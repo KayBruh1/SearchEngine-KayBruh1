@@ -1,9 +1,13 @@
 package edu.usfca.cs272;
 
+import java.io.IOException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Class responsible for running this project based on the provided command-line
@@ -21,28 +25,46 @@ public class Driver {
 	 *
 	 * @param args flag/value pairs used to start this program
 	 */
-	public static void main(String[] args) {
-		// store initial start time
+	public static void main(String[] args) throws IOException {
 		Instant start = Instant.now();
 
 		ArgumentParser parser = new ArgumentParser(args);
-        String inputPath = parser.getString("-text");
-        String outputPath = parser.getString("-counts", "counts.json");
-        
-        System.out.println(inputPath);
-        System.out.println(outputPath);
-        
-        if (inputPath != null) {
-            
-        }
+		String inputPath = parser.getString("-text");
+		String outputPath = parser.getString("-counts", "counts.json");
 
-		System.out.println("Working Directory: " + Path.of(".").toAbsolutePath().normalize().getFileName());
-		System.out.println("Arguments: " + Arrays.toString(args));
+		if (inputPath != null) {
+			try {
+				processDirectory(Path.of(inputPath), outputPath);
+			} catch (IOException e) {
+				System.err.println("Error processing directory: " + e.getMessage());
+			}
+		} else {
+			System.out.println("No input text files provided.");
+		}
 
-		// calculate time elapsed and output
 		long elapsed = Duration.between(start, Instant.now()).toMillis();
 		double seconds = (double) elapsed / Duration.ofSeconds(1).toMillis();
 		System.out.printf("Elapsed: %f seconds%n", seconds);
+	}
+
+	public static void processDirectory(Path directory, String outputPath) throws IOException {
+		Map<String, Integer> wordCounts = new HashMap<>();
+		try (DirectoryStream<Path> listing = Files.newDirectoryStream(directory)) {
+			for (Path path : listing) {
+				if (Files.isDirectory(path)) {
+					processDirectory(path, outputPath);
+				} else {
+					if (isTextFile(path)) {
+						processTextFile(path, wordCounts);
+					}
+				}
+			}
+		}
+	}
+
+	public static boolean isTextFile(Path file) {
+		String fileName = file.getFileName().toString().toLowerCase();
+		return fileName.endsWith(".txt") || fileName.endsWith(".text");
 	}
 
 }
