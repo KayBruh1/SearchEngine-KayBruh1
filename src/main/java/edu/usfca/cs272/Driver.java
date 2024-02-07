@@ -6,8 +6,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Class responsible for running this project based on the provided command-line
@@ -33,11 +31,8 @@ public class Driver {
 		String outputPath = parser.getString("-counts", "counts.json");
 
 		if (inputPath != null) {
-			try {
-				processDirectory(Path.of(inputPath), outputPath);
-			} catch (IOException e) {
-				System.err.println("Error processing directory: " + e.getMessage());
-			}
+			Path path = Path.of(inputPath);
+			processPath(path, outputPath);
 		} else {
 			System.out.println("No input text files provided.");
 		}
@@ -47,24 +42,24 @@ public class Driver {
 		System.out.printf("Elapsed: %f seconds%n", seconds);
 	}
 
-	public static void processDirectory(Path directory, String outputPath) throws IOException {
-		Map<String, Integer> wordCounts = new HashMap<>();
+	private static void processPath(Path path, String outputPath) throws IOException {
+		if (Files.isDirectory(path)) {
+			processDirectory(path, outputPath);
+		} else {
+			processFile(path);
+		}
+	}
+
+	private static void processDirectory(Path directory, String outputPath) throws IOException {
 		try (DirectoryStream<Path> listing = Files.newDirectoryStream(directory)) {
 			for (Path path : listing) {
-				if (Files.isDirectory(path)) {
-					processDirectory(path, outputPath);
-				} else {
-					if (isTextFile(path)) {
-						processTextFile(path, wordCounts);
-					}
-				}
+				processPath(path, outputPath);
 			}
 		}
 	}
 
-	public static boolean isTextFile(Path file) {
-		String fileName = file.getFileName().toString().toLowerCase();
-		return fileName.endsWith(".txt") || fileName.endsWith(".text");
+	private static void processFile(Path file) throws IOException {
+		// Implement logic to process the file
+		System.out.println("Processing file: " + file);
 	}
-
 }
