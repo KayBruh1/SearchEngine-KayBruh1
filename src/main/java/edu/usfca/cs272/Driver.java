@@ -9,7 +9,7 @@ import java.util.Arrays;
  * Class responsible for running this project based on the provided command-line
  * arguments. See the README for details.
  *
- * @author TODO Add Name Here
+ * @author Kayvan Zahiri
  * @author CS 272 Software Development (University of San Francisco)
  * @version Spring 2024
  */
@@ -25,7 +25,20 @@ public class Driver {
 		// store initial start time
 		Instant start = Instant.now();
 
-		// TODO Fill in and modify as needed
+		for (int i = 0; i < args.length; i++) {
+			if (args[i].equals("-text")) {
+				String input = args[i + 1];
+				System.out.println("1 " + input);
+			}
+			
+			if (args[i].equals("-counts")) {
+				if (i + 1 < args.length && !args[i + 1].equals("-text")) {
+					String output = args[i + 1];
+					System.out.println("2 " + output);
+				}
+			}
+		}
+		
 		System.out.println("Working Directory: " + Path.of(".").toAbsolutePath().normalize().getFileName());
 		System.out.println("Arguments: " + Arrays.toString(args));
 
