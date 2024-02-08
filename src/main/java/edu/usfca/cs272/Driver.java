@@ -82,18 +82,26 @@ public class Driver {
 	}
 
 	private static void outputWordCounts(HashMap<String, Integer> wordCounts, String inputPath, String outputPath) {
-		HashMap<String, Integer> pathWordCount = new HashMap<>();
-		int totalWords = 0;
-		
-		for (int count : wordCounts.values()) {
-			totalWords += count;
-		}
-		System.out.println(totalWords);
-		pathWordCount.put(inputPath, totalWords);
-
 		try {
-			JsonWriter.writeObject(pathWordCount, Path.of(outputPath));
-			System.out.println("Word counts have been written to: " + outputPath);
+			if (wordCounts.isEmpty()) {
+				System.out.println("Word counts map is empty"); 
+				HashMap<String, Integer> pathWordCount = new HashMap<>();
+
+				JsonWriter.writeObject(pathWordCount, Path.of(outputPath));
+				System.out.println("Empty word counts have been written to: " + outputPath);
+			} else {
+				HashMap<String, Integer> pathWordCount = new HashMap<>();
+				int totalWords = 0;
+				
+				for (int count : wordCounts.values()) {
+					totalWords += count;
+				}
+				System.out.println("Total words: " + totalWords);
+				pathWordCount.put(inputPath, totalWords);
+
+				JsonWriter.writeObject(pathWordCount, Path.of(outputPath));
+				System.out.println("Word counts have been written to: " + outputPath);
+			}
 		} catch (Exception e) {
 			System.err.println("Error writing word counts to file: " + e.getMessage());
 		}
