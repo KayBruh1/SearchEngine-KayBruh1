@@ -1,5 +1,6 @@
 package edu.usfca.cs272;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
@@ -55,7 +56,13 @@ public class Driver {
 	private static void processDirectory(Path directory, String inputPath, String outputPath) throws IOException {
 		try (DirectoryStream<Path> listing = Files.newDirectoryStream(directory)) {
 			for (Path path : listing) {
-				processPath(path, inputPath, outputPath);
+				if (Files.isDirectory(path)) {
+					processDirectory(path, inputPath, outputPath);
+				} else {
+					// @CITE StackOverflow 
+	                String relativePath = inputPath + File.separator + directory.relativize(path).toString();
+	                processFile(path, relativePath, outputPath); // Pass relativePath as key
+				}
 			}
 		}
 	}
@@ -92,7 +99,7 @@ public class Driver {
 			} else {
 				HashMap<String, Integer> pathWordCount = new HashMap<>();
 				int totalWords = 0;
-				
+
 				for (int count : wordCounts.values()) {
 					totalWords += count;
 				}
