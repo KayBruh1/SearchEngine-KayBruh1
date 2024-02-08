@@ -19,6 +19,8 @@ import java.util.List;
  * @version Spring 2024
  */
 public class Driver {
+	static HashMap<String, Integer> fileWordCount = new HashMap<>();
+	
 	/**
 	 * Initializes the classes necessary based on the provided command-line
 	 * arguments. This includes (but is not limited to) how to build or search an
@@ -105,8 +107,9 @@ public class Driver {
 				}
 				System.out.println("Total words: " + totalWords);
 				pathWordCount.put(inputPath, totalWords);
+				fileWordCount.put(inputPath, totalWords);
 
-				JsonWriter.writeObject(pathWordCount, Path.of(outputPath));
+				JsonWriter.writeObject(fileWordCount, Path.of(outputPath));
 				System.out.println("Word counts have been written to: " + outputPath);
 			}
 		} catch (Exception e) {
