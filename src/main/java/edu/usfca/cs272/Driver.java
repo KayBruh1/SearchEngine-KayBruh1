@@ -9,6 +9,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
+import java.util.TreeMap;
 
 /**
  * Class responsible for running this project based on the provided command-line
@@ -19,25 +20,19 @@ import java.util.List;
  * @version Spring 2024
  */
 public class Driver {
-	static HashMap<String, Integer> fileWordCount = new HashMap<>();
-	
-	/**
-	 * Initializes the classes necessary based on the provided command-line
-	 * arguments. This includes (but is not limited to) how to build or search an
-	 * inverted index.
-	 *
-	 * @param args flag/value pairs used to start this program
-	 */
+	static String inputPath;
+	static String outputPath;
+
 	public static void main(String[] args) throws IOException {
 		Instant start = Instant.now();
 
 		ArgumentParser parser = new ArgumentParser(args);
-		String inputPath = parser.getString("-text");
-		String outputPath = parser.getString("-counts", "counts.json");
+		inputPath = parser.getString("-text");
+		outputPath = parser.getString("-counts", "counts.json");
 
 		if (inputPath != null) {
 			Path path = Path.of(inputPath);
-			processPath(path, inputPath, outputPath);
+			processPath(path);
 		} else {
 			System.out.println("No input text files provided");
 		}
@@ -47,26 +42,50 @@ public class Driver {
 		System.out.printf("Elapsed: %f seconds%n", seconds);
 	}
 
-	private static void processPath(Path path, String inputPath, String outputPath) throws IOException {
+
+	private static void processPath(Path path) throws IOException {
 		if (Files.isDirectory(path)) {
-			processDirectory(path, inputPath, outputPath);
+			processDirectoryOutput(path);
 		} else {
 			processFile(path, inputPath, outputPath);
 		}
 	}
 
-	private static void processDirectory(Path directory, String inputPath, String outputPath) throws IOException {
+	private static void processDirectoryOutput(Path directory) throws IOException {
+		TreeMap<String, Integer> fileWordCounts = new TreeMap<>();
+
 		try (DirectoryStream<Path> listing = Files.newDirectoryStream(directory)) {
 			for (Path path : listing) {
 				if (Files.isDirectory(path)) {
-					processDirectory(path, inputPath, outputPath);
+					processDirectoryOutput(path);
 				} else {
-					// @CITE StackOverflow 
-	                String relativePath = inputPath + File.separator + directory.relativize(path).toString();
-	                processFile(path, relativePath, outputPath); // Pass relativePath as key
+					// @CITE StackOverflow
+					String relativePath = inputPath + File.separator + directory.relativize(path).toString();
+					HashMap<String, Integer> wordCounts = processFile(path);
+					int totalWords = wordCounts.values().stream().mapToInt(Integer::intValue).sum();
+					fileWordCounts.put(relativePath, totalWords);
 				}
 			}
 		}
+
+		// Write all the calculated word counts to file at once
+		JsonWriter.writeObject(fileWordCounts, Path.of(outputPath));
+		System.out.println("Word counts have been written to: " + outputPath);
+	}
+
+	private static HashMap<String, Integer> processFile(Path filePath) throws IOException {
+		List<String> lines = Files.readAllLines(filePath);
+		HashMap<String, Integer> wordCounts = new HashMap<>();
+
+		for (String line : lines) {
+			List<String> wordStems = FileStemmer.listStems(line);
+
+			for (String stemmedWord : wordStems) {
+				wordCounts.merge(stemmedWord, 1, Integer::sum);
+			}
+		}
+
+		return wordCounts;
 	}
 
 	private static void processFile(Path filePath, String inputPath, String outputPath) throws IOException {
@@ -107,9 +126,8 @@ public class Driver {
 				}
 				System.out.println("Total words: " + totalWords);
 				pathWordCount.put(inputPath, totalWords);
-				fileWordCount.put(inputPath, totalWords);
 
-				JsonWriter.writeObject(fileWordCount, Path.of(outputPath));
+				JsonWriter.writeObject(pathWordCount, Path.of(outputPath));
 				System.out.println("Word counts have been written to: " + outputPath);
 			}
 		} catch (Exception e) {
