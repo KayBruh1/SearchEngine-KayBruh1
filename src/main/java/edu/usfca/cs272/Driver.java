@@ -6,6 +6,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * Class responsible for running this project based on the provided command-line
@@ -34,7 +36,7 @@ public class Driver {
 			Path path = Path.of(inputPath);
 			processPath(path, outputPath);
 		} else {
-			System.out.println("No input text files provided.");
+			System.out.println("No input text files provided");
 		}
 
 		long elapsed = Duration.between(start, Instant.now()).toMillis();
@@ -46,7 +48,7 @@ public class Driver {
 		if (Files.isDirectory(path)) {
 			processDirectory(path, outputPath);
 		} else {
-			processFile(path);
+			processFile(path, outputPath);
 		}
 	}
 
@@ -58,8 +60,22 @@ public class Driver {
 		}
 	}
 
-	private static void processFile(Path file) throws IOException {
-		// Implement logic to process the file
-		System.out.println("Processing file: " + file);
-	}
+    private static void processFile(Path filePath, String outputPath) throws IOException {
+        System.out.println("Processing file: " + filePath);
+        
+        List<String> lines = Files.readAllLines(filePath);
+        HashMap<String, Integer> wordCounts = new HashMap<>();
+
+        for (String line : lines) {
+            List<String> wordStems = FileStemmer.listStems(line);
+            
+            for (String stemmedWord : wordStems) {
+                if (wordCounts.containsKey(stemmedWord)) {
+                    wordCounts.put(stemmedWord, wordCounts.get(stemmedWord) + 1);
+                } else {
+                    wordCounts.put(stemmedWord, 1);
+                }
+            }
+        }
+    }
 }
