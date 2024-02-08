@@ -1,6 +1,5 @@
 package edu.usfca.cs272;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
@@ -55,28 +54,26 @@ public class Driver {
 	}
 
 	private static void processDirectoryOutput(Path directory) throws IOException {
+	    try (DirectoryStream<Path> listing = Files.newDirectoryStream(directory)) {
+	        for (Path path : listing) {
+	            if (Files.isDirectory(path)) {
+	                processDirectoryOutput(path);
+	            } else {
+	                String relativePath = directory.resolve(path.getFileName()).toString();
+	                // @CITE StackOverflow 
+	                if (relativePath.toLowerCase().endsWith(".txt") || relativePath.toLowerCase().endsWith(".text")) {
+	                    HashMap<String, Integer> wordCounts = processFile(path);
+	                    int totalWords = wordCounts.values().stream().mapToInt(Integer::intValue).sum();
+	                    fileWordCounts.put(relativePath, totalWords);
+	                }
+	            }
+	        }
+	    }
 
-		try (DirectoryStream<Path> listing = Files.newDirectoryStream(directory)) {
-			for (Path path : listing) {
-				if (Files.isDirectory(path)) {
-					processDirectoryOutput(path);
-				} else {
-					// @CITE StackOverflow
-					String relativePath = inputPath + File.separator + directory.relativize(path).toString();
-
-					if (relativePath.toLowerCase().endsWith(".txt") || relativePath.toLowerCase().endsWith(".text")) {
-						HashMap<String, Integer> wordCounts = processFile(path);
-						int totalWords = wordCounts.values().stream().mapToInt(Integer::intValue).sum();
-						fileWordCounts.put(relativePath, totalWords);
-					}
-				}
-			}
-		}
-
-		// Write all the calculated word counts to file at once
-		JsonWriter.writeObject(fileWordCounts, Path.of(outputPath));
-		System.out.println("Word counts have been written to: " + outputPath);
+	    JsonWriter.writeObject(fileWordCounts, Path.of(outputPath));
+	    System.out.println("Word counts have been written to: " + outputPath);
 	}
+
 
 	private static HashMap<String, Integer> processFile(Path filePath) throws IOException {
 		List<String> lines = Files.readAllLines(filePath);
