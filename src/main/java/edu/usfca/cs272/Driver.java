@@ -34,7 +34,7 @@ public class Driver {
 
 		if (inputPath != null) {
 			Path path = Path.of(inputPath);
-			processPath(path, outputPath);
+			processPath(path, inputPath, outputPath);
 		} else {
 			System.out.println("No input text files provided");
 		}
@@ -44,38 +44,59 @@ public class Driver {
 		System.out.printf("Elapsed: %f seconds%n", seconds);
 	}
 
-	private static void processPath(Path path, String outputPath) throws IOException {
+	private static void processPath(Path path, String inputPath, String outputPath) throws IOException {
 		if (Files.isDirectory(path)) {
-			processDirectory(path, outputPath);
+			processDirectory(path, inputPath, outputPath);
 		} else {
-			processFile(path, outputPath);
+			processFile(path, inputPath, outputPath);
 		}
 	}
 
-	private static void processDirectory(Path directory, String outputPath) throws IOException {
+	private static void processDirectory(Path directory, String inputPath, String outputPath) throws IOException {
 		try (DirectoryStream<Path> listing = Files.newDirectoryStream(directory)) {
 			for (Path path : listing) {
-				processPath(path, outputPath);
+				processPath(path, inputPath, outputPath);
 			}
 		}
 	}
 
-    private static void processFile(Path filePath, String outputPath) throws IOException {
-        System.out.println("Processing file: " + filePath);
-        
-        List<String> lines = Files.readAllLines(filePath);
-        HashMap<String, Integer> wordCounts = new HashMap<>();
+	private static void processFile(Path filePath, String inputPath, String outputPath) throws IOException {
+		System.out.println("Processing file: " + filePath);
 
-        for (String line : lines) {
-            List<String> wordStems = FileStemmer.listStems(line);
-            
-            for (String stemmedWord : wordStems) {
-                if (wordCounts.containsKey(stemmedWord)) {
-                    wordCounts.put(stemmedWord, wordCounts.get(stemmedWord) + 1);
-                } else {
-                    wordCounts.put(stemmedWord, 1);
-                }
-            }
-        }
-    }
+		List<String> lines = Files.readAllLines(filePath);
+		HashMap<String, Integer> wordCounts = new HashMap<>();
+
+		for (String line : lines) {
+			List<String> wordStems = FileStemmer.listStems(line);
+
+			for (String stemmedWord : wordStems) {
+				if (wordCounts.containsKey(stemmedWord)) {
+					wordCounts.put(stemmedWord, wordCounts.get(stemmedWord) + 1);
+				} else {
+					wordCounts.put(stemmedWord, 1);
+				}
+			}
+		}
+
+		outputWordCounts(wordCounts, inputPath, outputPath);
+	}
+
+	private static void outputWordCounts(HashMap<String, Integer> wordCounts, String inputPath, String outputPath) {
+		HashMap<String, Integer> pathWordCount = new HashMap<>();
+		int totalWords = 0;
+		
+		for (int count : wordCounts.values()) {
+			totalWords += count;
+		}
+		System.out.println(totalWords);
+		pathWordCount.put(inputPath, totalWords);
+
+		try {
+			JsonWriter.writeObject(pathWordCount, Path.of(outputPath));
+			System.out.println("Word counts have been written to: " + outputPath);
+		} catch (Exception e) {
+			System.err.println("Error writing word counts to file: " + e.getMessage());
+		}
+	}
+
 }
