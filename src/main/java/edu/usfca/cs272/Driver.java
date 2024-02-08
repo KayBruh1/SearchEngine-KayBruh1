@@ -20,11 +20,14 @@ import java.util.TreeMap;
  * @version Spring 2024
  */
 public class Driver {
+	static TreeMap<String, Integer> fileWordCounts = new TreeMap<>();
 	static String inputPath;
 	static String outputPath;
 
 	public static void main(String[] args) throws IOException {
 		Instant start = Instant.now();
+
+		fileWordCounts.clear();
 
 		ArgumentParser parser = new ArgumentParser(args);
 		inputPath = parser.getString("-text");
@@ -52,7 +55,6 @@ public class Driver {
 	}
 
 	private static void processDirectoryOutput(Path directory) throws IOException {
-		TreeMap<String, Integer> fileWordCounts = new TreeMap<>();
 
 		try (DirectoryStream<Path> listing = Files.newDirectoryStream(directory)) {
 			for (Path path : listing) {
@@ -61,9 +63,12 @@ public class Driver {
 				} else {
 					// @CITE StackOverflow
 					String relativePath = inputPath + File.separator + directory.relativize(path).toString();
-					HashMap<String, Integer> wordCounts = processFile(path);
-					int totalWords = wordCounts.values().stream().mapToInt(Integer::intValue).sum();
-					fileWordCounts.put(relativePath, totalWords);
+
+					if (relativePath.toLowerCase().endsWith(".txt") || relativePath.toLowerCase().endsWith(".text")) {
+						HashMap<String, Integer> wordCounts = processFile(path);
+						int totalWords = wordCounts.values().stream().mapToInt(Integer::intValue).sum();
+						fileWordCounts.put(relativePath, totalWords);
+					}
 				}
 			}
 		}
