@@ -22,6 +22,7 @@ public class Driver {
 	static TreeMap<String, Integer> fileWordCounts = new TreeMap<>();
 	static String inputPath;
 	static String outputPath;
+	static boolean counts = false;
 
 	public static void main(String[] args) throws IOException {
 		Instant start = Instant.now();
@@ -29,8 +30,15 @@ public class Driver {
 		fileWordCounts.clear();
 
 		ArgumentParser parser = new ArgumentParser(args);
+
 		inputPath = parser.getString("-text");
-		outputPath = parser.getString("-counts", "counts.json");
+
+		for (String arg : args) {
+			if (arg.contains("-counts")) {
+				outputPath = parser.getString("-counts", "counts.json");
+				counts = true;
+			}
+		}
 
 		if (inputPath != null) {
 			Path path = Path.of(inputPath);
@@ -49,34 +57,34 @@ public class Driver {
 		if (Files.isDirectory(path)) {
 			processDirectoryOutput(path);
 		} else if (Files.exists(path)){
-			processFile(path, inputPath, outputPath);
+			processFile(path, inputPath, counts);
 		}
 	}
 
 	private static void processDirectoryOutput(Path directory) throws IOException {
-	    try (DirectoryStream<Path> listing = Files.newDirectoryStream(directory)) {
-	        for (Path path : listing) {
-	            if (Files.isDirectory(path)) {
-	                processDirectoryOutput(path);
-	            } else {
-	            	// @CITE StackOverflow 
-	            	String relativePath = directory.resolve(path.getFileName()).toString();
-	            	
-	                if (relativePath.toLowerCase().endsWith(".txt") || relativePath.toLowerCase().endsWith(".text")) {
-	                    HashMap<String, Integer> wordCounts = processFile(path);
-	                    
-	                    // @CITE StackOverflow
-	                    int totalWords = wordCounts.values().stream().mapToInt(Integer::intValue).sum();
-	                    if (totalWords > 0) {
-	                        fileWordCounts.put(relativePath, totalWords);
-	                    }
-	                }
-	            }
-	        }
-	    }
+		try (DirectoryStream<Path> listing = Files.newDirectoryStream(directory)) {
+			for (Path path : listing) {
+				if (Files.isDirectory(path)) {
+					processDirectoryOutput(path);
+				} else {
+					// @CITE StackOverflow 
+					String relativePath = directory.resolve(path.getFileName()).toString();
 
-	    JsonWriter.writeObject(fileWordCounts, Path.of(outputPath));
-	    System.out.println("Word counts have been written to: " + outputPath);
+					if (relativePath.toLowerCase().endsWith(".txt") || relativePath.toLowerCase().endsWith(".text")) {
+						HashMap<String, Integer> wordCounts = processFile(path);
+
+						// @CITE StackOverflow
+						int totalWords = wordCounts.values().stream().mapToInt(Integer::intValue).sum();
+						if (totalWords > 0) {
+							fileWordCounts.put(relativePath, totalWords);
+						}
+					}
+				}
+			}
+		}
+
+		JsonWriter.writeObject(fileWordCounts, Path.of(outputPath));
+		System.out.println("Word counts have been written to: " + outputPath);
 	}
 
 	private static HashMap<String, Integer> processFile(Path filePath) throws IOException {
@@ -87,19 +95,19 @@ public class Driver {
 			List<String> wordStems = FileStemmer.listStems(line);
 
 			for (String stemmedWord : wordStems) {
-		        if (wordCounts.containsKey(stemmedWord)) {
-		            int currentCount = wordCounts.get(stemmedWord);
-		            wordCounts.put(stemmedWord, currentCount + 1);
-		        } else {
-		            wordCounts.put(stemmedWord, 1);
-		        }
+				if (wordCounts.containsKey(stemmedWord)) {
+					int currentCount = wordCounts.get(stemmedWord);
+					wordCounts.put(stemmedWord, currentCount + 1);
+				} else {
+					wordCounts.put(stemmedWord, 1);
+				}
 			}
 		}
 
 		return wordCounts;
 	}
 
-	private static void processFile(Path filePath, String inputPath, String outputPath) throws IOException {
+	private static void processFile(Path filePath, String inputPath, boolean counts) throws IOException {
 		System.out.println("Processing file: " + filePath);
 
 		List<String> lines = Files.readAllLines(filePath);
@@ -117,7 +125,9 @@ public class Driver {
 			}
 		}
 
-		outputWordCounts(wordCounts, inputPath, outputPath);
+		if (counts == true) {
+			outputWordCounts(wordCounts, inputPath, outputPath);
+		}
 	}
 
 	private static void outputWordCounts(HashMap<String, Integer> wordCounts, String inputPath, String outputPath) {
