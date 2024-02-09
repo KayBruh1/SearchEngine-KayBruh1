@@ -48,7 +48,7 @@ public class Driver {
 	private static void processPath(Path path) throws IOException {
 		if (Files.isDirectory(path)) {
 			processDirectoryOutput(path);
-		} else {
+		} else if (Files.exists(path)){
 			processFile(path, inputPath, outputPath);
 		}
 	}
