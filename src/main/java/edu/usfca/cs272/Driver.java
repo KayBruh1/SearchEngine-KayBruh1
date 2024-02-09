@@ -59,12 +59,17 @@ public class Driver {
 	            if (Files.isDirectory(path)) {
 	                processDirectoryOutput(path);
 	            } else {
-	                String relativePath = directory.resolve(path.getFileName()).toString();
-	                // @CITE StackOverflow 
+	            	// @CITE StackOverflow 
+	            	String relativePath = directory.resolve(path.getFileName()).toString();
+	            	
 	                if (relativePath.toLowerCase().endsWith(".txt") || relativePath.toLowerCase().endsWith(".text")) {
 	                    HashMap<String, Integer> wordCounts = processFile(path);
+	                    
+	                    // @CITE StackOverflow
 	                    int totalWords = wordCounts.values().stream().mapToInt(Integer::intValue).sum();
-	                    fileWordCounts.put(relativePath, totalWords);
+	                    if (totalWords > 0) {
+	                        fileWordCounts.put(relativePath, totalWords);
+	                    }
 	                }
 	            }
 	        }
@@ -74,7 +79,6 @@ public class Driver {
 	    System.out.println("Word counts have been written to: " + outputPath);
 	}
 
-
 	private static HashMap<String, Integer> processFile(Path filePath) throws IOException {
 		List<String> lines = Files.readAllLines(filePath);
 		HashMap<String, Integer> wordCounts = new HashMap<>();
@@ -83,7 +87,12 @@ public class Driver {
 			List<String> wordStems = FileStemmer.listStems(line);
 
 			for (String stemmedWord : wordStems) {
-				wordCounts.merge(stemmedWord, 1, Integer::sum);
+		        if (wordCounts.containsKey(stemmedWord)) {
+		            int currentCount = wordCounts.get(stemmedWord);
+		            wordCounts.put(stemmedWord, currentCount + 1);
+		        } else {
+		            wordCounts.put(stemmedWord, 1);
+		        }
 			}
 		}
 
@@ -136,5 +145,4 @@ public class Driver {
 			System.err.println("Error writing word counts to file: " + e.getMessage());
 		}
 	}
-
 }
