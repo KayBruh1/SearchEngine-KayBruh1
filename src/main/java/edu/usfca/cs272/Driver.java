@@ -43,6 +43,9 @@ public class Driver {
 		if (inputPath != null) {
 			Path path = Path.of(inputPath);
 			processPath(path);
+		} else if (inputPath == null && counts == true) {
+			fileWordCounts.put("No input provided", 0);
+			JsonWriter.writeObject(fileWordCounts, Path.of(outputPath));
 		} else {
 			System.out.println("No input text files provided");
 		}
@@ -57,7 +60,7 @@ public class Driver {
 		if (Files.isDirectory(path)) {
 			processDirectoryOutput(path);
 		} else if (Files.exists(path)){
-			processFile(path, inputPath, counts);
+			processFile(path, counts);
 		}
 	}
 
@@ -107,7 +110,7 @@ public class Driver {
 		return wordCounts;
 	}
 
-	private static void processFile(Path filePath, String inputPath, boolean counts) throws IOException {
+	private static void processFile(Path filePath, boolean counts) throws IOException {
 		System.out.println("Processing file: " + filePath);
 
 		List<String> lines = Files.readAllLines(filePath);
