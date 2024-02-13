@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.time.Duration;
-import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
 import java.util.TreeMap;
@@ -19,14 +17,15 @@ import java.util.TreeMap;
  * @version Spring 2024
  */
 public class Driver {
-	static TreeMap<String, Integer> fileWordCounts = new TreeMap<>();
-	static String inputPath;
-	static String outputPath;
-	static boolean counts = false;
+    static TreeMap<String, Integer> fileWordCounts = new TreeMap<>();
+    static TreeMap<String, HashMap<String, List<Integer>>> invertedIndex = new TreeMap<>();
+    static String inputPath;
+    static String outputPath;
+    static String indexPath;
+    static boolean counts = false;
+    static boolean index = false;
 
 	public static void main(String[] args) throws IOException {
-		Instant start = Instant.now();
-
 		fileWordCounts.clear();
 
 		ArgumentParser parser = new ArgumentParser(args);
@@ -38,6 +37,10 @@ public class Driver {
 				outputPath = parser.getString("-counts", "counts.json");
 				counts = true;
 			}
+            if (arg.contains("-index")) {
+                indexPath = parser.getString("-index", "index.json");
+                index = true;
+            }
 		}
 
 		if (inputPath != null) {
@@ -49,10 +52,16 @@ public class Driver {
 		} else {
 			System.out.println("No input text files provided");
 		}
+		
+        if (index == true) {
+            writeInvertedIndex();
+        }
+        
+        System.out.println("Input Path: " + inputPath);
+        System.out.println("Counts Flag: " + counts);
+        System.out.println("Index Path: " + indexPath);
+        System.out.println("Index Flag: " + index);
 
-		long elapsed = Duration.between(start, Instant.now()).toMillis();
-		double seconds = (double) elapsed / Duration.ofSeconds(1).toMillis();
-		System.out.printf("Elapsed: %f seconds%n", seconds);
 	}
 
 
@@ -158,4 +167,8 @@ public class Driver {
 			System.err.println("Error writing word counts to file: " + e.getMessage());
 		}
 	}
+	
+    private static void writeInvertedIndex() {
+    	
+    }
 }
