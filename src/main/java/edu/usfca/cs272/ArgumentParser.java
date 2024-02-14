@@ -53,10 +53,9 @@ public class ArgumentParser {
 	 */
 	public static boolean isFlag(String arg) {		
 		if (arg != null && arg.startsWith("-") && arg.length() > 1) {
-			char secondChar = arg.charAt(1);
-			if (!Character.isWhitespace(secondChar) && !Character.isDigit(secondChar)) {
-				return true;
-			}
+			
+			int secondChar = arg.codePointAt(1);
+			return !Character.isWhitespace(secondChar) && !Character.isDigit(secondChar);
 		}
 		return false;
 	}
@@ -173,9 +172,13 @@ public class ArgumentParser {
 	 * @see Path#of(String, String...)
 	 */
 	public Path getPath(String flag, Path backup) {
-		if (map.containsKey(flag) && map.get(flag) != null) {
-			String value = map.get(flag);
-            return FileSystems.getDefault().getPath(value);
+		try {
+			if (map.containsKey(flag) && map.get(flag) != null) {
+				String value = map.get(flag);
+				return Path.of(value);
+			}
+		} catch (Exception e) {
+			return backup;
 		}
 		return backup;
 	}
@@ -196,7 +199,7 @@ public class ArgumentParser {
 	public Path getPath(String flag) {
 		if (map.containsKey(flag) && map.get(flag) != null) {
 			String value = map.get(flag);
-            return FileSystems.getDefault().getPath(value);
+			return FileSystems.getDefault().getPath(value);
 		}
 		return null;
 	}
@@ -218,6 +221,7 @@ public class ArgumentParser {
 			try {
 				return Integer.parseInt(map.get(flag));
 			} catch (Exception e) {
+				return backup;
 			}
 		}
 		return backup;

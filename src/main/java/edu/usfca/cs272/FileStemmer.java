@@ -102,14 +102,9 @@ public class FileStemmer {
 	 * @see #addStems(String, Stemmer, Collection)
 	 */
 	public static ArrayList<String> listStems(String line, Stemmer stemmer) {
-		ArrayList<String> words = new ArrayList<String>();
-		String[] clean = parse(line);
-
-		for (String word : clean) {
-			String stem = stemmer.stem(word).toString();
-			words.add(stem);
-		}
-		return words;
+	    ArrayList<String> words = new ArrayList<String>();
+	    addStems(line, stemmer, words);
+	    return words;
 
 	}
 
@@ -125,15 +120,10 @@ public class FileStemmer {
 	 * @see #listStems(String, Stemmer)
 	 */
 	public static ArrayList<String> listStems(String line) {
-		ArrayList<String> words = new ArrayList<String>();
-		String[] clean = parse(line);
-		Stemmer stemmer = new SnowballStemmer(ENGLISH);
-
-		for (String word : clean) {
-			String stem = stemmer.stem(word).toString();
-			words.add(stem);
-		}
-		return words;
+	    ArrayList<String> words = new ArrayList<String>();
+	    Stemmer stemmer = new SnowballStemmer(ENGLISH);
+	    addStems(line, stemmer, words);
+	    return words;
 	}
 
 	/**
@@ -183,14 +173,9 @@ public class FileStemmer {
 	 * @see #addStems(String, Stemmer, Collection)
 	 */
 	public static TreeSet<String> uniqueStems(String line, Stemmer stemmer) {
-		TreeSet<String> unique = new TreeSet<>();
-		String[] clean = parse(line);
-
-		for (String word : clean) {
-			String stem = stemmer.stem(word).toString();
-			unique.add(stem);
-		}
-		return unique;
+		   TreeSet<String> unique = new TreeSet<>();
+		    addStems(line, stemmer, unique);
+		    return unique;
 	}
 
 	/**
@@ -205,15 +190,10 @@ public class FileStemmer {
 	 * @see #uniqueStems(String, Stemmer)
 	 */
 	public static TreeSet<String> uniqueStems(String line) {
-		TreeSet<String> unique = new TreeSet<>();
-		String[] clean = parse(line);
-		Stemmer stemmer = new SnowballStemmer(ENGLISH);
-
-		for (String word : clean) {
-			String stem = stemmer.stem(word).toString();
-			unique.add(stem);
-		}
-		return unique;
+	    TreeSet<String> unique = new TreeSet<>();
+	    Stemmer stemmer = new SnowballStemmer(ENGLISH);
+	    addStems(line, stemmer, unique);
+	    return unique;
 	}
 
 	/**
