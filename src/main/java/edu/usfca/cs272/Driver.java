@@ -23,7 +23,7 @@ public class Driver {
 	static TreeMap<String, Integer> fileWordCounts = new TreeMap<>();
 	static TreeMap<String, TreeMap<String, List<Integer>>> invertedIndex = new TreeMap<>();
 	static String inputPath;
-	static String outputPath;
+	static String countsPath;
 	static String indexPath;
 	static boolean counts = false;
 	static boolean index = false;
@@ -38,7 +38,7 @@ public class Driver {
 
 		for (String arg : args) {
 			if (arg.contains("-counts")) {
-				outputPath = parser.getString("-counts", "counts.json");
+				countsPath = parser.getString("-counts", "counts.json");
 				counts = true;
 			}
 			
@@ -53,7 +53,7 @@ public class Driver {
 			processPath(path);
 		} else if (inputPath == null && counts == true) {
 			fileWordCounts.put("No input provided", 0);
-			JsonWriter.writeObject(fileWordCounts, Path.of(outputPath));
+			JsonWriter.writeObject(fileWordCounts, Path.of(countsPath));
 		} else {
 			System.out.println("No input text files provided");
 		}
@@ -102,10 +102,8 @@ public class Driver {
 			}
 		}
 
-        if (index == true) {
-            writeInvertedIndex();
-        }
-		System.out.println("Word counts have been written to: " + outputPath);
+        writeInvertedIndex();
+		System.out.println("Word counts have been written to: " + countsPath);
 	}
 
 	private static HashMap<String, Integer> processDirIndex(Path filePath) throws IOException {
@@ -183,10 +181,7 @@ public class Driver {
 			}
 		}
 
-        if (index == true) {
-            writeInvertedIndex();
-        }
-
+        writeInvertedIndex();
 	}
 	
 	private static void processDirectoryCounts(Path directory) throws IOException {
@@ -211,8 +206,8 @@ public class Driver {
 			}
 		}
 
-		JsonWriter.writeObject(fileWordCounts, Path.of(outputPath));
-		System.out.println("Word counts have been written to: " + outputPath);
+		JsonWriter.writeObject(fileWordCounts, Path.of(countsPath));
+		System.out.println("Word counts have been written to: " + countsPath);
 	}
 
 	private static HashMap<String, Integer> processDirCounts(Path filePath) throws IOException {
@@ -253,9 +248,7 @@ public class Driver {
 			}
 		}
 
-		if (counts == true) {
-			outputWordCounts(wordCounts, inputPath, outputPath);
-		}
+		outputWordCounts(wordCounts, inputPath, countsPath);
 	}
 
 	private static void outputWordCounts(HashMap<String, Integer> wordCounts, String inputPath, String outputPath) {
