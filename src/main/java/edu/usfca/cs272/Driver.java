@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.TreeMap;
 
+
 /**
  * Class responsible for running this project based on the provided command-line
  * arguments. See the README for details.
@@ -28,6 +29,7 @@ public class Driver {
 
 	public static void main(String[] args) throws IOException {
 		fileWordCounts.clear();
+		invertedIndex.clear();
 
 		ArgumentParser parser = new ArgumentParser(args);
 
@@ -125,12 +127,12 @@ public class Driver {
 
 		List<String> lines = Files.readAllLines(filePath);
 		HashMap<String, Integer> wordCounts = new HashMap<>();
-
+		int position = 0;
+		
 		for (String line : lines) {
 			
 			List<String> wordStems = FileStemmer.listStems(line);
-			int position = 0;
-			
+		
 			for (String stemmedWord : wordStems) {
 				position += 1;
 				if (wordCounts.containsKey(stemmedWord)) {
@@ -160,11 +162,7 @@ public class Driver {
 		for (String word : invertedIndex.keySet()) {
 			System.out.println(word + ": " + invertedIndex.get(word));
 		}
-
-		outputWordCounts(wordCounts, inputPath, outputPath);
 	}
-
-
 
 	private static void outputWordCounts(HashMap<String, Integer> wordCounts, String inputPath, String outputPath) {
 		try {
