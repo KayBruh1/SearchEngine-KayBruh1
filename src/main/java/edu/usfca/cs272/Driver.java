@@ -66,10 +66,14 @@ public class Driver {
 
 
 	private static void processPath(Path path) throws IOException {
-		if (Files.isDirectory(path)) {
+		if (Files.isDirectory(path) && index && !counts) {
 			processDirectoryIndex(path);
-		} else if (Files.exists(path)){
+		} else if (Files.isDirectory(path) && counts && !index) {
+			processDirectoryCounts(path);
+		} else if (Files.exists(path) && index && !counts){
 			processFileIndex(path, counts);
+		} else if (Files.exists(path) && counts && !index){
+			processFileCounts(path, counts);
 		}
 	}
 
@@ -180,6 +184,75 @@ public class Driver {
             writeInvertedIndex();
         }
 
+	}
+	
+	private static void processDirectoryCounts(Path directory) throws IOException {
+		try (DirectoryStream<Path> listing = Files.newDirectoryStream(directory)) {
+			for (Path path : listing) {
+				if (Files.isDirectory(path)) {
+					processDirectoryCounts(path);
+				} else {
+					// @CITE StackOverflow 
+					String relativePath = directory.resolve(path.getFileName()).toString();
+
+					if (relativePath.toLowerCase().endsWith(".txt") || relativePath.toLowerCase().endsWith(".text")) {
+						HashMap<String, Integer> wordCounts = processDirCounts(path);
+
+						// @CITE StackOverflow
+						int totalWords = wordCounts.values().stream().mapToInt(Integer::intValue).sum();
+						if (totalWords > 0) {
+							fileWordCounts.put(relativePath, totalWords);
+						}
+					}
+				}
+			}
+		}
+
+		JsonWriter.writeObject(fileWordCounts, Path.of(outputPath));
+		System.out.println("Word counts have been written to: " + outputPath);
+	}
+
+	private static HashMap<String, Integer> processDirCounts(Path filePath) throws IOException {
+		List<String> lines = Files.readAllLines(filePath);
+		HashMap<String, Integer> wordCounts = new HashMap<>();
+
+		for (String line : lines) {
+			List<String> wordStems = FileStemmer.listStems(line);
+
+			for (String stemmedWord : wordStems) {
+				if (wordCounts.containsKey(stemmedWord)) {
+					int currentCount = wordCounts.get(stemmedWord);
+					wordCounts.put(stemmedWord, currentCount + 1);
+				} else {
+					wordCounts.put(stemmedWord, 1);
+				}
+			}
+		}
+
+		return wordCounts;
+	}
+
+	private static void processFileCounts(Path filePath, boolean counts) throws IOException {
+		System.out.println("Processing file: " + filePath);
+
+		List<String> lines = Files.readAllLines(filePath);
+		HashMap<String, Integer> wordCounts = new HashMap<>();
+
+		for (String line : lines) {
+			List<String> wordStems = FileStemmer.listStems(line);
+
+			for (String stemmedWord : wordStems) {
+				if (wordCounts.containsKey(stemmedWord)) {
+					wordCounts.put(stemmedWord, wordCounts.get(stemmedWord) + 1);
+				} else {
+					wordCounts.put(stemmedWord, 1);
+				}
+			}
+		}
+
+		if (counts == true) {
+			outputWordCounts(wordCounts, inputPath, outputPath);
+		}
 	}
 
 	private static void outputWordCounts(HashMap<String, Integer> wordCounts, String inputPath, String outputPath) {
