@@ -97,27 +97,52 @@ public class Driver {
 			}
 		}
 
-		JsonWriter.writeObject(fileWordCounts, Path.of(outputPath));
+        if (index == true) {
+            writeInvertedIndex();
+        }
 		System.out.println("Word counts have been written to: " + outputPath);
 	}
 
 	private static HashMap<String, Integer> processFile(Path filePath) throws IOException {
+		System.out.println("Processing file: " + filePath);
+
 		List<String> lines = Files.readAllLines(filePath);
 		HashMap<String, Integer> wordCounts = new HashMap<>();
+		int position = 0;
 
 		for (String line : lines) {
+
 			List<String> wordStems = FileStemmer.listStems(line);
 
 			for (String stemmedWord : wordStems) {
+				position += 1;
 				if (wordCounts.containsKey(stemmedWord)) {
-					int currentCount = wordCounts.get(stemmedWord);
-					wordCounts.put(stemmedWord, currentCount + 1);
+					wordCounts.put(stemmedWord, wordCounts.get(stemmedWord) + 1);
 				} else {
 					wordCounts.put(stemmedWord, 1);
 				}
+
+				if (!invertedIndex.containsKey(stemmedWord)) {
+					invertedIndex.put(stemmedWord, new TreeMap<>());
+				}
+
+				TreeMap<String, List<Integer>> fileMap = invertedIndex.get(stemmedWord);
+
+				if (!fileMap.containsKey(filePath.toString())) {
+					fileMap.put(filePath.toString(), new ArrayList<>());
+
+				}
+
+				List<Integer> wordPosition = fileMap.get(filePath.toString());
+				wordPosition.add(position);
+
 			}
 		}
 
+		System.out.println("Inverted Index:");
+		for (String word : invertedIndex.keySet()) {
+			System.out.println(word + ": " + invertedIndex.get(word));
+		}
 		return wordCounts;
 	}
 
