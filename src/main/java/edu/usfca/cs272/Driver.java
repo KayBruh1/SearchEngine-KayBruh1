@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.TreeMap;
@@ -17,13 +18,13 @@ import java.util.TreeMap;
  * @version Spring 2024
  */
 public class Driver {
-    static TreeMap<String, Integer> fileWordCounts = new TreeMap<>();
-    static TreeMap<String, HashMap<String, List<Integer>>> invertedIndex = new TreeMap<>();
-    static String inputPath;
-    static String outputPath;
-    static String indexPath;
-    static boolean counts = false;
-    static boolean index = false;
+	static TreeMap<String, Integer> fileWordCounts = new TreeMap<>();
+	static TreeMap<String, HashMap<String, List<Integer>>> invertedIndex = new TreeMap<>();
+	static String inputPath;
+	static String outputPath;
+	static String indexPath;
+	static boolean counts = false;
+	static boolean index = false;
 
 	public static void main(String[] args) throws IOException {
 		fileWordCounts.clear();
@@ -37,10 +38,10 @@ public class Driver {
 				outputPath = parser.getString("-counts", "counts.json");
 				counts = true;
 			}
-            if (arg.contains("-index")) {
-                indexPath = parser.getString("-index", "index.json");
-                index = true;
-            }
+			if (arg.contains("-index")) {
+				indexPath = parser.getString("-index", "index.json");
+				index = true;
+			}
 		}
 
 		if (inputPath != null) {
@@ -52,15 +53,15 @@ public class Driver {
 		} else {
 			System.out.println("No input text files provided");
 		}
-		
-        if (index == true) {
-            writeInvertedIndex();
-        }
-        
-        System.out.println("Input Path: " + inputPath);
-        System.out.println("Counts Flag: " + counts);
-        System.out.println("Index Path: " + indexPath);
-        System.out.println("Index Flag: " + index);
+
+		if (index == true) {
+			
+		}
+
+		System.out.println("Input Path: " + inputPath);
+		System.out.println("Counts Flag: " + counts);
+		System.out.println("Index Path: " + indexPath);
+		System.out.println("Index Flag: " + index);
 
 	}
 
@@ -126,21 +127,44 @@ public class Driver {
 		HashMap<String, Integer> wordCounts = new HashMap<>();
 
 		for (String line : lines) {
+			
 			List<String> wordStems = FileStemmer.listStems(line);
-
+			int position = 0;
+			
 			for (String stemmedWord : wordStems) {
+				position += 1;
 				if (wordCounts.containsKey(stemmedWord)) {
 					wordCounts.put(stemmedWord, wordCounts.get(stemmedWord) + 1);
 				} else {
 					wordCounts.put(stemmedWord, 1);
 				}
+
+				if (!invertedIndex.containsKey(stemmedWord)) {
+					invertedIndex.put(stemmedWord, new HashMap<>());
+				}
+
+				HashMap<String, List<Integer>> fileMap = invertedIndex.get(stemmedWord);
+
+				if (!fileMap.containsKey(filePath.toString())) {
+					fileMap.put(filePath.toString(), new ArrayList<>());
+
+				}
+
+				List<Integer> wordPosition = fileMap.get(filePath.toString());
+				wordPosition.add(position);
+			
 			}
 		}
 
-		if (counts == true) {
-			outputWordCounts(wordCounts, inputPath, outputPath);
+		System.out.println("Inverted Index:");
+		for (String word : invertedIndex.keySet()) {
+			System.out.println(word + ": " + invertedIndex.get(word));
 		}
+
+		outputWordCounts(wordCounts, inputPath, outputPath);
 	}
+
+
 
 	private static void outputWordCounts(HashMap<String, Integer> wordCounts, String inputPath, String outputPath) {
 		try {
@@ -167,8 +191,6 @@ public class Driver {
 			System.err.println("Error writing word counts to file: " + e.getMessage());
 		}
 	}
-	
-    private static void writeInvertedIndex() {
-    	
-    }
+
+
 }
