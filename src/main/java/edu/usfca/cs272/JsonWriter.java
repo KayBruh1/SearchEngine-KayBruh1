@@ -14,7 +14,9 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
+import java.util.TreeMap;
 
 /**
  * Outputs several simple data structures in "pretty" JSON format where newlines
@@ -265,6 +267,35 @@ public class JsonWriter {
 		writeIndent(writer, indent);
 		writer.write("}");
 	}
+	
+	public static void writeIndex(TreeMap<String, TreeMap<String, List<Integer>>> elements, BufferedWriter writer, int indent) throws IOException {
+	    writer.write("{");
+	    writer.write("\n");
+
+	    var iterator = elements.entrySet().iterator();
+
+	    while (iterator.hasNext()) {
+	        Entry<String, TreeMap<String, List<Integer>>> entry = iterator.next();
+	        String word = entry.getKey();
+	        Map<String, List<Integer>> filePositions = entry.getValue();
+
+	        writeIndent(writer, indent + 1);
+	        writeQuote(word, writer, 0);
+	        writer.write(": ");
+
+	        writeObjectArrays(filePositions, writer, indent + 1);
+
+	        if (iterator.hasNext()) {
+	            writer.write(",");
+	        }
+	        writer.write("\n");
+	    }
+
+	    writeIndent(writer, indent);
+	    writer.write("}");
+	}
+
+
 
 	/**
 	 * Writes the elements as a pretty JSON object with nested arrays to file.
