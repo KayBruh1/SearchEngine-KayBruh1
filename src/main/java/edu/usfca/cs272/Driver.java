@@ -70,6 +70,9 @@ public class Driver {
 			processDirectoryIndex(path);
 		} else if (Files.isDirectory(path) && counts && !index) {
 			processDirectoryCounts(path);
+		} else if (Files.isDirectory(path) && counts && index) {
+			processDirectoryCounts(path);
+			processDirectoryIndex(path);
 		} else if (Files.exists(path) && index && !counts){
 			processFileIndex(path, counts);
 		} else if (Files.exists(path) && counts && !index){
