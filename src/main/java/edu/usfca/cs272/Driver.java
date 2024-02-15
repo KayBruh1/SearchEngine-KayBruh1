@@ -67,23 +67,23 @@ public class Driver {
 
 	private static void processPath(Path path) throws IOException {
 		if (Files.isDirectory(path)) {
-			processDirectoryOutput(path);
+			processDirectoryIndex(path);
 		} else if (Files.exists(path)){
-			processFile(path, counts);
+			processFileIndex(path, counts);
 		}
 	}
 
-	private static void processDirectoryOutput(Path directory) throws IOException {
+	private static void processDirectoryIndex(Path directory) throws IOException {
 		try (DirectoryStream<Path> listing = Files.newDirectoryStream(directory)) {
 			for (Path path : listing) {
 				if (Files.isDirectory(path)) {
-					processDirectoryOutput(path);
+					processDirectoryIndex(path);
 				} else {
 					// @CITE StackOverflow 
 					String relativePath = directory.resolve(path.getFileName()).toString();
 
 					if (relativePath.toLowerCase().endsWith(".txt") || relativePath.toLowerCase().endsWith(".text")) {
-						HashMap<String, Integer> wordCounts = processFile(path);
+						HashMap<String, Integer> wordCounts = processDirIndex(path);
 
 						// @CITE StackOverflow
 						int totalWords = wordCounts.values().stream().mapToInt(Integer::intValue).sum();
@@ -101,7 +101,7 @@ public class Driver {
 		System.out.println("Word counts have been written to: " + outputPath);
 	}
 
-	private static HashMap<String, Integer> processFile(Path filePath) throws IOException {
+	private static HashMap<String, Integer> processDirIndex(Path filePath) throws IOException {
 		System.out.println("Processing file: " + filePath);
 
 		List<String> lines = Files.readAllLines(filePath);
@@ -136,15 +136,11 @@ public class Driver {
 
 			}
 		}
-
-		System.out.println("Inverted Index:");
-		for (String word : invertedIndex.keySet()) {
-			System.out.println(word + ": " + invertedIndex.get(word));
-		}
+		
 		return wordCounts;
 	}
 
-	private static void processFile(Path filePath, boolean counts) throws IOException {
+	private static void processFileIndex(Path filePath, boolean counts) throws IOException {
 		System.out.println("Processing file: " + filePath);
 
 		List<String> lines = Files.readAllLines(filePath);
@@ -178,11 +174,6 @@ public class Driver {
 				wordPosition.add(position);
 
 			}
-		}
-
-		System.out.println("Inverted Index:");
-		for (String word : invertedIndex.keySet()) {
-			System.out.println(word + ": " + invertedIndex.get(word));
 		}
 
         if (index == true) {
