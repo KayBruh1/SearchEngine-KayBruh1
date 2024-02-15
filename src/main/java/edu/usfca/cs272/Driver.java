@@ -1,6 +1,8 @@
 package edu.usfca.cs272;
 
+import java.io.BufferedWriter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -8,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.TreeMap;
+
 
 
 /**
@@ -20,7 +23,7 @@ import java.util.TreeMap;
  */
 public class Driver {
 	static TreeMap<String, Integer> fileWordCounts = new TreeMap<>();
-	static TreeMap<String, HashMap<String, List<Integer>>> invertedIndex = new TreeMap<>();
+	static TreeMap<String, TreeMap<String, List<Integer>>> invertedIndex = new TreeMap<>();
 	static String inputPath;
 	static String outputPath;
 	static String indexPath;
@@ -40,6 +43,7 @@ public class Driver {
 				outputPath = parser.getString("-counts", "counts.json");
 				counts = true;
 			}
+			
 			if (arg.contains("-index")) {
 				indexPath = parser.getString("-index", "index.json");
 				index = true;
@@ -55,16 +59,11 @@ public class Driver {
 		} else {
 			System.out.println("No input text files provided");
 		}
-
-		if (index == true) {
-			
-		}
-
+		
 		System.out.println("Input Path: " + inputPath);
 		System.out.println("Counts Flag: " + counts);
 		System.out.println("Index Path: " + indexPath);
 		System.out.println("Index Flag: " + index);
-
 	}
 
 
@@ -128,11 +127,11 @@ public class Driver {
 		List<String> lines = Files.readAllLines(filePath);
 		HashMap<String, Integer> wordCounts = new HashMap<>();
 		int position = 0;
-		
+
 		for (String line : lines) {
-			
+
 			List<String> wordStems = FileStemmer.listStems(line);
-		
+
 			for (String stemmedWord : wordStems) {
 				position += 1;
 				if (wordCounts.containsKey(stemmedWord)) {
@@ -142,10 +141,10 @@ public class Driver {
 				}
 
 				if (!invertedIndex.containsKey(stemmedWord)) {
-					invertedIndex.put(stemmedWord, new HashMap<>());
+					invertedIndex.put(stemmedWord, new TreeMap<>());
 				}
 
-				HashMap<String, List<Integer>> fileMap = invertedIndex.get(stemmedWord);
+				TreeMap<String, List<Integer>> fileMap = invertedIndex.get(stemmedWord);
 
 				if (!fileMap.containsKey(filePath.toString())) {
 					fileMap.put(filePath.toString(), new ArrayList<>());
@@ -154,7 +153,7 @@ public class Driver {
 
 				List<Integer> wordPosition = fileMap.get(filePath.toString());
 				wordPosition.add(position);
-			
+
 			}
 		}
 
@@ -162,6 +161,11 @@ public class Driver {
 		for (String word : invertedIndex.keySet()) {
 			System.out.println(word + ": " + invertedIndex.get(word));
 		}
+
+        if (index == true) {
+            writeInvertedIndex();
+        }
+
 	}
 
 	private static void outputWordCounts(HashMap<String, Integer> wordCounts, String inputPath, String outputPath) {
@@ -189,6 +193,17 @@ public class Driver {
 			System.err.println("Error writing word counts to file: " + e.getMessage());
 		}
 	}
+	
+    private static void writeInvertedIndex() {
+        try {
+            TreeMap<String, TreeMap<String, List<Integer>>> convertedIndex = new TreeMap<>(invertedIndex);
 
-
+            try (BufferedWriter writer = Files.newBufferedWriter(Path.of(indexPath), StandardCharsets.UTF_8)) {
+                JsonWriter.writeIndex(convertedIndex, writer, 0);
+            }
+            System.out.println("Inverted index has been written to: " + indexPath);
+        } catch (IOException e) {
+            System.err.println("Error writing inverted index to file: " + e.getMessage());
+        }
+    }
 }
