@@ -143,7 +143,6 @@ public class Driver {
 
 			}
 		}
-		
 		return wordCounts;
 	}
 
@@ -182,7 +181,6 @@ public class Driver {
 
 			}
 		}
-
         writeInvertedIndex();
 	}
 	
@@ -207,7 +205,6 @@ public class Driver {
 				}
 			}
 		}
-
 		JsonWriter.writeObject(fileWordCounts, Path.of(countsPath));
 		System.out.println("Word counts have been written to: " + countsPath);
 	}
@@ -228,7 +225,6 @@ public class Driver {
 				}
 			}
 		}
-
 		return wordCounts;
 	}
 
@@ -249,7 +245,6 @@ public class Driver {
 				}
 			}
 		}
-
 		outputWordCounts(wordCounts, inputPath, countsPath);
 	}
 
