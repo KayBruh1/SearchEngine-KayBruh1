@@ -41,7 +41,6 @@ public class Driver {
 				countsPath = parser.getString("-counts", "counts.json");
 				counts = true;
 			}
-			
 			if (arg.contains("-index")) {
 				indexPath = parser.getString("-index", "index.json");
 				index = true;
