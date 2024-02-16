@@ -29,6 +29,8 @@ public class Driver {
 	static boolean index = false;
 
 	public static void main(String[] args) throws IOException {
+		counts = false;
+		index = false;
 		fileWordCounts.clear();
 		invertedIndex.clear();
 
