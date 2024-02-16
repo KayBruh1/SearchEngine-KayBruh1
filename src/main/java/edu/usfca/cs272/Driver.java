@@ -20,14 +20,33 @@ import java.util.TreeMap;
  * @version Spring 2024
  */
 public class Driver {
+    /** TreeMap storing word counts for each file */
 	static TreeMap<String, Integer> fileWordCounts = new TreeMap<>();
+	
+	/** TreeMap storing inverted index for files and word positions */
 	static TreeMap<String, TreeMap<String, List<Integer>>> invertedIndex = new TreeMap<>();
-	static String inputPath;
-	static String countsPath;
-	static String indexPath;
-	static boolean counts = false;
-	static boolean index = false;
+	
+    /** Path to input text files */
+    static String inputPath;
 
+    /** Path to write word counts JSON file */
+    static String countsPath;
+
+    /** Path to write inverted index JSON file */
+    static String indexPath;
+
+    /** Flag indicating to write word counts or not */
+    static boolean counts = false;
+
+    /** Flag indicating to write inverted index or not */
+    static boolean index = false;
+
+    /**
+     * Main method
+     *
+     * @param args Command line arguments
+     * @throws IOException If an I/O error occurs
+     */
 	public static void main(String[] args) throws IOException {
 		counts = false;
 		index = false;
@@ -68,14 +87,20 @@ public class Driver {
 		System.out.println("Index Flag: " + index);
 	}
 
+	/**
+	 * Processes the given path as file or directory
+	 *
+	 * @param path The path to process
+	 * @throws IOException If an I/O error occurs
+	 */
 	private static void processPath(Path path) throws IOException {
 		if (Files.isDirectory(path) && index && !counts) {
-			processDirectoryIndex(path);
+			processIndexDirectory(path);
 		} else if (Files.isDirectory(path) && counts && !index) {
-			processDirectoryCounts(path);
+			processCountsDirectory(path);
 		} else if (Files.isDirectory(path) && counts && index) {
-			processDirectoryCounts(path);
-			processDirectoryIndex(path);
+			processCountsDirectory(path);
+			processIndexDirectory(path);
 		} else if (Files.exists(path) && index && !counts){
 			processFileIndex(path, counts);
 		} else if (Files.exists(path) && counts && !index){
@@ -83,11 +108,17 @@ public class Driver {
 		}
 	}
 
-	private static void processDirectoryIndex(Path directory) throws IOException {
+	/**
+	 * Recursively processes the directory to build and write the inverted index.
+	 *
+	 * @param directory The directory to process
+	 * @throws IOException If an I/O error occurs
+	 */
+	private static void processIndexDirectory(Path directory) throws IOException {
 		try (DirectoryStream<Path> listing = Files.newDirectoryStream(directory)) {
 			for (Path path : listing) {
 				if (Files.isDirectory(path)) {
-					processDirectoryIndex(path);
+					processIndexDirectory(path);
 				} else {
 					// @CITE StackOverflow 
 					String relativePath = directory.resolve(path.getFileName()).toString();
@@ -109,6 +140,13 @@ public class Driver {
 		System.out.println("Word counts have been written to: " + countsPath);
 	}
 
+	/**
+	 * Processes file to generate word counts and build the inverted index
+	 * 
+	 * @param filePath The path of file to be processed
+	 * @return A HashMap containing word counts for the file
+	 * @throws IOException If an I/O error occurs
+	 */
 	private static HashMap<String, Integer> processDirIndex(Path filePath) throws IOException {
 		System.out.println("Processing file: " + filePath);
 
@@ -147,6 +185,13 @@ public class Driver {
 		return wordCounts;
 	}
 
+	/**
+	 * Processes file to generate word counts and build and write the inverted index
+
+	 * @param filePath The path of the file to be processed
+	 * @param counts   A boolean indicating to generate word counts or not
+	 * @throws IOException If an I/O error occurs
+	 */
 	private static void processFileIndex(Path filePath, boolean counts) throws IOException {
 		System.out.println("Processing file: " + filePath);
 
@@ -185,11 +230,17 @@ public class Driver {
         writeInvertedIndex();
 	}
 	
-	private static void processDirectoryCounts(Path directory) throws IOException {
+	/**
+	 * Recursively processes directory to generate word counts for files
+	 * 
+	 * @param directory The directory to process
+	 * @throws IOException If an I/O error occurs
+	 */
+	private static void processCountsDirectory(Path directory) throws IOException {
 		try (DirectoryStream<Path> listing = Files.newDirectoryStream(directory)) {
 			for (Path path : listing) {
 				if (Files.isDirectory(path)) {
-					processDirectoryCounts(path);
+					processCountsDirectory(path);
 				} else {
 					// @CITE StackOverflow 
 					String relativePath = directory.resolve(path.getFileName()).toString();
@@ -210,6 +261,13 @@ public class Driver {
 		System.out.println("Word counts have been written to: " + countsPath);
 	}
 
+	/**
+	 * Processes file to generate word counts
+
+	 * @param filePath The path of the file to be processed
+	 * @return A HashMap containing the word counts for the file
+	 * @throws IOException If an I/O error occurs
+	 */
 	private static HashMap<String, Integer> processDirCounts(Path filePath) throws IOException {
 		List<String> lines = Files.readAllLines(filePath);
 		HashMap<String, Integer> wordCounts = new HashMap<>();
@@ -229,6 +287,13 @@ public class Driver {
 		return wordCounts;
 	}
 
+	/**
+	 * Processes the file to generate and write word count
+	 * 
+	 * @param filePath  The path of the file to be processed
+	 * @param counts    A boolean indicating to output word counts or not
+	 * @throws IOException If an I/O error occurs
+	 */
 	private static void processFileCounts(Path filePath, boolean counts) throws IOException {
 		System.out.println("Processing file: " + filePath);
 
@@ -249,6 +314,13 @@ public class Driver {
 		outputWordCounts(wordCounts, inputPath, countsPath);
 	}
 
+	/**
+	 * Outputs word counts to JSON file
+
+	 * @param wordCounts The word counts map to be written to file
+	 * @param inputPath  The input path of the text file
+	 * @param outputPath The output path of the JSON file
+	 */
 	private static void outputWordCounts(HashMap<String, Integer> wordCounts, String inputPath, String outputPath) {
 		try {
 			if (wordCounts.isEmpty()) {
@@ -275,6 +347,9 @@ public class Driver {
 		}
 	}
 	
+	/**
+	 * Writes inverted index to JSON file
+	 */
     private static void writeInvertedIndex() {
         try {
             TreeMap<String, TreeMap<String, List<Integer>>> convertedIndex = new TreeMap<>(invertedIndex);

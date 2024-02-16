@@ -268,6 +268,14 @@ public class JsonWriter {
 		writer.write("}");
 	}
 	
+	/**
+	 * Writes the inverted index as a pretty JSON object
+	 *
+	 * @param elements the inverted index to write
+	 * @param writer   the buffered writer to write to
+	 * @param indent   the initial indentation level for the JSON output
+	 * @throws IOException if an I/O error occurs while writing
+	 */
 	public static void writeIndex(TreeMap<String, TreeMap<String, List<Integer>>> elements, BufferedWriter writer, int indent) throws IOException {
 	    writer.write("{");
 	    writer.write("\n");
@@ -294,8 +302,6 @@ public class JsonWriter {
 	    writeIndent(writer, indent);
 	    writer.write("}");
 	}
-
-
 
 	/**
 	 * Writes the elements as a pretty JSON object with nested arrays to file.
