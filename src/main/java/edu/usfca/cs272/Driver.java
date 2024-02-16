@@ -67,7 +67,6 @@ public class Driver {
 		System.out.println("Index Flag: " + index);
 	}
 
-
 	private static void processPath(Path path) throws IOException {
 		if (Files.isDirectory(path) && index && !counts) {
 			processDirectoryIndex(path);
