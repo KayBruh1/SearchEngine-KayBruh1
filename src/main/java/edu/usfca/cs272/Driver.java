@@ -51,9 +51,12 @@ public class Driver {
 		if (inputPath != null) {
 			Path path = Path.of(inputPath);
 			processPath(path);
-		} else if (inputPath == null && counts == true) {
+		} else if (inputPath == null && counts == true && index != true) {
 			fileWordCounts.put("No input provided", 0);
 			JsonWriter.writeObject(fileWordCounts, Path.of(countsPath));
+		} else if (inputPath == null && index == true && counts != true) {
+			fileWordCounts.put("No input provided", 0);
+			JsonWriter.writeObject(fileWordCounts, Path.of(indexPath));
 		} else {
 			System.out.println("No input text files provided");
 		}
