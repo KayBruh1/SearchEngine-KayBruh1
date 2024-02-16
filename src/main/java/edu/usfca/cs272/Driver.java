@@ -37,30 +37,32 @@ public class Driver {
 		inputPath = parser.getString("-text");
 
 		for (String arg : args) {
-			if (arg.contains("-counts")) {
+			if (arg.strip().contains("-counts")) {
 				countsPath = parser.getString("-counts", "counts.json");
 				counts = true;
 			}
-			
-			if (arg.contains("-index")) {
+
+			if (arg.strip().equals("-index")) {
 				indexPath = parser.getString("-index", "index.json");
 				index = true;
 			}
 		}
 
 		if (inputPath != null) {
-			Path path = Path.of(inputPath);
-			processPath(path);
-		} else if (inputPath == null && counts == true && index != true) {
+			if (index == true) {
+				Path path = Path.of(inputPath);
+				processPath(path);
+			}
+		} else if (inputPath == null && counts == true && index == false) {
 			fileWordCounts.put("No input provided", 0);
 			JsonWriter.writeObject(fileWordCounts, Path.of(countsPath));
-		} else if (inputPath == null && index == true && counts != true) {
+		} else if (inputPath == null && index == true && counts == false) {
 			fileWordCounts.put("No input provided", 0);
 			JsonWriter.writeObject(fileWordCounts, Path.of(indexPath));
 		} else {
 			System.out.println("No input text files provided");
 		}
-		
+
 		System.out.println("Input Path: " + inputPath);
 		System.out.println("Counts Flag: " + counts);
 		System.out.println("Index Path: " + indexPath);
@@ -105,7 +107,7 @@ public class Driver {
 			}
 		}
 
-        writeInvertedIndex();
+		writeInvertedIndex();
 		System.out.println("Word counts have been written to: " + countsPath);
 	}
 
@@ -144,7 +146,7 @@ public class Driver {
 
 			}
 		}
-		
+
 		return wordCounts;
 	}
 
@@ -184,9 +186,9 @@ public class Driver {
 			}
 		}
 
-        writeInvertedIndex();
+		writeInvertedIndex();
 	}
-	
+
 	private static void processDirectoryCounts(Path directory) throws IOException {
 		try (DirectoryStream<Path> listing = Files.newDirectoryStream(directory)) {
 			for (Path path : listing) {
@@ -279,17 +281,17 @@ public class Driver {
 			System.err.println("Error writing word counts to file: " + e.getMessage());
 		}
 	}
-	
-    private static void writeInvertedIndex() {
-        try {
-            TreeMap<String, TreeMap<String, List<Integer>>> convertedIndex = new TreeMap<>(invertedIndex);
 
-            try (BufferedWriter writer = Files.newBufferedWriter(Path.of(indexPath), StandardCharsets.UTF_8)) {
-                JsonWriter.writeIndex(convertedIndex, writer, 0);
-            }
-            System.out.println("Inverted index has been written to: " + indexPath);
-        } catch (IOException e) {
-            System.err.println("Error writing inverted index to file: " + e.getMessage());
-        }
-    }
+	private static void writeInvertedIndex() {
+		try {
+			TreeMap<String, TreeMap<String, List<Integer>>> convertedIndex = new TreeMap<>(invertedIndex);
+
+			try (BufferedWriter writer = Files.newBufferedWriter(Path.of(indexPath), StandardCharsets.UTF_8)) {
+				JsonWriter.writeIndex(convertedIndex, writer, 0);
+			}
+			System.out.println("Inverted index has been written to: " + indexPath);
+		} catch (IOException e) {
+			System.err.println("Error writing inverted index to file: " + e.getMessage());
+		}
+	}
 }
