@@ -20,33 +20,33 @@ import java.util.TreeMap;
  * @version Spring 2024
  */
 public class Driver {
-    /** TreeMap storing word counts for each file */
+	/** TreeMap storing word counts for each file */
 	static TreeMap<String, Integer> fileWordCounts = new TreeMap<>();
-	
+
 	/** TreeMap storing inverted index for files and word positions */
 	static TreeMap<String, TreeMap<String, List<Integer>>> invertedIndex = new TreeMap<>();
-	
-    /** Path to input text files */
-    static String inputPath;
 
-    /** Path to write word counts JSON file */
-    static String countsPath;
+	/** Path to input text files */
+	static String inputPath;
 
-    /** Path to write inverted index JSON file */
-    static String indexPath;
+	/** Path to write word counts JSON file */
+	static String countsPath;
 
-    /** Flag indicating to write word counts or not */
-    static boolean counts = false;
+	/** Path to write inverted index JSON file */
+	static String indexPath;
 
-    /** Flag indicating to write inverted index or not */
-    static boolean index = false;
+	/** Flag indicating to write word counts or not */
+	static boolean counts = false;
 
-    /**
-     * Main method
-     *
-     * @param args Command line arguments
-     * @throws IOException If an I/O error occurs
-     */
+	/** Flag indicating to write inverted index or not */
+	static boolean index = false;
+
+	/**
+	 * Main method
+	 *
+	 * @param args Command line arguments
+	 * @throws IOException If an I/O error occurs
+	 */
 	public static void main(String[] args) throws IOException {
 		counts = false;
 		index = false;
@@ -77,16 +77,8 @@ public class Driver {
 		} else if (inputPath == null && index == true && counts == false) {
 			fileWordCounts.put("No input provided", 0);
 			JsonWriter.writeObject(fileWordCounts, Path.of(indexPath));
-		} else {
-			System.out.println("No input text files provided");
-		}
-		
-		System.out.println("Input Path: " + inputPath);
-		System.out.println("Counts Flag: " + counts);
-		System.out.println("Index Path: " + indexPath);
-		System.out.println("Index Flag: " + index);
+		} 
 	}
-
 	/**
 	 * Processes the given path as file or directory
 	 *
@@ -136,8 +128,7 @@ public class Driver {
 			}
 		}
 
-        writeInvertedIndex();
-		System.out.println("Word counts have been written to: " + countsPath);
+		writeInvertedIndex();
 	}
 
 	/**
@@ -148,8 +139,6 @@ public class Driver {
 	 * @throws IOException If an I/O error occurs
 	 */
 	private static HashMap<String, Integer> processDirIndex(Path filePath) throws IOException {
-		System.out.println("Processing file: " + filePath);
-
 		List<String> lines = Files.readAllLines(filePath);
 		HashMap<String, Integer> wordCounts = new HashMap<>();
 		int position = 0;
@@ -193,8 +182,6 @@ public class Driver {
 	 * @throws IOException If an I/O error occurs
 	 */
 	private static void processFileIndex(Path filePath, boolean counts) throws IOException {
-		System.out.println("Processing file: " + filePath);
-
 		List<String> lines = Files.readAllLines(filePath);
 		HashMap<String, Integer> wordCounts = new HashMap<>();
 		int position = 0;
@@ -227,9 +214,9 @@ public class Driver {
 
 			}
 		}
-        writeInvertedIndex();
+		writeInvertedIndex();
 	}
-	
+
 	/**
 	 * Recursively processes directory to generate word counts for files
 	 * 
@@ -258,7 +245,6 @@ public class Driver {
 			}
 		}
 		JsonWriter.writeObject(fileWordCounts, Path.of(countsPath));
-		System.out.println("Word counts have been written to: " + countsPath);
 	}
 
 	/**
@@ -295,8 +281,6 @@ public class Driver {
 	 * @throws IOException If an I/O error occurs
 	 */
 	private static void processFileCounts(Path filePath, boolean counts) throws IOException {
-		System.out.println("Processing file: " + filePath);
-
 		List<String> lines = Files.readAllLines(filePath);
 		HashMap<String, Integer> wordCounts = new HashMap<>();
 
@@ -324,11 +308,9 @@ public class Driver {
 	private static void outputWordCounts(HashMap<String, Integer> wordCounts, String inputPath, String outputPath) {
 		try {
 			if (wordCounts.isEmpty()) {
-				System.out.println("Word counts map is empty"); 
 				HashMap<String, Integer> pathWordCount = new HashMap<>();
 
 				JsonWriter.writeObject(pathWordCount, Path.of(outputPath));
-				System.out.println("Empty word counts have been written to: " + outputPath);
 			} else {
 				HashMap<String, Integer> pathWordCount = new HashMap<>();
 				int totalWords = 0;
@@ -336,30 +318,28 @@ public class Driver {
 				for (int count : wordCounts.values()) {
 					totalWords += count;
 				}
-				System.out.println("Total words: " + totalWords);
 				pathWordCount.put(inputPath, totalWords);
 
 				JsonWriter.writeObject(pathWordCount, Path.of(outputPath));
-				System.out.println("Word counts have been written to: " + outputPath);
 			}
 		} catch (Exception e) {
-			System.err.println("Error writing word counts to file: " + e.getMessage());
+
 		}
 	}
-	
+
 	/**
 	 * Writes inverted index to JSON file
 	 */
-    private static void writeInvertedIndex() {
-        try {
-            TreeMap<String, TreeMap<String, List<Integer>>> convertedIndex = new TreeMap<>(invertedIndex);
+	private static void writeInvertedIndex() {
+		try {
+			TreeMap<String, TreeMap<String, List<Integer>>> convertedIndex = new TreeMap<>(invertedIndex);
 
-            try (BufferedWriter writer = Files.newBufferedWriter(Path.of(indexPath), StandardCharsets.UTF_8)) {
-                JsonWriter.writeIndex(convertedIndex, writer, 0);
-            }
-            System.out.println("Inverted index has been written to: " + indexPath);
-        } catch (IOException e) {
-            System.err.println("Error writing inverted index to file: " + e.getMessage());
-        }
-    }
+			try (BufferedWriter writer = Files.newBufferedWriter(Path.of(indexPath), StandardCharsets.UTF_8)) {
+				JsonWriter.writeIndex(convertedIndex, writer, 0);
+			}
+
+		} catch (IOException e) {
+
+		}
+	}
 }
