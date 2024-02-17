@@ -48,36 +48,40 @@ public class Driver {
 	 * @throws IOException If an I/O error occurs
 	 */
 	public static void main(String[] args) throws IOException {
-		counts = false;
-		index = false;
-		fileWordCounts.clear();
-		invertedIndex.clear();
+		try {
+			counts = false;
+			index = false;
+			fileWordCounts.clear();
+			invertedIndex.clear();
 
-		ArgumentParser parser = new ArgumentParser(args);
+			ArgumentParser parser = new ArgumentParser(args);
 
-		inputPath = parser.getString("-text");
+			inputPath = parser.getString("-text");
 
-		for (String arg : args) {
-			if (arg.contains("-counts")) {
-				countsPath = parser.getString("-counts", "counts.json");
-				counts = true;
+			for (String arg : args) {
+				if (arg.contains("-counts")) {
+					countsPath = parser.getString("-counts", "counts.json");
+					counts = true;
+				}
+				if (arg.contains("-index")) {
+					indexPath = parser.getString("-index", "index.json");
+					index = true;
+				}
 			}
-			if (arg.contains("-index")) {
-				indexPath = parser.getString("-index", "index.json");
-				index = true;
-			}
+
+			if (inputPath != null) {
+				Path path = Path.of(inputPath);
+				processPath(path);
+			} else if (inputPath == null && counts == true && index == false) {
+				fileWordCounts.put("No input provided", 0);
+				JsonWriter.writeObject(fileWordCounts, Path.of(countsPath));
+			} else if (inputPath == null && index == true && counts == false) {
+				fileWordCounts.put("No input provided", 0);
+				JsonWriter.writeObject(fileWordCounts, Path.of(indexPath));
+			} 
+		} catch (Exception e) {
+			System.err.println("Error" + e.getMessage());
 		}
-
-		if (inputPath != null) {
-			Path path = Path.of(inputPath);
-			processPath(path);
-		} else if (inputPath == null && counts == true && index == false) {
-			fileWordCounts.put("No input provided", 0);
-			JsonWriter.writeObject(fileWordCounts, Path.of(countsPath));
-		} else if (inputPath == null && index == true && counts == false) {
-			fileWordCounts.put("No input provided", 0);
-			JsonWriter.writeObject(fileWordCounts, Path.of(indexPath));
-		} 
 	}
 	/**
 	 * Processes the given path as file or directory
