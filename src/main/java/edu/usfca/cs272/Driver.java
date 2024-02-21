@@ -88,7 +88,7 @@ public class Driver {
 		}
 
 		etc.
-		*/
+		 */
 
 		try {
 			counts = false;
@@ -350,42 +350,36 @@ public class Driver {
 	 * @param wordCounts The word counts map to be written to file
 	 * @param inputPath  The input path of the text file
 	 * @param outputPath The output path of the JSON file
+	 * @throws IOException 
 	 */
-	private static void outputWordCounts(HashMap<String, Integer> wordCounts, String inputPath, String outputPath) {
-		try {
-			if (wordCounts.isEmpty()) {
-				HashMap<String, Integer> pathWordCount = new HashMap<>();
+	private static void outputWordCounts(HashMap<String, Integer> wordCounts, String inputPath, String outputPath) throws IOException {
 
-				JsonWriter.writeObject(pathWordCount, Path.of(outputPath));
-			} else {
-				HashMap<String, Integer> pathWordCount = new HashMap<>();
-				int totalWords = 0;
+		if (wordCounts.isEmpty()) {
+			HashMap<String, Integer> pathWordCount = new HashMap<>();
 
-				for (int count : wordCounts.values()) {
-					totalWords += count;
-				}
-				pathWordCount.put(inputPath, totalWords);
+			JsonWriter.writeObject(pathWordCount, Path.of(outputPath));
+		} else {
+			HashMap<String, Integer> pathWordCount = new HashMap<>();
+			int totalWords = 0;
 
-				JsonWriter.writeObject(pathWordCount, Path.of(outputPath));
+			for (int count : wordCounts.values()) {
+				totalWords += count;
 			}
-		} catch (Exception e) {
-			// TODO Remove try/catch here, throw the exception to main instead
+			pathWordCount.put(inputPath, totalWords);
+
+			JsonWriter.writeObject(pathWordCount, Path.of(outputPath));
 		}
 	}
 
 	/**
 	 * Writes inverted index to JSON file
+	 * @throws IOException 
 	 */
-	private static void writeInvertedIndex() { // TODO Move into the InvertedIndex class
-		try {
-			TreeMap<String, TreeMap<String, List<Integer>>> convertedIndex = new TreeMap<>(invertedIndex);
+	private static void writeInvertedIndex() throws IOException { // TODO Move into the InvertedIndex class
+		TreeMap<String, TreeMap<String, List<Integer>>> convertedIndex = new TreeMap<>(invertedIndex);
 
-			try (BufferedWriter writer = Files.newBufferedWriter(Path.of(indexPath), StandardCharsets.UTF_8)) {
-				JsonWriter.writeIndex(convertedIndex, writer, 0);
-			}
-
-		} catch (IOException e) {
-			// TODO Remove try/catch here, throw the exception to main instead
+		try (BufferedWriter writer = Files.newBufferedWriter(Path.of(indexPath), StandardCharsets.UTF_8)) {
+			JsonWriter.writeIndex(convertedIndex, writer, 0);
 		}
 	}
 }
