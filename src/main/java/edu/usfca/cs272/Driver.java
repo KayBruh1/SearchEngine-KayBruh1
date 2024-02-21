@@ -20,6 +20,19 @@ import java.util.TreeMap;
  * @version Spring 2024
  */
 public class Driver {
+	/*
+	 * TODO Move fileWordCounts and invertedIndex into an InvertedIndex data structure class
+	 *
+	 * Keep the members public and non-static for now
+	 * Have at least an add method...
+	 * addWordCount(String location, Integer count) --> fileWordCounts.put(locations, count);
+	 * addWord(String word, String location (filePath), Integer position) --> add to the invertedIndex here
+	 *
+	 * ---
+	 *
+	 * Move the traversing and stemming etc. into a builder or parser class.
+	 */
+
 	/** TreeMap storing word counts for each file */
 	static TreeMap<String, Integer> fileWordCounts = new TreeMap<>();
 
@@ -48,6 +61,35 @@ public class Driver {
 	 * @throws IOException If an I/O error occurs
 	 */
 	public static void main(String[] args) throws IOException {
+		/* TODO
+		ArgumentParser parser = new ArgumentParser(args);
+		InvertedIndex index = new InvertedIndex();
+
+		if (parser.hasFlag("-text")) {
+			Path input = parser.getPath("-text");
+
+			try {
+				1 or 2 lines of code calling other classes
+			}
+			catch ( ... ) {
+				System.out.println("Unable to build the inverted index from path: " + input.toString());
+			}
+		}
+
+		if (parser.hasFlag("-counts")) {
+			Path output = parser.getPath("-counts", Path.of("counts.json"));
+
+			try {
+				index.writeCounts(output);
+			}
+			catch ( ) {
+
+			}
+		}
+
+		etc.
+		*/
+
 		try {
 			counts = false;
 			index = false;
@@ -78,7 +120,7 @@ public class Driver {
 			} else if (inputPath == null && index == true && counts == false) {
 				fileWordCounts.put("No input provided", 0);
 				JsonWriter.writeObject(fileWordCounts, Path.of(indexPath));
-			} 
+			}
 		} catch (Exception e) {
 			System.err.println("Error" + e.getMessage());
 		}
@@ -116,7 +158,7 @@ public class Driver {
 				if (Files.isDirectory(path)) {
 					processIndexDirectory(path);
 				} else {
-					// @CITE StackOverflow 
+					// @CITE StackOverflow
 					String relativePath = directory.resolve(path.getFileName()).toString();
 
 					if (relativePath.toLowerCase().endsWith(".txt") || relativePath.toLowerCase().endsWith(".text")) {
@@ -137,7 +179,7 @@ public class Driver {
 
 	/**
 	 * Processes file to generate word counts and build the inverted index
-	 * 
+	 *
 	 * @param filePath The path of file to be processed
 	 * @return A HashMap containing word counts for the file
 	 * @throws IOException If an I/O error occurs
@@ -223,7 +265,7 @@ public class Driver {
 
 	/**
 	 * Recursively processes directory to generate word counts for files
-	 * 
+	 *
 	 * @param directory The directory to process
 	 * @throws IOException If an I/O error occurs
 	 */
@@ -233,7 +275,7 @@ public class Driver {
 				if (Files.isDirectory(path)) {
 					processCountsDirectory(path);
 				} else {
-					// @CITE StackOverflow 
+					// @CITE StackOverflow
 					String relativePath = directory.resolve(path.getFileName()).toString();
 
 					if (relativePath.toLowerCase().endsWith(".txt") || relativePath.toLowerCase().endsWith(".text")) {
@@ -279,7 +321,7 @@ public class Driver {
 
 	/**
 	 * Processes the file to generate and write word count
-	 * 
+	 *
 	 * @param filePath  The path of the file to be processed
 	 * @param counts    A boolean indicating to output word counts or not
 	 * @throws IOException If an I/O error occurs
@@ -327,14 +369,14 @@ public class Driver {
 				JsonWriter.writeObject(pathWordCount, Path.of(outputPath));
 			}
 		} catch (Exception e) {
-
+			// TODO Remove try/catch here, throw the exception to main instead
 		}
 	}
 
 	/**
 	 * Writes inverted index to JSON file
 	 */
-	private static void writeInvertedIndex() {
+	private static void writeInvertedIndex() { // TODO Move into the InvertedIndex class
 		try {
 			TreeMap<String, TreeMap<String, List<Integer>>> convertedIndex = new TreeMap<>(invertedIndex);
 
@@ -343,7 +385,7 @@ public class Driver {
 			}
 
 		} catch (IOException e) {
-
+			// TODO Remove try/catch here, throw the exception to main instead
 		}
 	}
 }
