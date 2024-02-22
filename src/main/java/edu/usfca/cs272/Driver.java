@@ -49,6 +49,10 @@ class InvertedIndex {
 
 }
 
+class FileParser {
+	
+}
+
 public class Driver {
 	/*
 	 * TODO Move fileWordCounts and invertedIndex into an InvertedIndex data structure class
