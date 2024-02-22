@@ -22,10 +22,15 @@ import java.util.TreeMap;
 
 class InvertedIndex {
 	/** TreeMap storing word counts for each file */
-	static TreeMap<String, Integer> fileWordCounts = new TreeMap<>();
+	public TreeMap<String, Integer> fileWordCounts = new TreeMap<>();
 
 	/** TreeMap storing inverted index for files and word positions */
-	static TreeMap<String, TreeMap<String, List<Integer>>> invertedIndex = new TreeMap<>();
+	public TreeMap<String, TreeMap<String, List<Integer>>> invertedIndex = new TreeMap<>();
+	
+
+    public void addWordCount(String location, Integer count) {
+        fileWordCounts.put(location, count);
+    }
 
 }
 
