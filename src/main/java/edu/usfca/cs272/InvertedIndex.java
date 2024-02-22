@@ -15,7 +15,7 @@ public class InvertedIndex {
 	public static TreeMap<String, Integer> fileWordCounts = new TreeMap<>();
 
 	/** TreeMap storing inverted index for files and word positions */
-	public TreeMap<String, TreeMap<String, List<Integer>>> invertedIndex = new TreeMap<>();
+	public static TreeMap<String, TreeMap<String, List<Integer>>> invertedIndex = new TreeMap<>();
 
 
 	public void addWordCount(String filePath, Integer count) {
@@ -68,8 +68,8 @@ public class InvertedIndex {
 	 * Writes inverted index to JSON file
 	 * @throws IOException 
 	 */
-	public static void writeInvertedIndex(String indexPath) throws IOException {
-		TreeMap<String, TreeMap<String, List<Integer>>> convertedIndex = new TreeMap<String, TreeMap<String, List<Integer>>>();
+	public static void writeInvertedIndex(String indexPath, TreeMap<String, TreeMap<String, List<Integer>>> invertedIndex) throws IOException {
+		TreeMap<String, TreeMap<String, List<Integer>>> convertedIndex = new TreeMap<>(invertedIndex);
 
 		try (BufferedWriter writer = Files.newBufferedWriter(Path.of(indexPath), StandardCharsets.UTF_8)) {
 			JsonWriter.writeIndex(convertedIndex, writer, 0);

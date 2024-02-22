@@ -39,7 +39,7 @@ public class FileBuilder {
 			}
 		}
 
-		indexer.writeInvertedIndex(indexPath);
+		indexer.writeInvertedIndex(indexPath, indexer.invertedIndex);
 	}
 
 	/**
@@ -125,7 +125,7 @@ public class FileBuilder {
 
 			}
 		}
-		indexer.writeInvertedIndex(indexPath);
+		indexer.writeInvertedIndex(indexPath, indexer.invertedIndex);
 	}
 
 	/**
