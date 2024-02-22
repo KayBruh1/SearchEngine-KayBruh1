@@ -1,5 +1,10 @@
 package edu.usfca.cs272;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeMap;
@@ -29,5 +34,17 @@ public class InvertedIndex {
 
 		List<Integer> wordPosition = wordMap.get(filePath);
 		wordPosition.add(position);
+	}
+	
+	/**
+	 * Writes inverted index to JSON file
+	 * @throws IOException 
+	 */
+	private static void writeInvertedIndex(String indexPath) throws IOException {
+		TreeMap<String, TreeMap<String, List<Integer>>> convertedIndex = new TreeMap<String, TreeMap<String, List<Integer>>>();
+
+		try (BufferedWriter writer = Files.newBufferedWriter(Path.of(indexPath), StandardCharsets.UTF_8)) {
+			JsonWriter.writeIndex(convertedIndex, writer, 0);
+		}
 	}
 }
