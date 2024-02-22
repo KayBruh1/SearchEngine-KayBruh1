@@ -6,12 +6,13 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.TreeMap;
 
 public class InvertedIndex {
 	/** TreeMap storing word counts for each file */
-	public TreeMap<String, Integer> fileWordCounts = new TreeMap<>();
+	public static TreeMap<String, Integer> fileWordCounts = new TreeMap<>();
 
 	/** TreeMap storing inverted index for files and word positions */
 	public TreeMap<String, TreeMap<String, List<Integer>>> invertedIndex = new TreeMap<>();
@@ -37,10 +38,37 @@ public class InvertedIndex {
 	}
 	
 	/**
+	 * Outputs word counts to JSON file
+
+	 * @param wordCounts The word counts map to be written to file
+	 * @param inputPath  The input path of the text file
+	 * @param outputPath The output path of the JSON file
+	 * @throws IOException 
+	 */
+	public static void outputWordCounts(HashMap<String, Integer> wordCounts, String inputPath, String outputPath) throws IOException {
+
+		if (wordCounts.isEmpty()) {
+			HashMap<String, Integer> pathWordCount = new HashMap<>();
+
+			JsonWriter.writeObject(pathWordCount, Path.of(outputPath));
+		} else {
+			HashMap<String, Integer> pathWordCount = new HashMap<>();
+			int totalWords = 0;
+
+			for (int count : wordCounts.values()) {
+				totalWords += count;
+			}
+			pathWordCount.put(inputPath, totalWords);
+
+			JsonWriter.writeObject(pathWordCount, Path.of(outputPath));
+		}
+	}
+	
+	/**
 	 * Writes inverted index to JSON file
 	 * @throws IOException 
 	 */
-	private static void writeInvertedIndex(String indexPath) throws IOException {
+	public static void writeInvertedIndex(String indexPath) throws IOException {
 		TreeMap<String, TreeMap<String, List<Integer>>> convertedIndex = new TreeMap<String, TreeMap<String, List<Integer>>>();
 
 		try (BufferedWriter writer = Files.newBufferedWriter(Path.of(indexPath), StandardCharsets.UTF_8)) {
