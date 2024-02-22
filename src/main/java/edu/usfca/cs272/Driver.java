@@ -14,19 +14,6 @@ import java.nio.file.Path;
  */
 
 public class Driver {
-	/*
-	 * TODO Move fileWordCounts and invertedIndex into an InvertedIndex data structure class
-	 *
-	 * Keep the members public and non-static for now
-	 * Have at least an add method...
-	 * addWordCount(String location, Integer count) --> fileWordCounts.put(locations, count);
-	 * addWord(String word, String location (filePath), Integer position) --> add to the invertedIndex here
-	 *
-	 * ---
-	 *
-	 * Move the traversing and stemming etc. into a builder or parser class.
-	 */
-	
 	static InvertedIndex indexer = new InvertedIndex();
 	static FileBuilder parser = new FileBuilder();
 	
