@@ -28,8 +28,23 @@ class InvertedIndex {
 	public TreeMap<String, TreeMap<String, List<Integer>>> invertedIndex = new TreeMap<>();
 	
 
-    public void addWordCount(String location, Integer count) {
-        fileWordCounts.put(location, count);
+    public void addWordCount(String filePath, Integer count) {
+        fileWordCounts.put(filePath, count);
+    }
+    
+    public void addWord(String word, String filePath, Integer position) {
+        if (!invertedIndex.containsKey(word)) {
+            invertedIndex.put(word, new TreeMap<>());
+        }
+        
+        TreeMap<String, List<Integer>> wordMap = invertedIndex.get(word);
+
+        if (!wordMap.containsKey(filePath)) {
+            wordMap.put(filePath, new ArrayList<>());
+        }
+        
+        List<Integer> wordPosition = wordMap.get(filePath);
+        wordPosition.add(position);
     }
 
 }
