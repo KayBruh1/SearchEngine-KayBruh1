@@ -19,6 +19,16 @@ import java.util.TreeMap;
  * @author CS 272 Software Development (University of San Francisco)
  * @version Spring 2024
  */
+
+class InvertedIndex {
+	/** TreeMap storing word counts for each file */
+	static TreeMap<String, Integer> fileWordCounts = new TreeMap<>();
+
+	/** TreeMap storing inverted index for files and word positions */
+	static TreeMap<String, TreeMap<String, List<Integer>>> invertedIndex = new TreeMap<>();
+
+}
+
 public class Driver {
 	/*
 	 * TODO Move fileWordCounts and invertedIndex into an InvertedIndex data structure class
