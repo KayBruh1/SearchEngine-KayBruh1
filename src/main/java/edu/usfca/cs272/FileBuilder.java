@@ -10,17 +10,18 @@ import java.util.List;
 import java.util.TreeMap;
 
 public class FileBuilder {
+	static InvertedIndex indexer = new InvertedIndex();
 	/**
 	 * Recursively processes the directory to build and write the inverted index.
 	 *
 	 * @param directory The directory to process
 	 * @throws IOException If an I/O error occurs
 	 */
-	private static void processIndexDirectory(Path directory) throws IOException {
+	private static void processIndexDirectory(Path directory, String indexPath) throws IOException {
 		try (DirectoryStream<Path> listing = Files.newDirectoryStream(directory)) {
 			for (Path path : listing) {
 				if (Files.isDirectory(path)) {
-					processIndexDirectory(path);
+					processIndexDirectory(path, indexPath);
 				} else {
 					// @CITE StackOverflow
 					String relativePath = directory.resolve(path.getFileName()).toString();
@@ -31,14 +32,14 @@ public class FileBuilder {
 						// @CITE StackOverflow
 						int totalWords = wordCounts.values().stream().mapToInt(Integer::intValue).sum();
 						if (totalWords > 0) {
-							fileWordCounts.put(relativePath, totalWords);
+							indexer.fileWordCounts.put(relativePath, totalWords);
 						}
 					}
 				}
 			}
 		}
 
-		writeInvertedIndex();
+		indexer.writeInvertedIndex(indexPath);
 	}
 
 	/**
@@ -65,11 +66,11 @@ public class FileBuilder {
 					wordCounts.put(stemmedWord, 1);
 				}
 
-				if (!invertedIndex.containsKey(stemmedWord)) {
-					invertedIndex.put(stemmedWord, new TreeMap<>());
+				if (!indexer.invertedIndex.containsKey(stemmedWord)) {
+					indexer.invertedIndex.put(stemmedWord, new TreeMap<>());
 				}
 
-				TreeMap<String, List<Integer>> fileMap = invertedIndex.get(stemmedWord);
+				TreeMap<String, List<Integer>> fileMap = indexer.invertedIndex.get(stemmedWord);
 
 				if (!fileMap.containsKey(filePath.toString())) {
 					fileMap.put(filePath.toString(), new ArrayList<>());
@@ -91,7 +92,7 @@ public class FileBuilder {
 	 * @param counts   A boolean indicating to generate word counts or not
 	 * @throws IOException If an I/O error occurs
 	 */
-	private static void processFileIndex(Path filePath, boolean counts) throws IOException {
+	private static void processFileIndex(Path filePath, boolean counts, String indexPath) throws IOException {
 		List<String> lines = Files.readAllLines(filePath);
 		HashMap<String, Integer> wordCounts = new HashMap<>();
 		int position = 0;
@@ -108,11 +109,11 @@ public class FileBuilder {
 					wordCounts.put(stemmedWord, 1);
 				}
 
-				if (!invertedIndex.containsKey(stemmedWord)) {
-					invertedIndex.put(stemmedWord, new TreeMap<>());
+				if (!indexer.invertedIndex.containsKey(stemmedWord)) {
+					indexer.invertedIndex.put(stemmedWord, new TreeMap<>());
 				}
 
-				TreeMap<String, List<Integer>> fileMap = invertedIndex.get(stemmedWord);
+				TreeMap<String, List<Integer>> fileMap = indexer.invertedIndex.get(stemmedWord);
 
 				if (!fileMap.containsKey(filePath.toString())) {
 					fileMap.put(filePath.toString(), new ArrayList<>());
@@ -124,7 +125,7 @@ public class FileBuilder {
 
 			}
 		}
-		writeInvertedIndex();
+		indexer.writeInvertedIndex(indexPath);
 	}
 
 	/**
@@ -133,7 +134,7 @@ public class FileBuilder {
 	 * @param directory The directory to process
 	 * @throws IOException If an I/O error occurs
 	 */
-	private static void processCountsDirectory(Path directory) throws IOException {
+	private static void processCountsDirectory(Path directory, String countsPath) throws IOException {
 		try (DirectoryStream<Path> listing = Files.newDirectoryStream(directory)) {
 			for (Path path : listing) {
 				if (Files.isDirectory(path)) {
@@ -148,13 +149,13 @@ public class FileBuilder {
 						// @CITE StackOverflow
 						int totalWords = wordCounts.values().stream().mapToInt(Integer::intValue).sum();
 						if (totalWords > 0) {
-							fileWordCounts.put(relativePath, totalWords);
+							indexer.fileWordCounts.put(relativePath, totalWords);
 						}
 					}
 				}
 			}
 		}
-		JsonWriter.writeObject(fileWordCounts, Path.of(countsPath));
+		JsonWriter.writeObject(indexer.fileWordCounts, Path.of(countsPath));
 	}
 
 	/**
@@ -190,7 +191,7 @@ public class FileBuilder {
 	 * @param counts    A boolean indicating to output word counts or not
 	 * @throws IOException If an I/O error occurs
 	 */
-	private static void processFileCounts(Path filePath, boolean counts) throws IOException {
+	private static void processFileCounts(Path filePath, String inputPath, String countsPath, boolean counts) throws IOException {
 		List<String> lines = Files.readAllLines(filePath);
 		HashMap<String, Integer> wordCounts = new HashMap<>();
 
@@ -205,7 +206,7 @@ public class FileBuilder {
 				}
 			}
 		}
-		outputWordCounts(wordCounts, inputPath, countsPath);
+		indexer.outputWordCounts(wordCounts, inputPath, countsPath);
 	}
 
 }
