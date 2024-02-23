@@ -14,14 +14,14 @@ import java.nio.file.Path;
  */
 
 public class Driver {
-	
-	   /** Instance of the InvertedIndex class */
+
+	/** Instance of the InvertedIndex class */
 	static InvertedIndex indexer = new InvertedIndex();
 
 	/** Path to input text files */
 	static Path inputPath;
 
-    /** Boolean flag indicating whether the input is a directory or not*/
+	/** Boolean flag indicating whether the input is a directory or not*/
 	static boolean dir = false;
 
 	/**

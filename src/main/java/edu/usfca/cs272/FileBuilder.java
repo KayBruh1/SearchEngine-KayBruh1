@@ -14,18 +14,18 @@ import java.util.TreeMap;
  * an inverted index to write to JSON file
  */
 public class FileBuilder {
-	
-	  /** The InvertedIndex class used for storing word counts and the inverted index */
+
+	/** The InvertedIndex class used for storing word counts and the inverted index */
 	static InvertedIndex indexer = new InvertedIndex();
 
-    /**
-     * Recursively processes the directory to build and write the inverted index.
-     *
-     * @param directory The directory to process
-     * @param indexPath The output path for the inverted index JSON file
-     * @param dir       A boolean indicating whether the given path is a directory or not
-     * @throws IOException If an I/O error occurs
-     */
+	/**
+	 * Recursively processes the directory to build and write the inverted index.
+	 *
+	 * @param directory The directory to process
+	 * @param indexPath The output path for the inverted index JSON file
+	 * @param dir       A boolean indicating whether the given path is a directory or not
+	 * @throws IOException If an I/O error occurs
+	 */
 	public static void processIndexDirectory(Path directory, String indexPath, boolean dir) throws IOException {
 		if (!dir) {
 			processFileIndex(directory, indexPath);
@@ -97,13 +97,13 @@ public class FileBuilder {
 		return wordCounts;
 	}
 
-    /**
-     * Processes a file to generate word counts and build the inverted index
-     *
-     * @param filePath The path of the file to be processed
-     * @param indexPath The output path for the inverted index JSON file
-     * @throws IOException If an I/O error occurs
-     */
+	/**
+	 * Processes a file to generate word counts and build the inverted index
+	 *
+	 * @param filePath The path of the file to be processed
+	 * @param indexPath The output path for the inverted index JSON file
+	 * @throws IOException If an I/O error occurs
+	 */
 	public static void processFileIndex(Path filePath, String indexPath) throws IOException {
 		List<String> lines = Files.readAllLines(filePath);
 		HashMap<String, Integer> wordCounts = new HashMap<>();
@@ -140,14 +140,14 @@ public class FileBuilder {
 		InvertedIndex.writeInvertedIndex(indexPath, InvertedIndex.invertedIndex);
 	}
 
-    /**
-     * Recursively processes a directory to generate word counts for files
-     *
-     * @param directory The directory to process
-     * @param countsPath The output path for the word counts JSON file
-     * @param dir A boolean indicating whether the given path is a directory or not
-     * @throws IOException If an I/O error occurs
-     */
+	/**
+	 * Recursively processes a directory to generate word counts for files
+	 *
+	 * @param directory The directory to process
+	 * @param countsPath The output path for the word counts JSON file
+	 * @param dir A boolean indicating whether the given path is a directory or not
+	 * @throws IOException If an I/O error occurs
+	 */
 	public static void processCountsDirectory(Path directory, String countsPath, boolean dir) throws IOException {
 		if (!dir) {
 			processFileCounts(directory, countsPath);
@@ -201,13 +201,13 @@ public class FileBuilder {
 		return wordCounts;
 	}
 
-    /**
-     * Processes a file to generate word counts and write them to a JSON file
-     *
-     * @param inputPath The path of the file to be processed
-     * @param countsPath The output path for the word counts JSON file
-     * @throws IOException If an I/O error occurs
-     */
+	/**
+	 * Processes a file to generate word counts and write them to a JSON file
+	 *
+	 * @param inputPath The path of the file to be processed
+	 * @param countsPath The output path for the word counts JSON file
+	 * @throws IOException If an I/O error occurs
+	 */
 	public static void processFileCounts(Path inputPath, String countsPath) throws IOException {
 		List<String> lines = Files.readAllLines(inputPath);
 		HashMap<String, Integer> wordCounts = new HashMap<>();

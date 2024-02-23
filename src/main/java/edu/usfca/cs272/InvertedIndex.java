@@ -21,23 +21,23 @@ public class InvertedIndex {
 	/** TreeMap storing inverted index for files and word positions */
 	public static TreeMap<String, TreeMap<String, List<Integer>>> invertedIndex = new TreeMap<>();
 
-    /**
-     * Adds the word count for a file to the inverted index
-     *
-     * @param filePath The path of the file
-     * @param count    The count of words in the file
-     */
+	/**
+	 * Adds the word count for a file to the inverted index
+	 *
+	 * @param filePath The path of the file
+	 * @param count    The count of words in the file
+	 */
 	public void addWordCount(String filePath, Integer count) {
 		fileWordCounts.put(filePath, count);
 	}
 
-    /**
-     * Adds a word with its position in a file to the inverted index
-     *
-     * @param word     The word to add
-     * @param filePath The path of the file
-     * @param position The position of the word in the file
-     */
+	/**
+	 * Adds a word with its position in a file to the inverted index
+	 *
+	 * @param word     The word to add
+	 * @param filePath The path of the file
+	 * @param position The position of the word in the file
+	 */
 	public void addWord(String word, String filePath, Integer position) {
 		if (!invertedIndex.containsKey(word)) {
 			invertedIndex.put(word, new TreeMap<>());
@@ -53,14 +53,14 @@ public class InvertedIndex {
 		wordPosition.add(position);
 	}
 
-    /**
-     * Outputs word counts to a JSON file
-     *
-     * @param wordCounts The word counts map to write to file
-     * @param inputPath  The input path of the file
-     * @param outputPath The output path of the JSON file
-     * @throws IOException If an I/O error occurs
-     */
+	/**
+	 * Outputs word counts to a JSON file
+	 *
+	 * @param wordCounts The word counts map to write to file
+	 * @param inputPath  The input path of the file
+	 * @param outputPath The output path of the JSON file
+	 * @throws IOException If an I/O error occurs
+	 */
 	public static void outputWordCounts(HashMap<String, Integer> wordCounts, String inputPath, String outputPath) throws IOException {
 
 		if (wordCounts.isEmpty()) {
@@ -80,13 +80,13 @@ public class InvertedIndex {
 		}
 	}
 
-    /**
-     * Writes the inverted index to a JSON file
-     *
-     * @param indexPath     The output path of the JSON file
-     * @param invertedIndex The inverted index to write to file
-     * @throws IOException If an I/O error occurs
-     */
+	/**
+	 * Writes the inverted index to a JSON file
+	 *
+	 * @param indexPath     The output path of the JSON file
+	 * @param invertedIndex The inverted index to write to file
+	 * @throws IOException If an I/O error occurs
+	 */
 	public static void writeInvertedIndex(String indexPath, TreeMap<String, TreeMap<String, List<Integer>>> invertedIndex) throws IOException {
 		TreeMap<String, TreeMap<String, List<Integer>>> convertedIndex = new TreeMap<>(invertedIndex);
 
