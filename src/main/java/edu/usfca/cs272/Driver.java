@@ -76,6 +76,8 @@ public class Driver {
 				builder.processCountsDirectory(inputPath, countsPath.toString(), dir);
 			}
 			catch (Exception e) {
+				indexer.fileWordCounts.put("No input provided", 0);
+				JsonWriter.writeObject(indexer.fileWordCounts, Path.of("counts.json"));
 				System.out.println("Error building the file counts");
 			}
 		}
@@ -86,6 +88,8 @@ public class Driver {
 				builder.processIndexDirectory(inputPath, indexPath.toString(), dir);
 			}
 			catch (Exception e) {
+				indexer.fileWordCounts.put("No input provided", 0);
+				JsonWriter.writeObject(indexer.fileWordCounts, Path.of("index.json"));	
 				System.out.println("Error building the inverted index");
 			}
 		}
