@@ -214,5 +214,4 @@ public class FileBuilder {
 		}
 		indexer.outputWordCounts(wordCounts, inputPath.toString(), countsPath);
 	}
-
 }

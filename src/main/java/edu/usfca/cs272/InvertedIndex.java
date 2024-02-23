@@ -36,7 +36,7 @@ public class InvertedIndex {
 		List<Integer> wordPosition = wordMap.get(filePath);
 		wordPosition.add(position);
 	}
-	
+
 	/**
 	 * Outputs word counts to JSON file
 
@@ -63,7 +63,7 @@ public class InvertedIndex {
 			JsonWriter.writeObject(pathWordCount, Path.of(outputPath));
 		}
 	}
-	
+
 	/**
 	 * Writes inverted index to JSON file
 	 * @throws IOException 

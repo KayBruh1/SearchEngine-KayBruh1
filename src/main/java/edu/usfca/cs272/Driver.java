@@ -15,11 +15,10 @@ import java.nio.file.Path;
 
 public class Driver {
 	static InvertedIndex indexer = new InvertedIndex();
-	
+
 	/** Path to input text files */
 	static Path inputPath;
-	
-	
+
 	static boolean dir = false;
 
 	/**
@@ -29,35 +28,6 @@ public class Driver {
 	 * @throws IOException If an I/O error occurs
 	 */
 	public static void main(String[] args) throws IOException {
-		/* TODO
-		ArgumentParser parser = new ArgumentParser(args);
-		InvertedIndex index = new InvertedIndex();
-
-		if (parser.hasFlag("-text")) {
-			Path input = parser.getPath("-text");
-
-			try {
-				1 or 2 lines of code calling other classes
-			}
-			catch ( ... ) {
-				System.out.println("Unable to build the inverted index from path: " + input.toString());
-			}
-		}
-
-		if (parser.hasFlag("-counts")) {
-			Path output = parser.getPath("-counts", Path.of("counts.json"));
-
-			try {
-				index.writeCounts(output);
-			}
-			catch ( ) {
-
-			}
-		}
-
-		etc.
-		 */
-
 		indexer.fileWordCounts.clear();
 		indexer.invertedIndex.clear();
 		ArgumentParser parser = new ArgumentParser(args);
@@ -81,7 +51,7 @@ public class Driver {
 				System.out.println("Error building the file counts");
 			}
 		}
-		
+
 		if (parser.hasFlag("-index")) {
 			Path indexPath = parser.getPath("-index", Path.of("index.json"));
 			try {
