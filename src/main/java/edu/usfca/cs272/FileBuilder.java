@@ -9,14 +9,23 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.TreeMap;
 
+/**
+ * Class for building and processing files/directories to generate word counts and 
+ * an inverted index to write to JSON file
+ */
 public class FileBuilder {
+	
+	  /** The InvertedIndex class used for storing word counts and the inverted index */
 	static InvertedIndex indexer = new InvertedIndex();
-	/**
-	 * Recursively processes the directory to build and write the inverted index.
-	 *
-	 * @param directory The directory to process
-	 * @throws IOException If an I/O error occurs
-	 */
+
+    /**
+     * Recursively processes the directory to build and write the inverted index.
+     *
+     * @param directory The directory to process
+     * @param indexPath The output path for the inverted index JSON file
+     * @param dir       A boolean indicating whether the given path is a directory or not
+     * @throws IOException If an I/O error occurs
+     */
 	public static void processIndexDirectory(Path directory, String indexPath, boolean dir) throws IOException {
 		if (!dir) {
 			processFileIndex(directory, indexPath);
@@ -35,14 +44,14 @@ public class FileBuilder {
 						// @CITE StackOverflow
 						int totalWords = wordCounts.values().stream().mapToInt(Integer::intValue).sum();
 						if (totalWords > 0) {
-							indexer.fileWordCounts.put(relativePath, totalWords);
+							InvertedIndex.fileWordCounts.put(relativePath, totalWords);
 						}
 					}
 				}
 			}
 		}
 
-		indexer.writeInvertedIndex(indexPath, indexer.invertedIndex);
+		InvertedIndex.writeInvertedIndex(indexPath, InvertedIndex.invertedIndex);
 	}
 
 	/**
@@ -69,11 +78,11 @@ public class FileBuilder {
 					wordCounts.put(stemmedWord, 1);
 				}
 
-				if (!indexer.invertedIndex.containsKey(stemmedWord)) {
-					indexer.invertedIndex.put(stemmedWord, new TreeMap<>());
+				if (!InvertedIndex.invertedIndex.containsKey(stemmedWord)) {
+					InvertedIndex.invertedIndex.put(stemmedWord, new TreeMap<>());
 				}
 
-				TreeMap<String, List<Integer>> fileMap = indexer.invertedIndex.get(stemmedWord);
+				TreeMap<String, List<Integer>> fileMap = InvertedIndex.invertedIndex.get(stemmedWord);
 
 				if (!fileMap.containsKey(filePath.toString())) {
 					fileMap.put(filePath.toString(), new ArrayList<>());
@@ -88,13 +97,13 @@ public class FileBuilder {
 		return wordCounts;
 	}
 
-	/**
-	 * Processes file to generate word counts and build and write the inverted index
-
-	 * @param filePath The path of the file to be processed
-	 * @param counts   A boolean indicating to generate word counts or not
-	 * @throws IOException If an I/O error occurs
-	 */
+    /**
+     * Processes a file to generate word counts and build the inverted index
+     *
+     * @param filePath The path of the file to be processed
+     * @param indexPath The output path for the inverted index JSON file
+     * @throws IOException If an I/O error occurs
+     */
 	public static void processFileIndex(Path filePath, String indexPath) throws IOException {
 		List<String> lines = Files.readAllLines(filePath);
 		HashMap<String, Integer> wordCounts = new HashMap<>();
@@ -112,11 +121,11 @@ public class FileBuilder {
 					wordCounts.put(stemmedWord, 1);
 				}
 
-				if (!indexer.invertedIndex.containsKey(stemmedWord)) {
-					indexer.invertedIndex.put(stemmedWord, new TreeMap<>());
+				if (!InvertedIndex.invertedIndex.containsKey(stemmedWord)) {
+					InvertedIndex.invertedIndex.put(stemmedWord, new TreeMap<>());
 				}
 
-				TreeMap<String, List<Integer>> fileMap = indexer.invertedIndex.get(stemmedWord);
+				TreeMap<String, List<Integer>> fileMap = InvertedIndex.invertedIndex.get(stemmedWord);
 
 				if (!fileMap.containsKey(filePath.toString())) {
 					fileMap.put(filePath.toString(), new ArrayList<>());
@@ -128,15 +137,17 @@ public class FileBuilder {
 
 			}
 		}
-		indexer.writeInvertedIndex(indexPath, indexer.invertedIndex);
+		InvertedIndex.writeInvertedIndex(indexPath, InvertedIndex.invertedIndex);
 	}
 
-	/**
-	 * Recursively processes directory to generate word counts for files
-	 *
-	 * @param directory The directory to process
-	 * @throws IOException If an I/O error occurs
-	 */
+    /**
+     * Recursively processes a directory to generate word counts for files
+     *
+     * @param directory The directory to process
+     * @param countsPath The output path for the word counts JSON file
+     * @param dir A boolean indicating whether the given path is a directory or not
+     * @throws IOException If an I/O error occurs
+     */
 	public static void processCountsDirectory(Path directory, String countsPath, boolean dir) throws IOException {
 		if (!dir) {
 			processFileCounts(directory, countsPath);
@@ -155,13 +166,13 @@ public class FileBuilder {
 						// @CITE StackOverflow
 						int totalWords = wordCounts.values().stream().mapToInt(Integer::intValue).sum();
 						if (totalWords > 0) {
-							indexer.fileWordCounts.put(relativePath, totalWords);
+							InvertedIndex.fileWordCounts.put(relativePath, totalWords);
 						}
 					}
 				}
 			}
 		}
-		JsonWriter.writeObject(indexer.fileWordCounts, Path.of(countsPath));
+		JsonWriter.writeObject(InvertedIndex.fileWordCounts, Path.of(countsPath));
 	}
 
 	/**
@@ -190,13 +201,13 @@ public class FileBuilder {
 		return wordCounts;
 	}
 
-	/**
-	 * Processes the file to generate and write word count
-	 *
-	 * @param filePath  The path of the file to be processed
-	 * @param counts    A boolean indicating to output word counts or not
-	 * @throws IOException If an I/O error occurs
-	 */
+    /**
+     * Processes a file to generate word counts and write them to a JSON file
+     *
+     * @param inputPath The path of the file to be processed
+     * @param countsPath The output path for the word counts JSON file
+     * @throws IOException If an I/O error occurs
+     */
 	public static void processFileCounts(Path inputPath, String countsPath) throws IOException {
 		List<String> lines = Files.readAllLines(inputPath);
 		HashMap<String, Integer> wordCounts = new HashMap<>();
@@ -212,6 +223,6 @@ public class FileBuilder {
 				}
 			}
 		}
-		indexer.outputWordCounts(wordCounts, inputPath.toString(), countsPath);
+		InvertedIndex.outputWordCounts(wordCounts, inputPath.toString(), countsPath);
 	}
 }
