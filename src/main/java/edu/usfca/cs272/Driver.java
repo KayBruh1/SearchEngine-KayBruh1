@@ -15,22 +15,12 @@ import java.nio.file.Path;
 
 public class Driver {
 	static InvertedIndex indexer = new InvertedIndex();
-	static FileBuilder parser = new FileBuilder();
 	
 	/** Path to input text files */
-	static String inputPath;
-
-	/** Path to write word counts JSON file */
-	static String countsPath;
-
-	/** Path to write inverted index JSON file */
-	static String indexPath;
-
-	/** Flag indicating to write word counts or not */
-	static boolean counts = false;
-
-	/** Flag indicating to write inverted index or not */
-	static boolean index = false;
+	static Path inputPath;
+	
+	
+	static boolean dir = false;
 
 	/**
 	 * Main method
@@ -68,59 +58,37 @@ public class Driver {
 		etc.
 		 */
 
-		try {
-			counts = false;
-			index = false;
-			indexer.fileWordCounts.clear();
-			indexer.invertedIndex.clear();
+		indexer.fileWordCounts.clear();
+		indexer.invertedIndex.clear();
+		ArgumentParser parser = new ArgumentParser(args);
+		FileBuilder builder = new FileBuilder();
 
-			ArgumentParser parser = new ArgumentParser(args);
-
-			inputPath = parser.getString("-text");
-
-			for (String arg : args) {
-				if (arg.contains("-counts")) {
-					countsPath = parser.getString("-counts", "counts.json");
-					counts = true;
-				}
-				if (arg.contains("-index")) {
-					indexPath = parser.getString("-index", "index.json");
-					index = true;
-				}
+		if (parser.hasFlag("-text")) {
+			inputPath = parser.getPath("-text");
+			if (inputPath != null && Files.isDirectory(inputPath)) {
+				dir = true;
 			}
+		}
 
-			if (inputPath != null) {
-				Path path = Path.of(inputPath);
-				processPath(path);
-			} else if (inputPath == null && counts == true && index == false) {
-				indexer.fileWordCounts.put("No input provided", 0);
-				JsonWriter.writeObject(indexer.fileWordCounts, Path.of(countsPath));
-			} else if (inputPath == null && index == true && counts == false) {
-				indexer.fileWordCounts.put("No input provided", 0);
-				JsonWriter.writeObject(indexer.fileWordCounts, Path.of(indexPath));
+		if (parser.hasFlag("-counts")) {
+			Path countsPath = parser.getPath("-counts", Path.of("counts.json"));
+			try {
+				builder.processCountsDirectory(inputPath, countsPath.toString(), dir);
 			}
-		} catch (Exception e) {
-			System.err.println("Error" + e.getMessage());
+			catch (Exception e) {
+				System.out.println("Error building the file counts");
+			}
+		}
+		
+		if (parser.hasFlag("-index")) {
+			Path indexPath = parser.getPath("-index", Path.of("index.json"));
+			try {
+				builder.processIndexDirectory(inputPath, indexPath.toString(), dir);
+			}
+			catch (Exception e) {
+				System.out.println("Error building the inverted index");
+			}
 		}
 	}
-	/**
-	 * Processes the given path as file or directory
-	 *
-	 * @param path The path to process
-	 * @throws IOException If an I/O error occurs
-	 */
-	private static void processPath(Path path) throws IOException {
-		if (Files.isDirectory(path) && index && !counts) {
-			parser.processIndexDirectory(path, indexPath);
-		} else if (Files.isDirectory(path) && counts && !index) {
-			parser.processCountsDirectory(path, countsPath);
-		} else if (Files.isDirectory(path) && counts && index) {
-			parser.processCountsDirectory(path, countsPath);
-			parser.processIndexDirectory(path, indexPath);
-		} else if (Files.exists(path) && index && !counts){
-			parser.processFileIndex(path, counts, indexPath);
-		} else if (Files.exists(path) && counts && !index){
-			parser.processFileCounts(path, inputPath, countsPath, counts);
-		}
-	}
+
 }

@@ -17,11 +17,14 @@ public class FileBuilder {
 	 * @param directory The directory to process
 	 * @throws IOException If an I/O error occurs
 	 */
-	public static void processIndexDirectory(Path directory, String indexPath) throws IOException {
+	public static void processIndexDirectory(Path directory, String indexPath, boolean dir) throws IOException {
+		if (!dir) {
+			processFileIndex(directory, indexPath);
+		}
 		try (DirectoryStream<Path> listing = Files.newDirectoryStream(directory)) {
 			for (Path path : listing) {
 				if (Files.isDirectory(path)) {
-					processIndexDirectory(path, indexPath);
+					processIndexDirectory(path, indexPath, dir);
 				} else {
 					// @CITE StackOverflow
 					String relativePath = directory.resolve(path.getFileName()).toString();
@@ -92,7 +95,7 @@ public class FileBuilder {
 	 * @param counts   A boolean indicating to generate word counts or not
 	 * @throws IOException If an I/O error occurs
 	 */
-	public static void processFileIndex(Path filePath, boolean counts, String indexPath) throws IOException {
+	public static void processFileIndex(Path filePath, String indexPath) throws IOException {
 		List<String> lines = Files.readAllLines(filePath);
 		HashMap<String, Integer> wordCounts = new HashMap<>();
 		int position = 0;
@@ -134,11 +137,14 @@ public class FileBuilder {
 	 * @param directory The directory to process
 	 * @throws IOException If an I/O error occurs
 	 */
-	public static void processCountsDirectory(Path directory, String countsPath) throws IOException {
+	public static void processCountsDirectory(Path directory, String countsPath, boolean dir) throws IOException {
+		if (!dir) {
+			processFileCounts(directory, countsPath);
+		}
 		try (DirectoryStream<Path> listing = Files.newDirectoryStream(directory)) {
 			for (Path path : listing) {
 				if (Files.isDirectory(path)) {
-					processCountsDirectory(path, countsPath);
+					processCountsDirectory(path, countsPath, dir);
 				} else {
 					// @CITE StackOverflow
 					String relativePath = directory.resolve(path.getFileName()).toString();
@@ -191,8 +197,8 @@ public class FileBuilder {
 	 * @param counts    A boolean indicating to output word counts or not
 	 * @throws IOException If an I/O error occurs
 	 */
-	public static void processFileCounts(Path filePath, String inputPath, String countsPath, boolean counts) throws IOException {
-		List<String> lines = Files.readAllLines(filePath);
+	public static void processFileCounts(Path inputPath, String countsPath) throws IOException {
+		List<String> lines = Files.readAllLines(inputPath);
 		HashMap<String, Integer> wordCounts = new HashMap<>();
 
 		for (String line : lines) {
@@ -206,7 +212,7 @@ public class FileBuilder {
 				}
 			}
 		}
-		indexer.outputWordCounts(wordCounts, inputPath, countsPath);
+		indexer.outputWordCounts(wordCounts, inputPath.toString(), countsPath);
 	}
 
 }
