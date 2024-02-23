@@ -14,11 +14,14 @@ import java.nio.file.Path;
  */
 
 public class Driver {
+	
+	   /** Instance of the InvertedIndex class */
 	static InvertedIndex indexer = new InvertedIndex();
 
 	/** Path to input text files */
 	static Path inputPath;
 
+    /** Boolean flag indicating whether the input is a directory or not*/
 	static boolean dir = false;
 
 	/**
@@ -28,10 +31,9 @@ public class Driver {
 	 * @throws IOException If an I/O error occurs
 	 */
 	public static void main(String[] args) throws IOException {
-		indexer.fileWordCounts.clear();
-		indexer.invertedIndex.clear();
+		InvertedIndex.fileWordCounts.clear();
+		InvertedIndex.invertedIndex.clear();
 		ArgumentParser parser = new ArgumentParser(args);
-		FileBuilder builder = new FileBuilder();
 
 		if (parser.hasFlag("-text")) {
 			inputPath = parser.getPath("-text");
@@ -43,11 +45,11 @@ public class Driver {
 		if (parser.hasFlag("-counts")) {
 			Path countsPath = parser.getPath("-counts", Path.of("counts.json"));
 			try {
-				builder.processCountsDirectory(inputPath, countsPath.toString(), dir);
+				FileBuilder.processCountsDirectory(inputPath, countsPath.toString(), dir);
 			}
 			catch (Exception e) {
-				indexer.fileWordCounts.put("No input provided", 0);
-				JsonWriter.writeObject(indexer.fileWordCounts, Path.of("counts.json"));
+				InvertedIndex.fileWordCounts.put("No input provided", 0);
+				JsonWriter.writeObject(InvertedIndex.fileWordCounts, Path.of("counts.json"));
 				System.out.println("Error building the file counts");
 			}
 		}
@@ -55,11 +57,11 @@ public class Driver {
 		if (parser.hasFlag("-index")) {
 			Path indexPath = parser.getPath("-index", Path.of("index.json"));
 			try {
-				builder.processIndexDirectory(inputPath, indexPath.toString(), dir);
+				FileBuilder.processIndexDirectory(inputPath, indexPath.toString(), dir);
 			}
 			catch (Exception e) {
-				indexer.fileWordCounts.put("No input provided", 0);
-				JsonWriter.writeObject(indexer.fileWordCounts, Path.of("index.json"));	
+				InvertedIndex.fileWordCounts.put("No input provided", 0);
+				JsonWriter.writeObject(InvertedIndex.fileWordCounts, Path.of("index.json"));	
 				System.out.println("Error building the inverted index");
 			}
 		}
