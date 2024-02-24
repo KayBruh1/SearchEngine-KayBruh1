@@ -29,10 +29,11 @@ public class FileBuilder {
 	public static void processIndexDirectory(Path directory, String indexPath, boolean dir) throws IOException {
 		if (!dir) {
 			processFileIndex(directory, indexPath);
+			return;
 		}
 		try (DirectoryStream<Path> listing = Files.newDirectoryStream(directory)) {
 			for (Path path : listing) {
-				if (Files.isDirectory(path)) {
+				if (Files.isDirectory(path)) { 
 					processIndexDirectory(path, indexPath, dir);
 				} else {
 					// @CITE StackOverflow
@@ -151,6 +152,7 @@ public class FileBuilder {
 	public static void processCountsDirectory(Path directory, String countsPath, boolean dir) throws IOException {
 		if (!dir) {
 			processFileCounts(directory, countsPath);
+			return;
 		}
 		try (DirectoryStream<Path> listing = Files.newDirectoryStream(directory)) {
 			for (Path path : listing) {

@@ -94,4 +94,14 @@ public class InvertedIndex {
 			JsonWriter.writeIndex(convertedIndex, writer, 0);
 		}
 	}
+	
+	public static void writeEmpty(Path countsPath, Path indexPath) throws IOException {
+		if (countsPath == null) {
+			fileWordCounts.put("No input provided", 0);
+			JsonWriter.writeObject(fileWordCounts, indexPath);
+		} else if (indexPath == null) {
+			fileWordCounts.put("No input provided", 0);
+			JsonWriter.writeObject(fileWordCounts, countsPath);	
+		}
+	}
 }
