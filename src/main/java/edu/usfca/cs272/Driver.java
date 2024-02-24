@@ -38,7 +38,6 @@ public class Driver {
 
 		if (parser.hasFlag("-text")) {
 			inputPath = parser.getPath("-text");
-			System.out.println("yo " + inputPath);
 			if (inputPath != null && Files.isDirectory(inputPath)) {
 				dir = true;
 			}
