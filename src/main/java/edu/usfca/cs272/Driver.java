@@ -51,7 +51,7 @@ public class Driver {
 			}
 			catch (Exception e) {
 				InvertedIndex.writeEmpty(countsPath, null);
-				e.printStackTrace();
+				System.out.println("Error building the file counts" + e);
 			}
 		}
 
@@ -62,7 +62,7 @@ public class Driver {
 			}
 			catch (Exception e) {
 				InvertedIndex.writeEmpty(null, indexPath);	
-				System.out.println("here ");
+				System.out.println("Error building the inverted index" + e);
 			}
 		}
 	}
