@@ -33,6 +33,7 @@ public class Driver {
 	public static void main(String[] args) throws IOException {
 		InvertedIndex.fileWordCounts.clear();
 		InvertedIndex.invertedIndex.clear();
+		inputPath = null;
 		ArgumentParser parser = new ArgumentParser(args);
 
 		if (parser.hasFlag("-text")) {
