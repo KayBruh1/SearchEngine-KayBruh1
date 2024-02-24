@@ -102,13 +102,8 @@ public class InvertedIndex {
 	 * @param indexPath The index output path of the JSON file
 	 * @throws IOException If an I/O error occurs
 	 */
-	public static void writeEmpty(Path countsPath, Path indexPath) throws IOException {
-		if (countsPath == null) {
-			fileWordCounts.put("No input provided", 0);
-			JsonWriter.writeObject(fileWordCounts, indexPath);
-		} else if (indexPath == null) {
-			fileWordCounts.put("No input provided", 0);
-			JsonWriter.writeObject(fileWordCounts, countsPath);	
-		}
+	public static void writeEmpty(Path indexPath) throws IOException {
+		fileWordCounts.put("No input provided", 0);
+		JsonWriter.writeObject(fileWordCounts, indexPath);
 	}
 }

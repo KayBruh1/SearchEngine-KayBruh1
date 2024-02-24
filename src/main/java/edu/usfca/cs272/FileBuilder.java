@@ -28,7 +28,10 @@ public class FileBuilder {
 	 */
 	public static void processIndexDirectory(Path directory, String indexPath, boolean dir) throws IOException {
 		boolean write = false;
-		if (!dir) {
+		if (directory == null) {
+			InvertedIndex.writeEmpty(Path.of(indexPath));
+			return;
+		} else if (!dir) {
 			processFileIndex(directory, indexPath);
 			return;
 		}
@@ -153,10 +156,13 @@ public class FileBuilder {
 	 * @throws IOException If an I/O error occurs
 	 */
 	public static void processCountsDirectory(Path directory, String countsPath, boolean dir) throws IOException {
-		if (!dir) {
+		if (directory == null) {
+			InvertedIndex.writeEmpty(Path.of(countsPath));
+			return;
+		} else if (!dir) {
 			processFileCounts(directory, countsPath);
 			return;
-		}
+		} 
 		try (DirectoryStream<Path> listing = Files.newDirectoryStream(directory)) {
 			for (Path path : listing) {
 				if (Files.isDirectory(path)) {
