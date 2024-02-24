@@ -27,6 +27,7 @@ public class FileBuilder {
 	 * @throws IOException If an I/O error occurs
 	 */
 	public static void processIndexDirectory(Path directory, String indexPath, boolean dir) throws IOException {
+		boolean write = false;
 		if (!dir) {
 			processFileIndex(directory, indexPath);
 			return;
@@ -40,6 +41,7 @@ public class FileBuilder {
 					String relativePath = directory.resolve(path.getFileName()).toString();
 
 					if (relativePath.toLowerCase().endsWith(".txt") || relativePath.toLowerCase().endsWith(".text")) {
+						write = true;
 						HashMap<String, Integer> wordCounts = processDirIndex(path);
 
 						// @CITE StackOverflow
@@ -51,8 +53,9 @@ public class FileBuilder {
 				}
 			}
 		}
-
-		InvertedIndex.writeInvertedIndex(indexPath, InvertedIndex.invertedIndex);
+		if (write == true) {
+			InvertedIndex.writeInvertedIndex(indexPath, InvertedIndex.invertedIndex);
+		}
 	}
 
 	/**

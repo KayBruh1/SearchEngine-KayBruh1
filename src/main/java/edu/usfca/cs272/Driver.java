@@ -62,7 +62,7 @@ public class Driver {
 			}
 			catch (Exception e) {
 				InvertedIndex.writeEmpty(null, indexPath);	
-				System.out.println(e);
+				System.out.println("here ");
 			}
 		}
 	}
