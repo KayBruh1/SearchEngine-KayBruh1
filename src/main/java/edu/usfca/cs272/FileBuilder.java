@@ -27,10 +27,7 @@ public class FileBuilder {
 	 * @throws IOException If an I/O error occurs
 	 */
 	public static void processIndexDirectory(Path directory, String indexPath, boolean dir) throws IOException {
-		if (directory == null) {
-			InvertedIndex.writeEmpty(Path.of(indexPath));
-			return;
-		} else if (!dir) {
+		if (!dir) {
 			processFileIndex(directory, indexPath);
 			return;
 		}
@@ -108,6 +105,10 @@ public class FileBuilder {
 	 * @throws IOException If an I/O error occurs
 	 */
 	public static void processFileIndex(Path filePath, String indexPath) throws IOException {
+		if (filePath == null) {
+			InvertedIndex.writeEmpty(Path.of(indexPath));
+			return;
+		}
 		List<String> lines = Files.readAllLines(filePath);
 		HashMap<String, Integer> wordCounts = new HashMap<>();
 		int position = 0;
