@@ -94,4 +94,15 @@ public class InvertedIndex {
 			JsonWriter.writeIndex(convertedIndex, writer, 0);
 		}
 	}
+	
+	/**
+	 * Writes to a JSON file
+	 *
+	 * @param indexPath     The output path of the JSON file
+	 * @throws IOException If an I/O error occurs
+	 */
+	public static void writeEmpty(Path indexPath) throws IOException {
+		fileWordCounts.put("No input provided", 0);
+		JsonWriter.writeObject(fileWordCounts, indexPath);
+	}
 }
