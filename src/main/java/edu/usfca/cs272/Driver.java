@@ -57,7 +57,11 @@ public class Driver {
 		if (parser.hasFlag("-index")) {
 			Path indexPath = parser.getPath("-index", Path.of("index.json"));
 			try {
-				FileBuilder.processIndexDirectory(inputPath, indexPath.toString(), dir);
+				if (dir) {
+					FileBuilder.processIndexDirectory(inputPath, indexPath.toString(), dir);
+				} else {
+					FileBuilder.processFileIndex(inputPath, indexPath.toString());
+				}
 			}
 			catch (Exception e) {
 				InvertedIndex.writeEmpty(indexPath);
