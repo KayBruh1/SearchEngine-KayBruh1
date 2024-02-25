@@ -94,7 +94,7 @@ public class InvertedIndex {
 			JsonWriter.writeIndex(convertedIndex, writer, 0);
 		}
 	}
-	
+
 	/**
 	 * Writes to a JSON file
 	 *

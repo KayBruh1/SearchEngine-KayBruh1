@@ -54,7 +54,7 @@ public class Driver {
 				}
 			}
 			catch (Exception e) {
-				e.printStackTrace();
+				System.out.println("Error building the word counts " + e);
 			}
 		}
 
@@ -68,7 +68,7 @@ public class Driver {
 				}
 			}
 			catch (Exception e) {
-				e.printStackTrace();
+				System.out.println("Error building the inverted index " + e);
 			}
 		}
 	}
