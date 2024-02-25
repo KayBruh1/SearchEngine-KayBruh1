@@ -46,10 +46,13 @@ public class Driver {
 		if (parser.hasFlag("-counts")) {
 			Path countsPath = parser.getPath("-counts", Path.of("counts.json"));
 			try {
-				FileBuilder.processCountsDirectory(inputPath, countsPath.toString(), dir);
+				if (dir) {
+					FileBuilder.processCountsDirectory(inputPath, countsPath.toString(), dir);
+				} else {
+					FileBuilder.processFileCounts(inputPath, countsPath.toString());
+				}
 			}
 			catch (Exception e) {
-				InvertedIndex.writeEmpty(countsPath);
 				System.out.println("Error building the file counts " + e);
 			}
 		}
@@ -64,7 +67,6 @@ public class Driver {
 				}
 			}
 			catch (Exception e) {
-				InvertedIndex.writeEmpty(indexPath);
 				System.out.println("Error building the inverted index " + e);
 			}
 		}

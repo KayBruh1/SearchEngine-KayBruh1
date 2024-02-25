@@ -145,13 +145,6 @@ public class FileBuilder {
 	 * @throws IOException If an I/O error occurs
 	 */
 	public static void processCountsDirectory(Path directory, String countsPath, boolean dir) throws IOException {
-		if (directory == null) {
-			InvertedIndex.writeEmpty(Path.of(countsPath));
-			return;
-		} else if (!dir) {
-			processFileCounts(directory, countsPath);
-			return;
-		} 
 		try (DirectoryStream<Path> listing = Files.newDirectoryStream(directory)) {
 			for (Path path : listing) {
 				if (Files.isDirectory(path)) {
