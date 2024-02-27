@@ -15,12 +15,22 @@ import java.util.TreeMap;
  * positions, and to a JSON file, and write * 
  */
 public class InvertedIndex {
+	// TODO Make these non-static, private final
+	
+	
 	/** TreeMap storing word counts for each file */
 	public static TreeMap<String, Integer> fileWordCounts = new TreeMap<>();
 
 	/** TreeMap storing inverted index for files and word positions */
+	// TODO public static TreeMap<String, TreeMap<String, TreeSet<Integer>>> invertedIndex
 	public static TreeMap<String, TreeMap<String, List<Integer>>> invertedIndex = new TreeMap<>();
 
+	/* TODO 
+	public InvertexIndex() {
+		init the members here instead
+	}
+	*/
+	
 	/**
 	 * Adds the word count for a file to the inverted index
 	 *
@@ -28,6 +38,7 @@ public class InvertedIndex {
 	 * @param count    The count of words in the file
 	 */
 	public void addWordCount(String filePath, Integer count) {
+		// TODO Only put the count if it is > 0
 		fileWordCounts.put(filePath, count);
 	}
 
@@ -38,7 +49,16 @@ public class InvertedIndex {
 	 * @param filePath The path of the file
 	 * @param position The position of the word in the file
 	 */
+	// TODO public void addWord(String word, String location, Integer position) {
 	public void addWord(String word, String filePath, Integer position) {
+		/* TODO 
+		invertedIndex.putIfAbsent(word, new TreeMap<>());
+		invertedIndex.get(word).putIfAbsent(filePath, new ArrayList<>());
+		invertedIndex.get(word).get(filePath).add(position);
+		
+		Make sure everything in this class is compact in size 
+		*/
+		
 		if (!invertedIndex.containsKey(word)) {
 			invertedIndex.put(word, new TreeMap<>());
 		}
@@ -53,6 +73,7 @@ public class InvertedIndex {
 		wordPosition.add(position);
 	}
 
+	// TODO Remove
 	/**
 	 * Outputs word counts to a JSON file
 	 *
@@ -101,8 +122,13 @@ public class InvertedIndex {
 	 * @param indexPath     The output path of the JSON file
 	 * @throws IOException If an I/O error occurs
 	 */
-	public static void writeEmpty(Path indexPath) throws IOException {
-		fileWordCounts.put("No input provided", 0);
+	public static void writeEmpty(Path indexPath) throws IOException { // TODO Rename to writeCounts(...)
+		fileWordCounts.put("No input provided", 0); // TODO Remove
 		JsonWriter.writeObject(fileWordCounts, indexPath);
 	}
+	
+	/*
+	 * TODO 
+	 * Add some more generally useful functionality
+	 */
 }

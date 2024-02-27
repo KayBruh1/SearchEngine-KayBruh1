@@ -14,6 +14,8 @@ import java.nio.file.Path;
  */
 
 public class Driver {
+	
+	// TODO Instead of static members, make these local variables inside of main
 
 	/** Instance of the InvertedIndex class */
 	static InvertedIndex indexer = new InvertedIndex();
@@ -30,15 +32,19 @@ public class Driver {
 	 * @param args Command line arguments
 	 * @throws IOException If an I/O error occurs
 	 */
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws IOException { // TODO Remove throws IOException
 		InvertedIndex.fileWordCounts.clear();
 		InvertedIndex.invertedIndex.clear();
 		inputPath = null;
 		dir = false;
 		ArgumentParser parser = new ArgumentParser(args);
+		// TODO InvertedIndex indexer = new InvertedIndex();
 
 		if (parser.hasFlag("-text")) {
 			inputPath = parser.getPath("-text");
+			
+			// TODO Just build in here (no output)
+			
 			if (inputPath != null && Files.isDirectory(inputPath)) {
 				dir = true;
 			}
@@ -47,6 +53,10 @@ public class Driver {
 		if (parser.hasFlag("-counts")) {
 			String countsPath = parser.getString("-counts", ("counts.json"));
 			try {
+				
+				// TODO Just output here
+				// TODO indexer.writeCounts(countsPath)
+				
 				if (dir) {
 					FileBuilder.processCountsDirectory(inputPath, countsPath, dir);
 				} else {
@@ -61,6 +71,7 @@ public class Driver {
 		if (parser.hasFlag("-index")) {
 			String indexPath = parser.getString("-index", ("index.json"));
 			try {
+				// TODO indexer.writeInvertedIndex(indexPath);
 				if (dir) {
 					FileBuilder.processIndexDirectory(inputPath, indexPath.toString(), dir);
 				} else {
