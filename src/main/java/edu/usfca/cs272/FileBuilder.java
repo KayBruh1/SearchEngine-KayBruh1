@@ -18,6 +18,25 @@ public class FileBuilder {
 	/** The InvertedIndex class used for storing word counts and the inverted index */
 	static InvertedIndex indexer = new InvertedIndex();
 
+	/*
+	 * TODO
+	 * 
+	 * public static void processFile(Path file, InvertedIndex indexer) throws IOExceptions {
+	 *    the only methods that stems the file
+	 *    updates both the counts and the index
+	 * }
+	 * 
+	 * public static void processDirectory(Path directory, InvertedIndex indexer) ... {
+	 *    really close to processIndexDirectory, just call processFile
+	 * }
+	 * 
+	 * public static void build(...) {
+	 *    if (dir) call traverse
+	 *    else processFile
+	 * }
+	 */
+	
+	
 	/**
 	 * Recursively processes the directory to build and write the inverted index.
 	 *
