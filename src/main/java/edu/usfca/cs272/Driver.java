@@ -19,9 +19,6 @@ public class Driver {
 	 * @param args Command line arguments
 	 */
 	public static void main(String[] args) {
-		InvertedIndex.fileWordCounts.clear();
-		InvertedIndex.invertedIndex.clear();
-		
 		Path inputPath = null;
 		boolean dir = false;
 		
@@ -44,11 +41,11 @@ public class Driver {
 				
 				// TODO Just output here
 				// TODO indexer.writeCounts(countsPath)
-				
+		        FileBuilder fileBuilder = new FileBuilder(indexer);
 				if (dir) {
-					FileBuilder.processCountsDirectory(inputPath, countsPath, dir);
+					fileBuilder.processCountsDirectory(inputPath, countsPath, dir);
 				} else {
-					FileBuilder.processFileCounts(inputPath, countsPath.toString());
+					fileBuilder.processFileCounts(inputPath, countsPath.toString());
 				}
 			}
 			catch (Exception e) {
@@ -57,19 +54,19 @@ public class Driver {
 		}
 
 		if (parser.hasFlag("-index")) {
-			String indexPath = parser.getString("-index", ("index.json"));
-			try {
-				// TODO indexer.writeInvertedIndex(indexPath);
-				if (dir) {
-					FileBuilder.processIndexDirectory(inputPath, indexPath.toString(), dir);
-				} else {
-					FileBuilder.processFileIndex(inputPath, indexPath.toString());
-				}
-			}
-			catch (Exception e) {
-				System.out.println("Error building the inverted index " + e);
-			}
+		    String indexPath = parser.getString("-index", ("index.json"));
+		    try {
+		        FileBuilder fileBuilder = new FileBuilder(indexer);
+		        if (dir) {
+		            fileBuilder.processIndexDirectory(inputPath, indexPath.toString(), dir);
+		        } else {
+		            fileBuilder.processFileIndex(inputPath, indexPath.toString());
+		        }
+		    } catch (Exception e) {
+		        System.out.println("Error building the inverted index " + e);
+		    }
 		}
+
 	}
 
 }
