@@ -1,6 +1,5 @@
 package edu.usfca.cs272;
 
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -14,31 +13,20 @@ import java.nio.file.Path;
  */
 
 public class Driver {
-	
-	// TODO Instead of static members, make these local variables inside of main
-
-	/** Instance of the InvertedIndex class */
-	static InvertedIndex indexer = new InvertedIndex();
-
-	/** Path to input text files */
-	static Path inputPath;
-
-	/** Boolean flag indicating whether the input is a directory or not*/
-	static boolean dir = false;
-
 	/**
 	 * Main method
 	 *
 	 * @param args Command line arguments
-	 * @throws IOException If an I/O error occurs
 	 */
-	public static void main(String[] args) throws IOException { // TODO Remove throws IOException
+	public static void main(String[] args) {
 		InvertedIndex.fileWordCounts.clear();
 		InvertedIndex.invertedIndex.clear();
-		inputPath = null;
-		dir = false;
+		
+		Path inputPath = null;
+		boolean dir = false;
+		
 		ArgumentParser parser = new ArgumentParser(args);
-		// TODO InvertedIndex indexer = new InvertedIndex();
+		InvertedIndex indexer = new InvertedIndex();
 
 		if (parser.hasFlag("-text")) {
 			inputPath = parser.getPath("-text");
