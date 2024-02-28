@@ -21,15 +21,15 @@ public class Driver {
 	public static void main(String[] args) {
 		Path inputPath = null;
 		boolean dir = false;
-		
+
 		ArgumentParser parser = new ArgumentParser(args);
 		InvertedIndex indexer = new InvertedIndex();
 
 		if (parser.hasFlag("-text")) {
 			inputPath = parser.getPath("-text");
-			
+
 			// TODO Just build in here (no output)
-			
+
 			if (inputPath != null && Files.isDirectory(inputPath)) {
 				dir = true;
 			}
@@ -38,10 +38,10 @@ public class Driver {
 		if (parser.hasFlag("-counts")) {
 			String countsPath = parser.getString("-counts", ("counts.json"));
 			try {
-				
+
 				// TODO Just output here
 				// TODO indexer.writeCounts(countsPath)
-		        FileBuilder fileBuilder = new FileBuilder(indexer);
+				FileBuilder fileBuilder = new FileBuilder(indexer);
 				if (dir) {
 					fileBuilder.processCountsDirectory(inputPath, countsPath, dir);
 				} else {
@@ -54,17 +54,17 @@ public class Driver {
 		}
 
 		if (parser.hasFlag("-index")) {
-		    String indexPath = parser.getString("-index", ("index.json"));
-		    try {
-		        FileBuilder fileBuilder = new FileBuilder(indexer);
-		        if (dir) {
-		            fileBuilder.processIndexDirectory(inputPath, indexPath.toString(), dir);
-		        } else {
-		            fileBuilder.processFileIndex(inputPath, indexPath.toString());
-		        }
-		    } catch (Exception e) {
-		        System.out.println("Error building the inverted index " + e);
-		    }
+			String indexPath = parser.getString("-index", ("index.json"));
+			try {
+				FileBuilder fileBuilder = new FileBuilder(indexer);
+				if (dir) {
+					fileBuilder.processIndexDirectory(inputPath, indexPath.toString(), dir);
+				} else {
+					fileBuilder.processFileIndex(inputPath, indexPath.toString());
+				}
+			} catch (Exception e) {
+				System.out.println("Error building the inverted index " + e);
+			}
 		}
 
 	}

@@ -16,11 +16,11 @@ import java.util.TreeSet;
 public class FileBuilder {
 
 	/** The InvertedIndex class used for storing word counts and the inverted index */
-    private InvertedIndex indexer;
+	private InvertedIndex indexer;
 
-    public FileBuilder(InvertedIndex indexer) {
-        this.indexer = indexer;
-    }
+	public FileBuilder(InvertedIndex indexer) {
+		this.indexer = indexer;
+	}
 
 	/*
 	 * TODO
@@ -39,7 +39,7 @@ public class FileBuilder {
 	 *    else processFile
 	 * }
 	 */
-	
+
 	/**
 	 * Recursively processes the directory to build and write the inverted index.
 	 *
@@ -49,7 +49,7 @@ public class FileBuilder {
 	 * @throws IOException If an I/O error occurs
 	 */
 	public void processIndexDirectory(Path directory, String indexPath, boolean dir) throws IOException {
-        try (DirectoryStream<Path> listing = Files.newDirectoryStream(directory)) {
+		try (DirectoryStream<Path> listing = Files.newDirectoryStream(directory)) {
 			for (Path path : listing) {
 				if (Files.isDirectory(path)) { 
 					processIndexDirectory(path, indexPath, dir);
@@ -82,32 +82,32 @@ public class FileBuilder {
 	public HashMap<String, Integer> processDirIndex(Path filePath) throws IOException {
 		TreeMap<String, TreeMap<String, TreeSet<Integer>>> invertedIndex = this.indexer.getInvertedIndex();
 
-		
+
 		List<String> lines = Files.readAllLines(filePath);
-	    HashMap<String, Integer> wordCounts = new HashMap<>();
-	    int position = 0;
+		HashMap<String, Integer> wordCounts = new HashMap<>();
+		int position = 0;
 
-	    for (String line : lines) {
-	        List<String> wordStems = FileStemmer.listStems(line);
-	        
-	        for (String stemmedWord : wordStems) {
-	            position += 1;
-	            wordCounts.put(stemmedWord, wordCounts.getOrDefault(stemmedWord, 0) + 1);
+		for (String line : lines) {
+			List<String> wordStems = FileStemmer.listStems(line);
 
-	            if (!invertedIndex.containsKey(stemmedWord)) {
-	                invertedIndex.put(stemmedWord, new TreeMap<>());
-	            }
+			for (String stemmedWord : wordStems) {
+				position += 1;
+				wordCounts.put(stemmedWord, wordCounts.getOrDefault(stemmedWord, 0) + 1);
 
-	            TreeMap<String, TreeSet<Integer>> fileMap = invertedIndex.get(stemmedWord);
-	            if (!fileMap.containsKey(filePath.toString())) {
-	                fileMap.put(filePath.toString(), new TreeSet<>());
-	            }
+				if (!invertedIndex.containsKey(stemmedWord)) {
+					invertedIndex.put(stemmedWord, new TreeMap<>());
+				}
 
-	            TreeSet<Integer> positions = fileMap.get(filePath.toString());
-	            positions.add(position);
-	        }
-	    }
-	    return wordCounts;
+				TreeMap<String, TreeSet<Integer>> fileMap = invertedIndex.get(stemmedWord);
+				if (!fileMap.containsKey(filePath.toString())) {
+					fileMap.put(filePath.toString(), new TreeSet<>());
+				}
+
+				TreeSet<Integer> positions = fileMap.get(filePath.toString());
+				positions.add(position);
+			}
+		}
+		return wordCounts;
 	}
 
 
@@ -120,40 +120,40 @@ public class FileBuilder {
 	 * @throws IOException If an I/O error occurs
 	 */
 	public void processFileIndex(Path filePath, String indexPath) throws IOException {
-	    InvertedIndex invertedIndex = new InvertedIndex();
+		InvertedIndex invertedIndex = new InvertedIndex();
 
-	    if (filePath == null) {
-	        invertedIndex.writeEmpty(Path.of(indexPath));
-	        return; 
-	    }
+		if (filePath == null) {
+			invertedIndex.writeEmpty(Path.of(indexPath));
+			return; 
+		}
 
-	    List<String> lines = Files.readAllLines(filePath);
-	    HashMap<String, Integer> wordCounts = new HashMap<>();
-	    int position = 0;
+		List<String> lines = Files.readAllLines(filePath);
+		HashMap<String, Integer> wordCounts = new HashMap<>();
+		int position = 0;
 
-	    for (String line : lines) {
-	        List<String> wordStems = FileStemmer.listStems(line);
+		for (String line : lines) {
+			List<String> wordStems = FileStemmer.listStems(line);
 
-	        for (String stemmedWord : wordStems) {
-	            position += 1;
-	            wordCounts.put(stemmedWord, wordCounts.getOrDefault(stemmedWord, 0) + 1);
+			for (String stemmedWord : wordStems) {
+				position += 1;
+				wordCounts.put(stemmedWord, wordCounts.getOrDefault(stemmedWord, 0) + 1);
 
-	            if (!invertedIndex.getInvertedIndex().containsKey(stemmedWord)) {
-	                invertedIndex.getInvertedIndex().put(stemmedWord, new TreeMap<>());
-	            }
+				if (!invertedIndex.getInvertedIndex().containsKey(stemmedWord)) {
+					invertedIndex.getInvertedIndex().put(stemmedWord, new TreeMap<>());
+				}
 
-	            TreeMap<String, TreeSet<Integer>> fileMap = invertedIndex.getInvertedIndex().get(stemmedWord);
+				TreeMap<String, TreeSet<Integer>> fileMap = invertedIndex.getInvertedIndex().get(stemmedWord);
 
-	            if (!fileMap.containsKey(filePath.toString())) {
-	                fileMap.put(filePath.toString(), new TreeSet<>());
-	            }
+				if (!fileMap.containsKey(filePath.toString())) {
+					fileMap.put(filePath.toString(), new TreeSet<>());
+				}
 
-	            TreeSet<Integer> wordPosition = fileMap.get(filePath.toString());
-	            wordPosition.add(position);
-	        }
-	    }
+				TreeSet<Integer> wordPosition = fileMap.get(filePath.toString());
+				wordPosition.add(position);
+			}
+		}
 
-	    invertedIndex.writeInvertedIndex(indexPath, invertedIndex.getInvertedIndex());
+		invertedIndex.writeInvertedIndex(indexPath, invertedIndex.getInvertedIndex());
 	}
 
 
@@ -166,26 +166,26 @@ public class FileBuilder {
 	 * @throws IOException If an I/O error occurs
 	 */
 	public void processCountsDirectory(Path directory, String countsPath, boolean dir) throws IOException {
-        try (DirectoryStream<Path> listing = Files.newDirectoryStream(directory)) {
-            for (Path path : listing) {
-                if (Files.isDirectory(path)) {
-                    processCountsDirectory(path, countsPath, dir);
-                } else {
-                    String relativePath = directory.resolve(path.getFileName()).toString();
+		try (DirectoryStream<Path> listing = Files.newDirectoryStream(directory)) {
+			for (Path path : listing) {
+				if (Files.isDirectory(path)) {
+					processCountsDirectory(path, countsPath, dir);
+				} else {
+					String relativePath = directory.resolve(path.getFileName()).toString();
 
-                    if (relativePath.toLowerCase().endsWith(".txt") || relativePath.toLowerCase().endsWith(".text")) {
-                        HashMap<String, Integer> wordCounts = processDirCounts(path);
+					if (relativePath.toLowerCase().endsWith(".txt") || relativePath.toLowerCase().endsWith(".text")) {
+						HashMap<String, Integer> wordCounts = processDirCounts(path);
 
-                        int totalWords = wordCounts.values().stream().mapToInt(Integer::intValue).sum();
-                        if (totalWords > 0) {
-                            indexer.getFileWordCounts().put(relativePath, totalWords);
-                        }
-                    }
-                }
-            }
-        }
-        JsonWriter.writeObject(indexer.getFileWordCounts(), Path.of(countsPath));
-    }
+						int totalWords = wordCounts.values().stream().mapToInt(Integer::intValue).sum();
+						if (totalWords > 0) {
+							indexer.getFileWordCounts().put(relativePath, totalWords);
+						}
+					}
+				}
+			}
+		}
+		JsonWriter.writeObject(indexer.getFileWordCounts(), Path.of(countsPath));
+	}
 
 
 	/**
@@ -222,26 +222,26 @@ public class FileBuilder {
 	 * @throws IOException If an I/O error occurs
 	 */
 	public void processFileCounts(Path inputPath, String countsPath) throws IOException {
-	    InvertedIndex invertedIndex = new InvertedIndex();
+		InvertedIndex invertedIndex = new InvertedIndex();
 
-	    if (inputPath == null) {
-	        invertedIndex.writeEmpty(Path.of(countsPath));
-	    }
-	    List<String> lines = Files.readAllLines(inputPath);
-	    HashMap<String, Integer> wordCounts = new HashMap<>();
+		if (inputPath == null) {
+			invertedIndex.writeEmpty(Path.of(countsPath));
+		}
+		List<String> lines = Files.readAllLines(inputPath);
+		HashMap<String, Integer> wordCounts = new HashMap<>();
 
-	    for (String line : lines) {
-	        List<String> wordStems = FileStemmer.listStems(line);
+		for (String line : lines) {
+			List<String> wordStems = FileStemmer.listStems(line);
 
-	        for (String stemmedWord : wordStems) {
-	            if (wordCounts.containsKey(stemmedWord)) {
-	                wordCounts.put(stemmedWord, wordCounts.get(stemmedWord) + 1);
-	            } else {
-	                wordCounts.put(stemmedWord, 1);
-	            }
-	        }
-	    }
-	    invertedIndex.outputWordCounts(wordCounts, inputPath.toString(), countsPath);
+			for (String stemmedWord : wordStems) {
+				if (wordCounts.containsKey(stemmedWord)) {
+					wordCounts.put(stemmedWord, wordCounts.get(stemmedWord) + 1);
+				} else {
+					wordCounts.put(stemmedWord, 1);
+				}
+			}
+		}
+		invertedIndex.outputWordCounts(wordCounts, inputPath.toString(), countsPath);
 	}
 
 }
