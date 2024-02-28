@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 /**
  * Outputs several simple data structures in "pretty" JSON format where newlines
@@ -271,21 +272,21 @@ public class JsonWriter {
 	/**
 	 * Writes the inverted index as a pretty JSON object
 	 *
-	 * @param elements the inverted index to write
+	 * @param invertedIndex the inverted index to write
 	 * @param writer   the buffered writer to write to
 	 * @param indent   the initial indentation level for the JSON output
 	 * @throws IOException if an I/O error occurs while writing
 	 */
-	public static void writeIndex(TreeMap<String, TreeMap<String, List<Integer>>> elements, BufferedWriter writer, int indent) throws IOException {
+	public static void writeIndex(TreeMap<String, TreeMap<String, TreeSet<Integer>>> invertedIndex, BufferedWriter writer, int indent) throws IOException {
 	    writer.write("{");
 	    writer.write("\n");
 
-	    var iterator = elements.entrySet().iterator();
+	    var iterator = invertedIndex.entrySet().iterator();
 
 	    while (iterator.hasNext()) {
-	        Entry<String, TreeMap<String, List<Integer>>> entry = iterator.next();
+	        Entry<String, TreeMap<String, TreeSet<Integer>>> entry = iterator.next();
 	        String word = entry.getKey();
-	        Map<String, List<Integer>> filePositions = entry.getValue();
+	        Map<String, TreeSet<Integer>> filePositions = entry.getValue();
 
 	        writeIndent(writer, indent + 1);
 	        writeQuote(word, writer, 0);
