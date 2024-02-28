@@ -40,7 +40,7 @@ public class InvertedIndex {
 	 * @param filePath The path of the file
 	 * @param count    The count of words in the file
 	 */
-	public void addWordCount(String filePath, int count) {
+	public void addWordCount(String filePath, Integer count) {
 	    if (count > 0) {
 	        fileWordCounts.put(filePath, count);
 	    }
@@ -50,32 +50,17 @@ public class InvertedIndex {
 	 * Adds a word with its position in a file to the inverted index
 	 *
 	 * @param word     The word to add
-	 * @param filePath The path of the file
+	 * @param location The path of the file
 	 * @param position The position of the word in the file
 	 */
-	// TODO public void addWord(String word, String location, Integer position) {
-	public void addWord(String word, String filePath, Integer position) {
-		/* TODO 
-		invertedIndex.putIfAbsent(word, new TreeMap<>());
-		invertedIndex.get(word).putIfAbsent(filePath, new ArrayList<>());
-		invertedIndex.get(word).get(filePath).add(position);
-
-		Make sure everything in this class is compact in size 
-		 */
-
-		if (!invertedIndex.containsKey(word)) {
-			invertedIndex.put(word, new TreeMap<>());
-		}
-
-		TreeMap<String, TreeSet<Integer>> wordMap = invertedIndex.get(word);
-
-		if (!wordMap.containsKey(filePath)) {
-			wordMap.put(filePath, new TreeSet<>());
-		}
-
-		TreeSet<Integer> wordPosition = wordMap.get(filePath);
-		wordPosition.add(position);
+	public void addWord(String word, String location, Integer position) {
+	    invertedIndex.putIfAbsent(word, new TreeMap<>());
+	    TreeMap<String, TreeSet<Integer>> wordMap = invertedIndex.get(word);
+	    wordMap.putIfAbsent(location, new TreeSet<>());
+	    TreeSet<Integer> wordPosition = wordMap.get(location);
+	    wordPosition.add(position);
 	}
+
 
 	// TODO Remove
 	/**
