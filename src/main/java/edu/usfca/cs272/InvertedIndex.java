@@ -18,31 +18,32 @@ public class InvertedIndex {
 	private final TreeMap<String, Integer> fileWordCounts; 
 
 	/** TreeMap storing inverted index for files and word positions */
-    private final TreeMap<String, TreeMap<String, TreeSet<Integer>>> invertedIndex;
+	private final TreeMap<String, TreeMap<String, TreeSet<Integer>>> invertedIndex;
 
 	public InvertedIndex() {
-	    this.fileWordCounts = new TreeMap<>();
-	    this.invertedIndex = new TreeMap<>();
+		this.fileWordCounts = new TreeMap<>();
+		this.invertedIndex = new TreeMap<>();
 	}
-	
-    public TreeMap<String, Integer> getFileWordCounts() {
-        return fileWordCounts;
-    } 
-   
-    public TreeMap<String, TreeMap<String, TreeSet<Integer>>> getInvertedIndex() {
-        return invertedIndex;
-    }
 
-	
+	public TreeMap<String, Integer> getFileWordCounts() {
+		return fileWordCounts;
+	} 
+
+	public TreeMap<String, TreeMap<String, TreeSet<Integer>>> getInvertedIndex() {
+		return invertedIndex;
+	}
+
+
 	/**
 	 * Adds the word count for a file to the inverted index
 	 *
 	 * @param filePath The path of the file
 	 * @param count    The count of words in the file
 	 */
-	public void addWordCount(String filePath, Integer count) {
-		// TODO Only put the count if it is > 0
-		fileWordCounts.put(filePath, count);
+	public void addWordCount(String filePath, int count) {
+	    if (count > 0) {
+	        fileWordCounts.put(filePath, count);
+	    }
 	}
 
 	/**
@@ -58,18 +59,18 @@ public class InvertedIndex {
 		invertedIndex.putIfAbsent(word, new TreeMap<>());
 		invertedIndex.get(word).putIfAbsent(filePath, new ArrayList<>());
 		invertedIndex.get(word).get(filePath).add(position);
-		
+
 		Make sure everything in this class is compact in size 
-		*/
-		
+		 */
+
 		if (!invertedIndex.containsKey(word)) {
-		    invertedIndex.put(word, new TreeMap<>());
+			invertedIndex.put(word, new TreeMap<>());
 		}
 
 		TreeMap<String, TreeSet<Integer>> wordMap = invertedIndex.get(word);
 
 		if (!wordMap.containsKey(filePath)) {
-		    wordMap.put(filePath, new TreeSet<>());
+			wordMap.put(filePath, new TreeSet<>());
 		}
 
 		TreeSet<Integer> wordPosition = wordMap.get(filePath);
@@ -110,11 +111,11 @@ public class InvertedIndex {
 	 * @param invertedIndex The inverted index to write to file
 	 * @throws IOException If an I/O error occurs
 	 */
-    public void writeInvertedIndex(String indexPath, TreeMap<String, TreeMap<String, TreeSet<Integer>>> invertedIndex) throws IOException {
-        try (BufferedWriter writer = Files.newBufferedWriter(Path.of(indexPath), StandardCharsets.UTF_8)) {
-            JsonWriter.writeIndex(invertedIndex, writer, 0);
-        }
-    }
+	public void writeInvertedIndex(String indexPath, TreeMap<String, TreeMap<String, TreeSet<Integer>>> invertedIndex) throws IOException {
+		try (BufferedWriter writer = Files.newBufferedWriter(Path.of(indexPath), StandardCharsets.UTF_8)) {
+			JsonWriter.writeIndex(invertedIndex, writer, 0);
+		}
+	}
 
 	/**
 	 * Writes to a JSON file
@@ -126,7 +127,7 @@ public class InvertedIndex {
 		fileWordCounts.put("No input provided", 0); // TODO Remove
 		JsonWriter.writeObject(fileWordCounts, indexPath);
 	}
-	
+
 	/*
 	 * TODO 
 	 * Add some more generally useful functionality
