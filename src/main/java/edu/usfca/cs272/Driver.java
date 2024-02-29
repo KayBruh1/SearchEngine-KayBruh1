@@ -1,7 +1,6 @@
 package edu.usfca.cs272;
 
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 
 /**
@@ -34,12 +33,8 @@ public class Driver {
 			inputPath = parser.getPath("-text");
 
 			// TODO Just build in here (no output)
-
-			if (inputPath != null && Files.isDirectory(inputPath)) {
-				fileBuilder.processDirectory(inputPath);
-			} else {
-				fileBuilder.processFile(inputPath);
-			}
+			
+			fileBuilder.buildStructures(inputPath);
 		}
 
 		if (parser.hasFlag("-counts")) {

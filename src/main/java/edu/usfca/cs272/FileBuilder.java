@@ -30,10 +30,13 @@ public class FileBuilder {
         return indexer;
     }
 
-	/*
-	 * TODO * 
-	 * public static void build(...) { if (dir) call traverse else processFile }
-	 */
+    public void buildStructures(Path inputPath) throws IOException {
+		if (inputPath != null && Files.isDirectory(inputPath)) {
+			processDirectory(inputPath);
+		} else {
+			processFile(inputPath);
+		}
+    }
 
 	/**
 	 * Recursively processes the directory to build and write the inverted index.
