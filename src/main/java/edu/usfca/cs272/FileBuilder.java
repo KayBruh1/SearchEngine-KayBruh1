@@ -31,9 +31,7 @@ public class FileBuilder {
     }
 
 	/*
-	 * TODO * public static void processDirectory(Path directory, InvertedIndex
-	 * indexer) ... { really close to processIndexDirectory, just call processFile }
-	 * 
+	 * TODO * 
 	 * public static void build(...) { if (dir) call traverse else processFile }
 	 */
 
