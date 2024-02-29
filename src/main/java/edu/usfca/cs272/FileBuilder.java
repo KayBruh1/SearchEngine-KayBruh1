@@ -244,4 +244,45 @@ public class FileBuilder {
 		invertedIndex.outputWordCounts(wordCounts, inputPath.toString(), countsPath);
 	}
 
+	public void processFile(Path filePath, String countsPath, String indexPath) throws IOException {
+	    InvertedIndex invertedIndex = new InvertedIndex();
+
+	    if (filePath != null) {
+	        List<String> lines = Files.readAllLines(filePath);
+	        
+	        HashMap<String, Integer> wordCounts = new HashMap<>();
+	        TreeMap<String, TreeMap<String, TreeSet<Integer>>> invertedIndexMap = new TreeMap<>();
+	        
+	        int position = 0;
+
+	        for (String line : lines) {
+	            List<String> wordStems = FileStemmer.listStems(line);
+
+	            for (String stemmedWord : wordStems) {
+	                position += 1;
+	                wordCounts.put(stemmedWord, wordCounts.getOrDefault(stemmedWord, 0) + 1);
+
+	                if (!invertedIndexMap.containsKey(stemmedWord)) {
+	                    invertedIndexMap.put(stemmedWord, new TreeMap<>());
+	                }
+	                
+	                TreeMap<String, TreeSet<Integer>> fileMap = invertedIndexMap.get(stemmedWord);
+	                if (!fileMap.containsKey(filePath.toString())) {
+	                    fileMap.put(filePath.toString(), new TreeSet<>());
+	                }
+	                
+	                TreeSet<Integer> wordPosition = fileMap.get(filePath.toString());
+	                wordPosition.add(position);
+	            }
+	        }
+
+	        if (countsPath != null) {
+	        	invertedIndex.outputWordCounts(wordCounts, filePath.toString(), countsPath);
+	        }
+
+	        invertedIndex.writeInvertedIndex(indexPath, invertedIndexMap);
+	    } else {
+	        invertedIndex.writeEmpty(Path.of(countsPath));
+	    }
+	}
 }

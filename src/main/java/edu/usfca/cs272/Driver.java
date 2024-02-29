@@ -21,6 +21,8 @@ public class Driver {
 	public static void main(String[] args) {
 		Path inputPath = null;
 		boolean dir = false;
+		String countsPath = null;
+		String indexPath = null;
 
 		ArgumentParser parser = new ArgumentParser(args);
 		InvertedIndex indexer = new InvertedIndex();
@@ -36,7 +38,7 @@ public class Driver {
 		}
 
 		if (parser.hasFlag("-counts")) {
-			String countsPath = parser.getString("-counts", ("counts.json"));
+			countsPath = parser.getString("-counts", ("counts.json"));
 			try {
 
 				// TODO Just output here
@@ -45,7 +47,8 @@ public class Driver {
 				if (dir) {
 					fileBuilder.processCountsDirectory(inputPath, countsPath, dir);
 				} else {
-					fileBuilder.processFileCounts(inputPath, countsPath.toString());
+					fileBuilder.processFile(inputPath, countsPath, indexPath);
+					//fileBuilder.processFileCounts(inputPath, countsPath.toString());
 				}
 			}
 			catch (Exception e) {
@@ -54,16 +57,16 @@ public class Driver {
 		}
 
 		if (parser.hasFlag("-index")) {
-			String indexPath = parser.getString("-index", ("index.json"));
+			indexPath = parser.getString("-index", ("index.json"));
 			try {
 				FileBuilder fileBuilder = new FileBuilder(indexer);
 				if (dir) {
 					fileBuilder.processIndexDirectory(inputPath, indexPath.toString(), dir);
 				} else {
-					fileBuilder.processFileIndex(inputPath, indexPath.toString());
+					fileBuilder.processFile(inputPath, countsPath, indexPath);
 				}
 			} catch (Exception e) {
-				System.out.println("Error building the inverted index " + e);
+				e.printStackTrace();
 			}
 		}
 
