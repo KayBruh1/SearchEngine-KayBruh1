@@ -45,14 +45,13 @@ public class Driver {
 				// TODO indexer.writeCounts(countsPath)
 				FileBuilder fileBuilder = new FileBuilder(indexer);
 				if (dir) {
-					fileBuilder.processCountsDirectory(inputPath, countsPath, dir);
+					fileBuilder.processDirectory(inputPath, countsPath, indexPath);
 				} else {
-					fileBuilder.processFile(inputPath, countsPath, indexPath);
-					//fileBuilder.processFileCounts(inputPath, countsPath.toString());
+					fileBuilder.processFile(inputPath, countsPath, indexPath, indexer);
 				}
 			}
 			catch (Exception e) {
-				System.out.println("Error building the word counts " + e);
+				e.printStackTrace();
 			}
 		}
 
@@ -61,9 +60,10 @@ public class Driver {
 			try {
 				FileBuilder fileBuilder = new FileBuilder(indexer);
 				if (dir) {
-					fileBuilder.processIndexDirectory(inputPath, indexPath.toString(), dir);
+					fileBuilder.processDirectory(inputPath, countsPath, indexPath);
+
 				} else {
-					fileBuilder.processFile(inputPath, countsPath, indexPath);
+					fileBuilder.processFile(inputPath, countsPath, indexPath, indexer);
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
