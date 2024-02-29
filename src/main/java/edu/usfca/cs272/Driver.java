@@ -48,6 +48,7 @@ public class Driver {
 
 				// TODO Just output here
 				// TODO indexer.writeCounts(countsPath)
+				  System.out.println("is " + indexer.getFileWordCounts());
 				indexer.outputWordCounts(indexer.getFileWordCounts(), inputPath.toString(), countsPath);
 			}
 			catch (Exception e) {
