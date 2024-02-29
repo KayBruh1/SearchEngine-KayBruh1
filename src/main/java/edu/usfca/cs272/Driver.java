@@ -1,5 +1,6 @@
 package edu.usfca.cs272;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -17,8 +18,9 @@ public class Driver {
 	 * Main method
 	 *
 	 * @param args Command line arguments
+	 * @throws IOException 
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		Path inputPath = null;
 		boolean dir = false;
 		String countsPath = null;
@@ -26,6 +28,7 @@ public class Driver {
 
 		ArgumentParser parser = new ArgumentParser(args);
 		InvertedIndex indexer = new InvertedIndex();
+		FileBuilder fileBuilder = new FileBuilder(indexer);
 
 		if (parser.hasFlag("-text")) {
 			inputPath = parser.getPath("-text");
@@ -34,6 +37,9 @@ public class Driver {
 
 			if (inputPath != null && Files.isDirectory(inputPath)) {
 				dir = true;
+				fileBuilder.processDirectory(inputPath);
+			} else {
+				fileBuilder.processFile(inputPath);
 			}
 		}
 
@@ -43,11 +49,11 @@ public class Driver {
 
 				// TODO Just output here
 				// TODO indexer.writeCounts(countsPath)
-				FileBuilder fileBuilder = new FileBuilder(indexer);
 				if (dir) {
-					fileBuilder.processDirectory(inputPath, countsPath, indexPath);
+					fileBuilder.processDirectory(inputPath);
 				} else {
-					fileBuilder.processFile(inputPath, countsPath, indexPath, indexer);
+					System.out.println(indexer.getFileWordCounts());
+					indexer.outputWordCounts(indexer.getFileWordCounts(), inputPath.toString(), countsPath);
 				}
 			}
 			catch (Exception e) {
@@ -58,12 +64,11 @@ public class Driver {
 		if (parser.hasFlag("-index")) {
 			indexPath = parser.getString("-index", ("index.json"));
 			try {
-				FileBuilder fileBuilder = new FileBuilder(indexer);
 				if (dir) {
-					fileBuilder.processDirectory(inputPath, countsPath, indexPath);
+					fileBuilder.processDirectory(inputPath);
 
 				} else {
-					fileBuilder.processFile(inputPath, countsPath, indexPath, indexer);
+					indexer.writeInvertedIndex(indexPath, indexer.getInvertedIndex());
 				}
 			} catch (Exception e) {
 				e.printStackTrace();

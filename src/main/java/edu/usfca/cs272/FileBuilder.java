@@ -18,11 +18,17 @@ public class FileBuilder {
 	/**
 	 * The InvertedIndex class used for storing word counts and the inverted index
 	 */
-	private InvertedIndex indexer;
+    private InvertedIndex indexer;
 
-	public FileBuilder(InvertedIndex indexer) {
-		this.indexer = indexer;
-	}
+    public FileBuilder(InvertedIndex indexer) {
+        this.indexer = indexer;
+    }
+
+    // Other methods of the FileBuilder class
+
+    public InvertedIndex getIndexer() {
+        return indexer;
+    }
 
 	/*
 	 * TODO * public static void processDirectory(Path directory, InvertedIndex
@@ -158,24 +164,24 @@ public class FileBuilder {
 		return wordCounts;
 	}
 
-	public void processDirectory(Path directory, String countsPath, String indexPath) throws IOException {
+	public void processDirectory(Path directory) throws IOException {
 	    InvertedIndex indexer = new InvertedIndex();
 
 	    try (DirectoryStream<Path> listing = Files.newDirectoryStream(directory)) {
 	        for (Path path : listing) {
 	            if (Files.isDirectory(path)) {
-	                processDirectory(path, countsPath, indexPath);
+	                processDirectory(path);
 	            } else {
-	                processFile(path, countsPath, indexPath, indexer);
+	                processFile(path);
 	            }
 	        }
 	    }
-
-	    indexer.writeInvertedIndex(indexPath, indexer.getInvertedIndex());
 	}
 
-	public void processFile(Path filePath, String countsPath, String indexPath, InvertedIndex invertedIndex) throws IOException {
-	    if (filePath != null) {
+	public void processFile(Path filePath) throws IOException {
+		FileBuilder fileBuilder = new FileBuilder(indexer);
+		
+		if (filePath != null) {
 	        List<String> lines = Files.readAllLines(filePath);
 
 	        HashMap<String, Integer> wordCounts = new HashMap<>();
@@ -188,6 +194,7 @@ public class FileBuilder {
 
 	            for (String stemmedWord : wordStems) {
 	                position += 1;
+	                
 	                wordCounts.put(stemmedWord, wordCounts.getOrDefault(stemmedWord, 0) + 1);
 
 	                if (!invertedIndexMap.containsKey(stemmedWord)) {
@@ -204,18 +211,13 @@ public class FileBuilder {
 	            }
 	        }
 
-	        if (countsPath != null) {
-	            invertedIndex.outputWordCounts(wordCounts, filePath.toString(), countsPath);
-	        }
-	        
-	        if (indexPath != null) {
-	        	invertedIndex.writeInvertedIndex(indexPath, invertedIndexMap);
-	        }
-	        
-	        System.out.println("here");
+	        InvertedIndex indexer = fileBuilder.getIndexer();
+	        indexer.setFileWordCounts(new TreeMap<>(wordCounts));
+	        indexer.setInvertedIndex(new TreeMap<>(invertedIndexMap));
+
+	        System.out.println("Processing completed");
 	    } else {
-	        invertedIndex.writeEmpty(Path.of(countsPath));
+	        System.out.println("File path is null");
 	    }
 	}
-
 }

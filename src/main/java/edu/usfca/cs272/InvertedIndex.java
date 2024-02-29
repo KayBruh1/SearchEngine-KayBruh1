@@ -13,12 +13,12 @@ import java.util.TreeSet;
  * Class representing an inverted index to add word counts, 
  * positions, and to a JSON file, and write * 
  */
-public class InvertedIndex {
+public class InvertedIndex {    
 	/** TreeMap storing word counts for each file */
-	private final TreeMap<String, Integer> fileWordCounts; 
+	private TreeMap<String, Integer> fileWordCounts; 
 
 	/** TreeMap storing inverted index for files and word positions */
-	private final TreeMap<String, TreeMap<String, TreeSet<Integer>>> invertedIndex;
+	private TreeMap<String, TreeMap<String, TreeSet<Integer>>> invertedIndex;
 
 	public InvertedIndex() {
 		this.fileWordCounts = new TreeMap<>();
@@ -32,7 +32,14 @@ public class InvertedIndex {
 	public TreeMap<String, TreeMap<String, TreeSet<Integer>>> getInvertedIndex() {
 		return invertedIndex;
 	}
-
+	
+	public void setFileWordCounts(TreeMap<String, Integer> fileWordCounts) {
+	    this.fileWordCounts = fileWordCounts;
+	}
+	
+	public void setInvertedIndex(TreeMap<String, TreeMap<String, TreeSet<Integer>>> invertedIndex) {
+	    this.invertedIndex = invertedIndex;
+	}
 
 	/**
 	 * Adds the word count for a file to the inverted index
@@ -71,7 +78,7 @@ public class InvertedIndex {
 	 * @param outputPath The output path of the JSON file
 	 * @throws IOException If an I/O error occurs
 	 */
-	public void outputWordCounts(HashMap<String, Integer> wordCounts, String inputPath, String outputPath) throws IOException {
+	public void outputWordCounts(TreeMap<String, Integer> wordCounts, String inputPath, String outputPath) throws IOException {
 		if (wordCounts.isEmpty()) {
 			HashMap<String, Integer> pathWordCount = new HashMap<>();
 
