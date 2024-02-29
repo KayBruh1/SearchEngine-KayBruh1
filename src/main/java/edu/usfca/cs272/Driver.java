@@ -36,7 +36,6 @@ public class Driver {
 			// TODO Just build in here (no output)
 
 			if (inputPath != null && Files.isDirectory(inputPath)) {
-				dir = true;
 				fileBuilder.processDirectory(inputPath);
 			} else {
 				fileBuilder.processFile(inputPath);
@@ -49,12 +48,7 @@ public class Driver {
 
 				// TODO Just output here
 				// TODO indexer.writeCounts(countsPath)
-				if (dir) {
-					fileBuilder.processDirectory(inputPath);
-				} else {
-					System.out.println(indexer.getFileWordCounts());
-					indexer.outputWordCounts(indexer.getFileWordCounts(), inputPath.toString(), countsPath);
-				}
+				indexer.outputWordCounts(indexer.getFileWordCounts(), inputPath.toString(), countsPath);
 			}
 			catch (Exception e) {
 				e.printStackTrace();
@@ -64,12 +58,7 @@ public class Driver {
 		if (parser.hasFlag("-index")) {
 			indexPath = parser.getString("-index", ("index.json"));
 			try {
-				if (dir) {
-					fileBuilder.processDirectory(inputPath);
-
-				} else {
-					indexer.writeInvertedIndex(indexPath, indexer.getInvertedIndex());
-				}
+				indexer.writeInvertedIndex(indexPath, indexer.getInvertedIndex());
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
