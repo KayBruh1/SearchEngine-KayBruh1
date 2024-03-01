@@ -67,6 +67,17 @@ public class InvertedIndex {
 	    TreeSet<Integer> wordPosition = wordMap.get(location);
 	    wordPosition.add(position);
 	}
+	
+	public void writeCounts(Path inputPath, ArgumentParser parser) throws IOException {
+		InvertedIndex indexer = new InvertedIndex();
+		FileBuilder fileBuilder = new FileBuilder(indexer);
+		if (Files.isDirectory(inputPath) ) {
+			fileBuilder.processDirectory(inputPath, parser);
+		} else {
+			String countsPath = parser.getString("-counts", ("counts.json"));
+			outputWordCounts(fileWordCounts, inputPath.toString(), countsPath);
+		}
+	}
 
 
 	// TODO Remove

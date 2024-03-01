@@ -19,7 +19,7 @@ public class Driver {
 	 * @param args Command line arguments
 	 * @throws IOException 
 	 */
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) {
 		Path inputPath = null;
 		boolean dir = false;
 		String countsPath = null;
@@ -31,20 +31,17 @@ public class Driver {
 
 		if (parser.hasFlag("-text")) {
 			inputPath = parser.getPath("-text");
-
-			// TODO Just build in here (no output)
-			
-			fileBuilder.buildStructures(inputPath);
+			try {
+				fileBuilder.buildStructures(inputPath, parser);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 
 		if (parser.hasFlag("-counts")) {
 			countsPath = parser.getString("-counts", ("counts.json"));
 			try {
-
-				// TODO Just output here
-				// TODO indexer.writeCounts(countsPath)
-				  System.out.println("is " + indexer.getFileWordCounts());
-				indexer.outputWordCounts(indexer.getFileWordCounts(), inputPath.toString(), countsPath);
+				indexer.writeCounts(inputPath, parser);
 			}
 			catch (Exception e) {
 				e.printStackTrace();

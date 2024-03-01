@@ -30,45 +30,56 @@ public class FileBuilder {
         return indexer;
     }
 
-    public void buildStructures(Path inputPath) throws IOException {
+    public void buildStructures(Path inputPath, ArgumentParser parser) throws IOException {
 		if (inputPath != null && Files.isDirectory(inputPath)) {
-			processDirectory(inputPath);
+			processDirectory(inputPath, parser);
 		} else {
 			processFile(inputPath);
 		}
     }
-
+    
 	/**
-	 * Recursively processes the directory to build and write the inverted index.
+	 * Recursively processes a directory to generate word counts for files
 	 *
-	 * @param directory The directory to process
-	 * @param indexPath The output path for the inverted index JSON file
-	 * @param dir       A boolean indicating whether the given path is a directory
-	 *                  or not
+	 * @param directory  The directory to process
+	 * @param parser 
 	 * @throws IOException If an I/O error occurs
 	 */
-	public void processIndexDirectory(Path directory, String indexPath, boolean dir) throws IOException {
+	public void processDirectory(Path directory, ArgumentParser parser) throws IOException {
+		String countsPath = null;
+		boolean counts = false;
+		
 		try (DirectoryStream<Path> listing = Files.newDirectoryStream(directory)) {
+			HashMap<String, Integer> wordCounts = null;
+			if (parser.hasFlag("-counts")) {
+				countsPath = parser.getString("-counts", ("counts.json"));
+				counts = true;
+			}
+			
 			for (Path path : listing) {
 				if (Files.isDirectory(path)) {
-					processIndexDirectory(path, indexPath, dir);
+					processDirectory(path, parser);
 				} else {
-					// @CITE StackOverflow
 					String relativePath = directory.resolve(path.getFileName()).toString();
 
 					if (relativePath.toLowerCase().endsWith(".txt") || relativePath.toLowerCase().endsWith(".text")) {
-						HashMap<String, Integer> wordCounts = processDirIndex(path);
+						if (counts) {
+							wordCounts = processCountsFiles(path);
+						} else {
+							wordCounts = processIndexFiles(path);	
+						}
 
-						// @CITE StackOverflow
 						int totalWords = wordCounts.values().stream().mapToInt(Integer::intValue).sum();
 						if (totalWords > 0) {
-							this.indexer.getFileWordCounts().put(relativePath, totalWords);
+							indexer.getFileWordCounts().put(relativePath, totalWords);
 						}
 					}
 				}
 			}
 		}
-		this.indexer.writeInvertedIndex(indexPath, this.indexer.getInvertedIndex());
+		if (counts) {
+			JsonWriter.writeObject(indexer.getFileWordCounts(), Path.of(countsPath));
+		}
 	}
 
 	/**
@@ -78,7 +89,7 @@ public class FileBuilder {
 	 * @return A HashMap containing word counts for the file
 	 * @throws IOException If an I/O error occurs
 	 */
-	public HashMap<String, Integer> processDirIndex(Path filePath) throws IOException {
+	public HashMap<String, Integer> processIndexFiles(Path filePath) throws IOException {
 		TreeMap<String, TreeMap<String, TreeSet<Integer>>> invertedIndex = this.indexer.getInvertedIndex();
 
 		List<String> lines = Files.readAllLines(filePath);
@@ -109,44 +120,13 @@ public class FileBuilder {
 	}
 
 	/**
-	 * Recursively processes a directory to generate word counts for files
-	 *
-	 * @param directory  The directory to process
-	 * @param countsPath The output path for the word counts JSON file
-	 * @param dir        A boolean indicating whether the given path is a directory
-	 *                   or not
-	 * @throws IOException If an I/O error occurs
-	 */
-	public void processCountsDirectory(Path directory, String countsPath, boolean dir) throws IOException {
-		try (DirectoryStream<Path> listing = Files.newDirectoryStream(directory)) {
-			for (Path path : listing) {
-				if (Files.isDirectory(path)) {
-					processCountsDirectory(path, countsPath, dir);
-				} else {
-					String relativePath = directory.resolve(path.getFileName()).toString();
-
-					if (relativePath.toLowerCase().endsWith(".txt") || relativePath.toLowerCase().endsWith(".text")) {
-						HashMap<String, Integer> wordCounts = processDirCounts(path);
-
-						int totalWords = wordCounts.values().stream().mapToInt(Integer::intValue).sum();
-						if (totalWords > 0) {
-							indexer.getFileWordCounts().put(relativePath, totalWords);
-						}
-					}
-				}
-			}
-		}
-		JsonWriter.writeObject(indexer.getFileWordCounts(), Path.of(countsPath));
-	}
-
-	/**
 	 * Processes file to generate word counts
 	 * 
 	 * @param filePath The path of the file to be processed
 	 * @return A HashMap containing the word counts for the file
 	 * @throws IOException If an I/O error occurs
 	 */
-	public HashMap<String, Integer> processDirCounts(Path filePath) throws IOException {
+	public HashMap<String, Integer> processCountsFiles(Path filePath) throws IOException {
 		List<String> lines = Files.readAllLines(filePath);
 		HashMap<String, Integer> wordCounts = new HashMap<>();
 
@@ -165,24 +145,7 @@ public class FileBuilder {
 		return wordCounts;
 	}
 
-	public void processDirectory(Path directory) throws IOException {
-		try (DirectoryStream<Path> listing = Files.newDirectoryStream(directory)) {
-			for (Path path : listing) {
-				if (Files.isDirectory(path)) {
-					processDirectory(path);
-				} else {
-					// @CITE StackOverflow
-					String relativePath = directory.resolve(path.getFileName()).toString();
-
-					if (relativePath.toLowerCase().endsWith(".txt") || relativePath.toLowerCase().endsWith(".text")) {
-						processFile(Path.of(relativePath));
-					}
-				}
-			}
-		}
-	}
-
-    public void processFile(Path filePath) throws IOException {
+	public void processFile(Path filePath) throws IOException {
         if (filePath != null) {
             List<String> lines = Files.readAllLines(filePath);
 
@@ -224,4 +187,3 @@ public class FileBuilder {
     }
 
 }
-
