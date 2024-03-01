@@ -89,14 +89,14 @@ public class FileBuilder {
 	/**
 	 * Processes file to generate word counts and build the inverted index
 	 *
-	 * @param filePath The path of file to be processed
+	 * @param location The path of file to be processed
 	 * @return A HashMap containing word counts for the file
 	 * @throws IOException If an I/O error occurs
 	 */
-	public HashMap<String, Integer> processIndexFiles(Path filePath) throws IOException {
+	public HashMap<String, Integer> processIndexFiles(Path location) throws IOException {
 		TreeMap<String, TreeMap<String, TreeSet<Integer>>> invertedIndex = this.indexer.getInvertedIndex();
 
-		List<String> lines = Files.readAllLines(filePath);
+		List<String> lines = Files.readAllLines(location);
 		HashMap<String, Integer> wordCounts = new HashMap<>();
 		int position = 0;
 
@@ -112,11 +112,11 @@ public class FileBuilder {
 				}
 
 				TreeMap<String, TreeSet<Integer>> fileMap = invertedIndex.get(stemmedWord);
-				if (!fileMap.containsKey(filePath.toString())) {
-					fileMap.put(filePath.toString(), new TreeSet<>());
+				if (!fileMap.containsKey(location.toString())) {
+					fileMap.put(location.toString(), new TreeSet<>());
 				}
 
-				TreeSet<Integer> positions = fileMap.get(filePath.toString());
+				TreeSet<Integer> positions = fileMap.get(location.toString());
 				positions.add(position);
 			}
 		}
@@ -126,12 +126,12 @@ public class FileBuilder {
 	/**
 	 * Processes file to generate word counts
 	 * 
-	 * @param filePath The path of the file to be processed
+	 * @param location The path of the file to be processed
 	 * @return A HashMap containing the word counts for the file
 	 * @throws IOException If an I/O error occurs
 	 */
-	public HashMap<String, Integer> processCountsFiles(Path filePath) throws IOException {
-		List<String> lines = Files.readAllLines(filePath);
+	public HashMap<String, Integer> processCountsFiles(Path location) throws IOException {
+		List<String> lines = Files.readAllLines(location);
 		HashMap<String, Integer> wordCounts = new HashMap<>();
 
 		for (String line : lines) {

@@ -17,7 +17,6 @@ public class Driver {
 	 * Main method
 	 *
 	 * @param args Command line arguments
-	 * @throws IOException 
 	 */
 	public static void main(String[] args) {
 		Path inputPath = null;
@@ -33,7 +32,7 @@ public class Driver {
 			try {
 				fileBuilder.buildStructures(inputPath);
 			} catch (IOException e) {
-				e.printStackTrace();
+				System.out.println("Error building the structures " + inputPath);
 			}
 		}
 
@@ -41,9 +40,8 @@ public class Driver {
 			countsPath = parser.getString("-counts", ("counts.json"));
 			try {
 				indexer.writeCounts(inputPath, countsPath);
-			}
-			catch (Exception e) {
-				e.printStackTrace();
+			} catch (Exception e) {
+				System.out.println("Error building the file word counts " + inputPath);
 			}
 		}
 
@@ -52,10 +50,8 @@ public class Driver {
 			try {
 				indexer.writeIndex(inputPath, indexPath, indexer);
 			} catch (Exception e) {
-				e.printStackTrace();
+				System.out.println("Error building the inverted index " + inputPath);
 			}
 		}
-
 	}
-
 }
