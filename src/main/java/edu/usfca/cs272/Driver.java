@@ -32,7 +32,7 @@ public class Driver {
 		if (parser.hasFlag("-text")) {
 			inputPath = parser.getPath("-text");
 			try {
-				fileBuilder.buildStructures(inputPath, parser);
+				fileBuilder.buildStructures(inputPath);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -41,7 +41,7 @@ public class Driver {
 		if (parser.hasFlag("-counts")) {
 			countsPath = parser.getString("-counts", ("counts.json"));
 			try {
-				indexer.writeCounts(inputPath, parser);
+				indexer.writeCounts(inputPath, countsPath);
 			}
 			catch (Exception e) {
 				e.printStackTrace();

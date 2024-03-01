@@ -68,13 +68,10 @@ public class InvertedIndex {
 	    wordPosition.add(position);
 	}
 	
-	public void writeCounts(Path inputPath, ArgumentParser parser) throws IOException {
-		InvertedIndex indexer = new InvertedIndex();
-		FileBuilder fileBuilder = new FileBuilder(indexer);
+	public void writeCounts(Path inputPath, String countsPath) throws IOException {
 		if (Files.isDirectory(inputPath) ) {
-			fileBuilder.processDirectory(inputPath, parser, 0);
+			JsonWriter.writeObject(fileWordCounts, Path.of(countsPath));
 		} else {
-			String countsPath = parser.getString("-counts", ("counts.json"));
 			outputWordCounts(fileWordCounts, inputPath.toString(), countsPath);
 		}
 	}
