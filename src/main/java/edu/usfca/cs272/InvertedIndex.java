@@ -72,7 +72,7 @@ public class InvertedIndex {
 		InvertedIndex indexer = new InvertedIndex();
 		FileBuilder fileBuilder = new FileBuilder(indexer);
 		if (Files.isDirectory(inputPath) ) {
-			fileBuilder.processDirectory(inputPath, parser);
+			fileBuilder.processDirectory(inputPath, parser, 0);
 		} else {
 			String countsPath = parser.getString("-counts", ("counts.json"));
 			outputWordCounts(fileWordCounts, inputPath.toString(), countsPath);

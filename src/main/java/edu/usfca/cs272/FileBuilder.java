@@ -32,7 +32,7 @@ public class FileBuilder {
 
     public void buildStructures(Path inputPath, ArgumentParser parser) throws IOException {
 		if (inputPath != null && Files.isDirectory(inputPath)) {
-			processDirectory(inputPath, parser);
+			processDirectory(inputPath, parser, 0);
 		} else {
 			processFile(inputPath);
 		}
@@ -45,28 +45,38 @@ public class FileBuilder {
 	 * @param parser 
 	 * @throws IOException If an I/O error occurs
 	 */
-	public void processDirectory(Path directory, ArgumentParser parser) throws IOException {
+	public void processDirectory(Path directory, ArgumentParser parser, int counter) throws IOException {
 		String countsPath = null;
 		boolean counts = false;
+		boolean index = false;
 		
 		try (DirectoryStream<Path> listing = Files.newDirectoryStream(directory)) {
 			HashMap<String, Integer> wordCounts = null;
 			if (parser.hasFlag("-counts")) {
 				countsPath = parser.getString("-counts", ("counts.json"));
 				counts = true;
+				if (index) {
+					counts = false;
+				}
 			}
 			
 			for (Path path : listing) {
 				if (Files.isDirectory(path)) {
-					processDirectory(path, parser);
+					processDirectory(path, parser, counter);
 				} else {
 					String relativePath = directory.resolve(path.getFileName()).toString();
-
+					if (counter > 0) {
+						counts = false;
+					}
+					
 					if (relativePath.toLowerCase().endsWith(".txt") || relativePath.toLowerCase().endsWith(".text")) {
 						if (counts) {
 							wordCounts = processCountsFiles(path);
+				            System.out.println("yo ");
 						} else {
-							wordCounts = processIndexFiles(path);	
+				            System.out.println("here ");
+							counts = false;
+							wordCounts = processIndexFiles(path);
 						}
 
 						int totalWords = wordCounts.values().stream().mapToInt(Integer::intValue).sum();
@@ -78,7 +88,15 @@ public class FileBuilder {
 			}
 		}
 		if (counts) {
+            counter += 1;
+            if (counter >= 2) {
+            	return;
+            }
 			JsonWriter.writeObject(indexer.getFileWordCounts(), Path.of(countsPath));
+			if (parser.hasFlag("-index")) {
+				counter += 1;
+				processDirectory(directory, parser, counter);
+			}
 		}
 	}
 
