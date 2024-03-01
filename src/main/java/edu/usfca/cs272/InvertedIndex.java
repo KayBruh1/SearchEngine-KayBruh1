@@ -106,26 +106,21 @@ public class InvertedIndex {
 
 	/**
 	 * Writes the inverted index to a JSON file
+	 * @param inputPath 
+	 * @param inputPath 
 	 *
 	 * @param indexPath     The output path of the JSON file
-	 * @param invertedIndex The inverted index to write to file
+	 * @param indexer The inverted index to write to file
 	 * @throws IOException If an I/O error occurs
 	 */
-	public void writeInvertedIndex(String indexPath, TreeMap<String, TreeMap<String, TreeSet<Integer>>> invertedIndex) throws IOException {
+	public void writeIndex(Path inputPath, String indexPath, InvertedIndex indexer) throws IOException {
 		try (BufferedWriter writer = Files.newBufferedWriter(Path.of(indexPath), StandardCharsets.UTF_8)) {
+			FileBuilder fileBuilder = new FileBuilder(indexer);;
+			if (Files.isDirectory(inputPath)) {
+				fileBuilder.processDirectory(inputPath, true);
+			}
 			JsonWriter.writeIndex(invertedIndex, writer, 0);
 		}
-	}
-
-	/**
-	 * Writes to a JSON file
-	 *
-	 * @param indexPath     The output path of the JSON file
-	 * @throws IOException If an I/O error occurs
-	 */
-	public void writeEmpty(Path indexPath) throws IOException { // TODO Rename to writeCounts(...)
-		fileWordCounts.put("No input provided", 0); // TODO Remove
-		JsonWriter.writeObject(fileWordCounts, indexPath);
 	}
 
 	/*

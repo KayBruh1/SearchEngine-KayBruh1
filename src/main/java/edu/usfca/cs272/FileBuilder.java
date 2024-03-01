@@ -32,7 +32,7 @@ public class FileBuilder {
 
 	public void buildStructures(Path inputPath) throws IOException {
 		if (inputPath != null && Files.isDirectory(inputPath)) {
-			processDirectory(inputPath);
+			processDirectory(inputPath, false);
 		} else {
 			processFile(inputPath);
 		}
@@ -68,7 +68,7 @@ public class FileBuilder {
 				}
 			}
 		}
-		this.indexer.writeInvertedIndex(indexPath, this.indexer.getInvertedIndex());
+		//this.indexer.writeIndex(indexPath, this.indexer.getInvertedIndex());
 	}
 
 	/**
@@ -165,16 +165,21 @@ public class FileBuilder {
 		return wordCounts;
 	}
 
-	public void processDirectory(Path directory) throws IOException {
+	public void processDirectory(Path directory, boolean both) throws IOException {
 		try (DirectoryStream<Path> listing = Files.newDirectoryStream(directory)) {
+			HashMap<String, Integer> wordCounts = null; 
 			for (Path path : listing) {
 				if (Files.isDirectory(path)) {
-					processDirectory(path);
+					processDirectory(path, both);
 				} else {
 					String relativePath = directory.resolve(path.getFileName()).toString();
 
 					if (relativePath.toLowerCase().endsWith(".txt") || relativePath.toLowerCase().endsWith(".text")) {
-						HashMap<String, Integer> wordCounts = processDirCounts(path);
+						if (both) {
+							wordCounts = processDirIndex(path);
+						} else {
+							wordCounts = processDirCounts(path);
+						}
 
 						int totalWords = wordCounts.values().stream().mapToInt(Integer::intValue).sum();
 						if (totalWords > 0) {

@@ -21,7 +21,6 @@ public class Driver {
 	 */
 	public static void main(String[] args) {
 		Path inputPath = null;
-		boolean dir = false;
 		String countsPath = null;
 		String indexPath = null;
 
@@ -51,7 +50,7 @@ public class Driver {
 		if (parser.hasFlag("-index")) {
 			indexPath = parser.getString("-index", ("index.json"));
 			try {
-				indexer.writeInvertedIndex(indexPath, indexer.getInvertedIndex());
+				indexer.writeIndex(inputPath, indexPath, indexer);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
