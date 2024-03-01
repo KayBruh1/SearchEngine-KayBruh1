@@ -93,7 +93,7 @@ public class InvertedIndex {
 		TreeSet<Integer> wordPosition = wordMap.get(location);
 		wordPosition.add(position);
 	}
-	
+
 	/**
 	 * Looks for a word in the inverted index
 	 *
@@ -101,11 +101,29 @@ public class InvertedIndex {
 	 * @return The findings of the word
 	 */
 	public List<String> findWord(String word) {
-	    if (invertedIndex.containsKey(word)) {
-	        TreeMap<String, TreeSet<Integer>> wordMap = invertedIndex.get(word);
-	        return new ArrayList<>(wordMap.keySet());
-	    }
-	    return Collections.emptyList();
+		if (invertedIndex.containsKey(word)) {
+			TreeMap<String, TreeSet<Integer>> wordMap = invertedIndex.get(word);
+			return new ArrayList<>(wordMap.keySet());
+		}
+		return Collections.emptyList();
+	}
+
+	/**
+	 * Finds the amount of different words
+	 * 
+	 * @return The number of words
+	 */
+	public int getIndexSize() {
+		return invertedIndex.size();
+	}
+
+	/**
+	 * Finds the amount of different files
+	 * 
+	 * @return The number of files
+	 */
+	public int getFileCount() {
+		return fileWordCounts.size();
 	}
 
 	/**
@@ -123,6 +141,25 @@ public class InvertedIndex {
 		} else {
 			fileWordCounts.put("No input provided", 0);
 			JsonWriter.writeObject(fileWordCounts, Path.of(countsPath));
+		}
+	}
+
+	/**
+	 * Writes the inverted index to a JSON file
+	 *
+	 * @param inputPath the input path of the file or directory
+	 * @param indexPath the output path of the JSON file
+	 * @param indexer   the InvertedIndex object
+	 * @throws IOException if an I/O error occurs
+	 */
+	public void writeIndex(Path inputPath, String indexPath, InvertedIndex indexer) throws IOException {
+		try (BufferedWriter writer = Files.newBufferedWriter(Path.of(indexPath), StandardCharsets.UTF_8)) {
+			FileBuilder fileBuilder = new FileBuilder(indexer);
+			;
+			if (Files.isDirectory(inputPath)) {
+				fileBuilder.processDirectory(inputPath, true);
+			}
+			JsonWriter.writeIndex(invertedIndex, writer, 0);
 		}
 	}
 
@@ -152,27 +189,4 @@ public class InvertedIndex {
 			JsonWriter.writeObject(pathWordCount, Path.of(outputPath));
 		}
 	}
-
-	/**
-	 * Writes the inverted index to a JSON file
-	 *
-	 * @param inputPath  the input path of the file or directory
-	 * @param indexPath  the output path of the JSON file
-	 * @param indexer    the InvertedIndex object
-	 * @throws IOException if an I/O error occurs
-	 */
-	public void writeIndex(Path inputPath, String indexPath, InvertedIndex indexer) throws IOException {
-		try (BufferedWriter writer = Files.newBufferedWriter(Path.of(indexPath), StandardCharsets.UTF_8)) {
-			FileBuilder fileBuilder = new FileBuilder(indexer);
-			;
-			if (Files.isDirectory(inputPath)) {
-				fileBuilder.processDirectory(inputPath, true);
-			}
-			JsonWriter.writeIndex(invertedIndex, writer, 0);
-		}
-	}
-
-	/*
-	 * TODO Add some more generally useful functionality
-	 */
 }
