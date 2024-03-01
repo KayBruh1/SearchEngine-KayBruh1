@@ -69,10 +69,13 @@ public class InvertedIndex {
 	}
 	
 	public void writeCounts(Path inputPath, String countsPath) throws IOException {
-		if (Files.isDirectory(inputPath) ) {
+		if (inputPath != null && Files.isDirectory(inputPath) ) {
 			JsonWriter.writeObject(fileWordCounts, Path.of(countsPath));
-		} else {
+		} else if (inputPath != null){
 			outputWordCounts(fileWordCounts, inputPath.toString(), countsPath);
+		} else {
+			fileWordCounts.put("No input provided", 0); 
+			JsonWriter.writeObject(fileWordCounts, Path.of(countsPath));
 		}
 	}
 
