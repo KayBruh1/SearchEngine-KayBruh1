@@ -5,7 +5,10 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -89,6 +92,20 @@ public class InvertedIndex {
 		wordMap.putIfAbsent(location, new TreeSet<>());
 		TreeSet<Integer> wordPosition = wordMap.get(location);
 		wordPosition.add(position);
+	}
+	
+	/**
+	 * Looks for a word in the inverted index
+	 *
+	 * @param word The word to add
+	 * @return The findings of the word
+	 */
+	public List<String> findWord(String word) {
+	    if (invertedIndex.containsKey(word)) {
+	        TreeMap<String, TreeSet<Integer>> wordMap = invertedIndex.get(word);
+	        return new ArrayList<>(wordMap.keySet());
+	    }
+	    return Collections.emptyList();
 	}
 
 	/**
