@@ -7,6 +7,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -193,41 +194,60 @@ public class FileBuilder {
 		}
 	}
 
-	public static List<List<String>> conductSearch(List<List<String>> processedQueries, InvertedIndex indexer) {
-		List<List<String>> searchResults = new ArrayList<>();
+    public static List<List<Map<String, Object>>> conductSearch(List<List<String>> processedQueries, InvertedIndex indexer) {
+        List<List<Map<String, Object>>> searchResults = new ArrayList<>();
 
-		System.out.println("Processing queries:");
+        System.out.println("Processing queries:");
 
-		for (List<String> query : processedQueries) {
-			System.out.println("Query: " + query);
-			List<String> result = new ArrayList<>();
+        for (List<String> query : processedQueries) {
+            System.out.println("Query: " + query);
+            List<Map<String, Object>> result = new ArrayList<>();
 
-			for (String word : query) {
-				System.out.println("Searching for word: " + word);
+            for (String word : query) {
+                System.out.println("Searching for word: " + word);
 
-				if (indexer.getInvertedIndex().containsKey(word)) {
+                if (indexer.getInvertedIndex().containsKey(word)) {
+                    TreeMap<String, TreeSet<Integer>> wordMap = indexer.getInvertedIndex().get(word);
 
-					TreeMap<String, TreeSet<Integer>> wordMap = indexer.getInvertedIndex().get(word);
+                    System.out.println("Locations for word '" + word + "': " + wordMap.keySet());
 
-					System.out.println("Locations for word '" + word + "': " + wordMap.keySet());
+                    for (String location : wordMap.keySet()) {
+                        int matchCount = wordMap.get(location).size();
+                        int totalWordCount = calculateWordCount(indexer);
+                        double score = calculateScore(matchCount, totalWordCount);
 
-					for (String location : wordMap.keySet()) {
-						int matchCount = wordMap.get(location).size();
-						System.out.println("Found " + matchCount + " matches in " + location);
+                        Map<String, Object> resultMap = new HashMap<>();
+                        resultMap.put("count", matchCount);
+                        resultMap.put("score", score);
+                        resultMap.put("where", location);
 
-						if (!result.contains(location)) {
-							result.add(location);
-						}
-					}
-				} else {
-					System.out.println("Word '" + word + "' not found in the inverted index");
-				}
-			}
-			System.out.println("Query result: " + result);
-			searchResults.add(result);
-		}
+                        result.add(resultMap);
+                    }
+                } else {
+                    System.out.println("Word '" + word + "' not found in the inverted index");
+                }
+            }
 
-		System.out.println("Search results: " + searchResults);
-		return searchResults;
-	}
+            System.out.println("Query result: " + result);
+            searchResults.add(result);
+        }
+
+        System.out.println("Search results: " + searchResults);
+        return searchResults;
+    }
+
+    private static int calculateWordCount(InvertedIndex indexer) {
+        int totalWordCount = 0;
+        for (String word : indexer.getInvertedIndex().keySet()) {
+            TreeMap<String, TreeSet<Integer>> wordMap = indexer.getInvertedIndex().get(word);
+            for (String location : wordMap.keySet()) {
+                totalWordCount += wordMap.get(location).size();
+            }
+        }
+        return totalWordCount;
+    }
+
+    private static double calculateScore(int matchCount, int totalWordCount) {
+        return (double) matchCount / totalWordCount;
+    }
 }
