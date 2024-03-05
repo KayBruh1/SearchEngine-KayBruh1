@@ -17,8 +17,14 @@ import java.util.TreeSet;
  * JSON file, and write *
  */
 public class InvertedIndex {
+	/*
+	 * TODO Can use either the static -or- final keywords on the two private
+	 * members below without having to change any other code. Which one should
+	 * you use?
+	 */
+	
 	/** TreeMap storing word counts for each file */
-	private TreeMap<String, Integer> fileWordCounts;
+	private TreeMap<String, Integer> fileWordCounts; // TODO Call just counts or wordCounts? We won't always work with files
 
 	/** TreeMap storing inverted index for files and word positions */
 	private TreeMap<String, TreeMap<String, TreeSet<Integer>>> invertedIndex;
@@ -31,6 +37,12 @@ public class InvertedIndex {
 		this.invertedIndex = new TreeMap<>();
 	}
 
+	/*
+	 * TODO The get methods here are breaking encapsulation. It is now time to fix
+	 * this problem. The PrefixMap example from the lectures illustrates how to fix
+	 * this problem efficiently.
+	 */
+	
 	/**
 	 * Returns the file word counts
 	 *
@@ -49,6 +61,11 @@ public class InvertedIndex {
 		return invertedIndex;
 	}
 
+	/*
+	 * TODO Remove these set methods---it will allow for invalid data to be placed
+	 * into our data structure and break encapsulation.
+	 */
+	
 	/**
 	 * Sets the TreeMap storing the word counts for each file
 	 *
@@ -92,6 +109,12 @@ public class InvertedIndex {
 		wordMap.putIfAbsent(location, new TreeSet<>());
 		TreeSet<Integer> wordPosition = wordMap.get(location);
 		wordPosition.add(position);
+		
+		/*
+		 * TODO If you are interested in making this more efficient, there is a
+		 * better way than using putIfAbsent. Otherwise, try to make this as compact
+		 * as possible. (Choose one to be more important than the other in this class.)
+		 */
 	}
 
 	/**
@@ -100,7 +123,7 @@ public class InvertedIndex {
 	 * @param word The word to add
 	 * @return The findings of the word
 	 */
-	public List<String> findWord(String word) {
+	public List<String> findWord(String word) { // TODO Looks like a get method, not a find method? Not efficient way of doing this (copying from one type to the other). See PrefixMap for a better approach!
 		if (invertedIndex.containsKey(word)) {
 			TreeMap<String, TreeSet<Integer>> wordMap = invertedIndex.get(word);
 			return new ArrayList<>(wordMap.keySet());
@@ -122,10 +145,31 @@ public class InvertedIndex {
 	 * 
 	 * @return The number of files
 	 */
-	public int getFileCount() {
+	public int getFileCount() { // TODO getCountSize
 		return fileWordCounts.size();
 	}
+	
+	/*
+	 * TODO Still missing many methods. Try to make:
+	 * 
+	 * get or view methods, viewCounts, viewWords, viewLocations, etc.
+	 * has or contains methods, hasWord, etc.
+	 * num or size methods, numWords, etc.
+	 * 
+	 * (each of the above usually has the same number of methods to make sure
+	 * all data is safely accessible)
+	 * 
+	 * toString
+	 * addAll
+	 * etc.
+	 */
 
+	/*
+	 * TODO This method should take ONLY the file PATH to produce the output
+	 * (to avoid too much string to path to string conversion back and forth)
+	 * 
+	 * writeCounts(Path output) throws IOException
+	 */
 	/**
 	 * Writes the word counts to a JSON file
 	 *
@@ -134,6 +178,10 @@ public class InvertedIndex {
 	 * @throws IOException if an I/O error occurs
 	 */
 	public void writeCounts(Path inputPath, String countsPath) throws IOException {
+		// TODO Should only need to call 1 JsonWriter method here with nothing else
+		// TODO Let exceptions happen if the parameter is an issue
+		// TODO JsonWriter.writeObject(fileWordCounts, output);
+		
 		if (inputPath != null && Files.isDirectory(inputPath)) {
 			JsonWriter.writeObject(fileWordCounts, Path.of(countsPath));
 		} else if (inputPath != null) {
@@ -144,6 +192,10 @@ public class InvertedIndex {
 		}
 	}
 
+	/*
+	 * TODO Same as writeCounts, should only need 1 output Path parameter
+	 * and 1 JsonWriter call (should create the bufferd writer in JsonWriter)
+	 */
 	/**
 	 * Writes the inverted index to a JSON file
 	 *
@@ -163,6 +215,7 @@ public class InvertedIndex {
 		}
 	}
 
+	// TODO Remove this one, should not be needed anymore
 	/**
 	 * Outputs word counts to a JSON file
 	 *
