@@ -51,7 +51,7 @@ public class ArgumentParser {
 	 * @see Character#isDigit(int)
 	 * @see Character#isWhitespace(int)
 	 */
-	public static boolean isFlag(String arg) {		
+	public static boolean isFlag(String arg) { // TODO Rethink how using blank lines below to be consistent with other code
 		if (arg != null && arg.startsWith("-") && arg.length() > 1) {
 			
 			int secondChar = arg.codePointAt(1);
@@ -119,7 +119,7 @@ public class ArgumentParser {
 	 * @return {@code true} if the flag is mapped to a non-null value
 	 */
 	public boolean hasValue(String flag) {
-		if (map.containsKey(flag) && map.get(flag) != null) {
+		if (map.containsKey(flag) && map.get(flag) != null) { // TODO Can make this a single return statement! return map.get(flag) != null
 			return true;
 		}
 		return false;
@@ -136,6 +136,7 @@ public class ArgumentParser {
 	 *   if there is no mapping
 	 */
 	public String getString(String flag, String backup) {
+		// TODO Don't need the containsKey and get != null check... if the key does not exist, get will return null
 		if (map.containsKey(flag) && map.get(flag) != null) {
 			return map.get(flag);
 		}
@@ -151,7 +152,7 @@ public class ArgumentParser {
 	 *   there is no mapping
 	 */
 	public String getString(String flag) {
-		if (map.containsKey(flag) && map.get(flag) != null) {
+		if (map.containsKey(flag) && map.get(flag) != null) { // TODO Same as before, only need get != null
 			return map.get(flag);
 		}
 		return null;
@@ -173,14 +174,14 @@ public class ArgumentParser {
 	 */
 	public Path getPath(String flag, Path backup) {
 		try {
-			if (map.containsKey(flag) && map.get(flag) != null) {
+			if (map.containsKey(flag) && map.get(flag) != null) { // TODO Remove check, let exception happen
 				String value = map.get(flag);
 				return Path.of(value);
 			}
-		} catch (Exception e) {
+		} catch (Exception e) { // TODO If catching a generic exception, let it handle the null issue too!
 			return backup;
 		}
-		return backup;
+		return backup; // TODO Can remove, Java compiler knows all paths out of this method have a return
 	}
 
 	/**
@@ -196,7 +197,7 @@ public class ArgumentParser {
 	 *
 	 * @see #getPath(String, Path)
 	 */
-	public Path getPath(String flag) {
+	public Path getPath(String flag) { // TODO Try to reuse getPath(String, Path) here
 		if (map.containsKey(flag) && map.get(flag) != null) {
 			String value = map.get(flag);
 			return FileSystems.getDefault().getPath(value);
@@ -216,7 +217,7 @@ public class ArgumentParser {
 	 *
 	 * @see Integer#parseInt(String)
 	 */
-	public int getInteger(String flag, int backup) {
+	public int getInteger(String flag, int backup) { // TODO See comments from getPath, make approaches look similar!
 		if (map.containsKey(flag) && map.get(flag) != null) {
 			try {
 				return Integer.parseInt(map.get(flag));
@@ -238,7 +239,7 @@ public class ArgumentParser {
 	 *
 	 * @see #getInteger(String, int)
 	 */
-	public int getInteger(String flag) {
+	public int getInteger(String flag) { // TODO Reuse getInteger(String, Path)
 		if (map.containsKey(flag) && map.get(flag) != null) {
 			try {
 				return Integer.parseInt(map.get(flag));
@@ -258,7 +259,7 @@ public class ArgumentParser {
 	 *
 	 * @param args the arguments to test
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) { // TODO Can delete these old main methods used for debugging at this point!
 		// Feel free to modify or delete this method for debugging
 		if (args.length < 1) {
 			args = new String[] { "-max", "false", "-min", "0", "-min", "-10", "hello", "-@debug",

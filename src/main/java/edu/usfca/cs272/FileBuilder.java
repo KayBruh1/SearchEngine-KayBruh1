@@ -18,7 +18,7 @@ public class FileBuilder {
 	/**
 	 * The InvertedIndex class used for storing word counts and the inverted index
 	 */
-	private InvertedIndex indexer;
+	private InvertedIndex indexer; // TODO Missing keyword---either static or final... which one?
 
 	/**
 	 * Creates a new FileBuilder object with the InvertedIndex
@@ -45,12 +45,31 @@ public class FileBuilder {
 	 * @throws IOException If an I/O error occurs
 	 */
 	public void buildStructures(Path inputPath) throws IOException {
-		if (inputPath != null && Files.isDirectory(inputPath)) {
+		if (inputPath != null && Files.isDirectory(inputPath)) { // TODO Remove null check, an exception SHOULD happen if values are null
 			processDirectory(inputPath, false);
 		} else {
 			processFile(inputPath);
 		}
 	}
+	
+	/*
+	 * TODO There is still a bit more complexity in here than recommended last time:
+	 * https://github.com/usf-cs272-spring2024/project-KayBruh1/blob/497875dba651eba029bc70ec23a5d7d3882cf766/src/main/java/edu/usfca/cs272/FileBuilder.java#L21-L37
+	 * 
+	 * There should NOT be separate steps for processing the index or the counts.
+	 * Both should always be done. So processIndexFiles, processCountFiles, and processFile
+	 * all need to be combined into 1 method. And it needs to work with the indexer now,
+	 * not creating its own data structures. Something like:
+	 * 
+	 * var location = file.toString();
+	 * var stems = FileStemmer.listStems(file);
+	 * indexer.addCount(location, stems.size());
+	 * 
+	 * for (...) {
+	 *     ...
+	 *     indexer.addWord(stem, location, ...) 
+	 * }
+	 */
 
 	/**
 	 * Processes the files in the specified directory to generate word counts and
