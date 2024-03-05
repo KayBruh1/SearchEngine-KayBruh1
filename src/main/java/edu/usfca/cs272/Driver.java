@@ -22,6 +22,8 @@ public class Driver {
 		Path inputPath = null;
 		String countsPath = null;
 		String indexPath = null;
+		String queryFilePath = null;
+		String resultsOutputPath = null;
 
 		ArgumentParser parser = new ArgumentParser(args);
 		InvertedIndex indexer = new InvertedIndex();
@@ -37,7 +39,7 @@ public class Driver {
 		}
 
 		if (parser.hasFlag("-counts")) {
-			countsPath = parser.getString("-counts", ("counts.json"));
+			countsPath = parser.getString("-counts", "counts.json");
 			try {
 				indexer.writeCounts(inputPath, countsPath);
 			} catch (Exception e) {
@@ -46,12 +48,20 @@ public class Driver {
 		}
 
 		if (parser.hasFlag("-index")) {
-			indexPath = parser.getString("-index", ("index.json"));
+			indexPath = parser.getString("-index", "index.json");
 			try {
 				indexer.writeIndex(inputPath, indexPath, indexer);
 			} catch (Exception e) {
 				System.out.println("Error building the inverted index " + inputPath);
 			}
+		}
+
+		if (parser.hasFlag("-query")) {
+			queryFilePath = parser.getPath("-query").toString();
+		}
+
+		if (parser.hasFlag("-results")) {
+			resultsOutputPath = parser.getString("-results", "results.json");
 		}
 	}
 }
