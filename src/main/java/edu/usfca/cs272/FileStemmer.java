@@ -101,7 +101,7 @@ public class FileStemmer {
 	 * @see Stemmer#stem(CharSequence)
 	 * @see #addStems(String, Stemmer, Collection)
 	 */
-	public static ArrayList<String> listStems(String line, Stemmer stemmer) {
+	public static ArrayList<String> listStems(String line, Stemmer stemmer) { // TODO Mix of tabs and spaces below (and in other places in this file)
 	    ArrayList<String> words = new ArrayList<String>();
 	    addStems(line, stemmer, words);
 	    return words;
@@ -120,6 +120,7 @@ public class FileStemmer {
 	 * @see #listStems(String, Stemmer)
 	 */
 	public static ArrayList<String> listStems(String line) {
+	// TODO Figure out how to reuse listStems(line, stemmer) here
 	    ArrayList<String> words = new ArrayList<String>();
 	    Stemmer stemmer = new SnowballStemmer(ENGLISH);
 	    addStems(line, stemmer, words);
@@ -140,23 +141,23 @@ public class FileStemmer {
 	 * @see #listStems(String, Stemmer)
 	 */
 	public static ArrayList<String> listStems(Path input) throws IOException {
-	    if (Files.isDirectory(input)) {
+	    if (Files.isDirectory(input)) { // TODO No need, the io exception will happen automatically. Remove this code
 	        throw new IOException("Input is a directory");
 	    }
 	    
 		ArrayList<String> words = new ArrayList<>();
-		try (Scanner scanner = new Scanner(input)) {
+		try (Scanner scanner = new Scanner(input)) { // TODO Use a BufferedReader
 			while (scanner.hasNextLine()) {
 				String line = scanner.nextLine();
 				String[] clean = parse(line);
-				Stemmer stemmer = new SnowballStemmer(ALGORITHM.ENGLISH);
+				Stemmer stemmer = new SnowballStemmer(ALGORITHM.ENGLISH); // TODO How many stemmers are being created?
 
-				for (String word : clean) {
+				for (String word : clean) { // TODO Figure out how to reuse code
 					String stem = stemmer.stem(word).toString();
 					words.add(stem);
 				}
 			}
-		} catch (Exception e) {
+		} catch (Exception e) { // TODO Remove the catch block if just going to re-throw the exception (then it happens automatically)
 			throw e;
 		}
 		return words;
@@ -190,6 +191,7 @@ public class FileStemmer {
 	 * @see #uniqueStems(String, Stemmer)
 	 */
 	public static TreeSet<String> uniqueStems(String line) {
+		// TODO Figure out how to reuse uniqueStems(line, stemmer) here
 	    TreeSet<String> unique = new TreeSet<>();
 	    Stemmer stemmer = new SnowballStemmer(ENGLISH);
 	    addStems(line, stemmer, unique);
@@ -209,7 +211,7 @@ public class FileStemmer {
 	 * @see StandardCharsets#UTF_8
 	 * @see #uniqueStems(String, Stemmer)
 	 */
-	public static TreeSet<String> uniqueStems(Path input) throws IOException {
+	public static TreeSet<String> uniqueStems(Path input) throws IOException { // TODO Same fixes required here too
 		TreeSet<String> unique = new TreeSet<>();
 		try (Scanner scanner = new Scanner(input)) {
 			while (scanner.hasNextLine()) {
@@ -243,7 +245,7 @@ public class FileStemmer {
 	 * @see StandardCharsets#UTF_8
 	 * @see #uniqueStems(String, Stemmer)
 	 */
-	public static ArrayList<TreeSet<String>> listUniqueStems(Path input) throws IOException {
+	public static ArrayList<TreeSet<String>> listUniqueStems(Path input) throws IOException { // TODO And here
 	    ArrayList<TreeSet<String>> words = new ArrayList<>();
 	    	    
 	    try (Scanner scanner = new Scanner(input)) {
@@ -273,7 +275,7 @@ public class FileStemmer {
 	 * @param args unused
 	 * @throws IOException if an I/O error occurs
 	 */
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws IOException { // TODO Can delete these old main methods used for debugging at this point!
 		// demonstrates how to use split, clean, and parse
 		System.out.println("____PARSING DEMO____");
 		System.out.println();
