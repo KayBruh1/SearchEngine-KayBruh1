@@ -58,13 +58,13 @@ public class Driver {
 				System.out.println("Error building the inverted index " + inputPath);
 			}
 		}
-
+		
+		List<List<String>> processedQueries = new ArrayList<>();
 		if (parser.hasFlag("-query")) {
 			queryFilePath = parser.getPath("-query");
 			if (Files.exists(queryFilePath)) {
 				try {
 					List<String> queryLines = Files.readAllLines(queryFilePath);
-					List<List<String>> processedQueries = new ArrayList<>();
 
 					for (String queryLine : queryLines) {
 						List<String> stemmedWords = FileStemmer.listStems(queryLine);
@@ -78,8 +78,15 @@ public class Driver {
 			}
 		}
 
-		if (parser.hasFlag("-results")) {
-			resultsOutputPath = parser.getString("-results", "results.json");
-		}
+        if (parser.hasFlag("-results")) {
+            resultsOutputPath = parser.getString("-results", "results.json");
+            try {
+            	fileBuilder.processDirectory(inputPath, true);
+                List<List<String>> searchResults = FileBuilder.conductSearch(processedQueries, indexer);
+                
+            } catch (Exception e) {
+                System.out.println("Error writing results to file: " + resultsOutputPath);
+            }
+        }
 	}
 }

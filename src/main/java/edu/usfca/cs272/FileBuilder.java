@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.TreeMap;
@@ -190,5 +191,43 @@ public class FileBuilder {
 			indexer.setFileWordCounts(new TreeMap<>(wordCounts));
 			indexer.setInvertedIndex(new TreeMap<>(invertedIndexMap));
 		}
+	}
+
+	public static List<List<String>> conductSearch(List<List<String>> processedQueries, InvertedIndex indexer) {
+		List<List<String>> searchResults = new ArrayList<>();
+
+		System.out.println("Processing queries:");
+
+		for (List<String> query : processedQueries) {
+			System.out.println("Query: " + query);
+			List<String> result = new ArrayList<>();
+
+			for (String word : query) {
+				System.out.println("Searching for word: " + word);
+
+				if (indexer.getInvertedIndex().containsKey(word)) {
+
+					TreeMap<String, TreeSet<Integer>> wordMap = indexer.getInvertedIndex().get(word);
+
+					System.out.println("Locations for word '" + word + "': " + wordMap.keySet());
+
+					for (String location : wordMap.keySet()) {
+						int matchCount = wordMap.get(location).size();
+						System.out.println("Found " + matchCount + " matches in " + location);
+
+						if (!result.contains(location)) {
+							result.add(location);
+						}
+					}
+				} else {
+					System.out.println("Word '" + word + "' not found in the inverted index");
+				}
+			}
+			System.out.println("Query result: " + result);
+			searchResults.add(result);
+		}
+
+		System.out.println("Search results: " + searchResults);
+		return searchResults;
 	}
 }
