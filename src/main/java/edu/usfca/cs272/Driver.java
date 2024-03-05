@@ -1,7 +1,10 @@
 package edu.usfca.cs272;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Class responsible for running this project based on the provided command-line
@@ -22,7 +25,7 @@ public class Driver {
 		Path inputPath = null;
 		String countsPath = null;
 		String indexPath = null;
-		String queryFilePath = null;
+		Path queryFilePath = null;
 		String resultsOutputPath = null;
 
 		ArgumentParser parser = new ArgumentParser(args);
@@ -57,7 +60,22 @@ public class Driver {
 		}
 
 		if (parser.hasFlag("-query")) {
-			queryFilePath = parser.getPath("-query").toString();
+			queryFilePath = parser.getPath("-query");
+			if (Files.exists(queryFilePath)) {
+				try {
+					List<String> queryLines = Files.readAllLines(queryFilePath);
+					List<List<String>> processedQueries = new ArrayList<>();
+
+					for (String queryLine : queryLines) {
+						List<String> stemmedWords = FileStemmer.listStems(queryLine);
+						processedQueries.add(stemmedWords);
+					}
+				} catch (Exception e) {
+					System.out.println("Error reading the query file " + queryFilePath);
+				}
+			} else {
+				System.out.println("Query file does not exist: " + queryFilePath);
+			}
 		}
 
 		if (parser.hasFlag("-results")) {
