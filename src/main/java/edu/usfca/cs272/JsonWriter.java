@@ -72,6 +72,13 @@ public class JsonWriter {
 		writer.write(element);
 		writer.write('"');
 	}
+	
+	/*
+	 * TODO Refactor your approach based on the discussion from the Feb 22nd remote
+	 * lecture. Start with writeArray then when that is working, use that approach
+	 * in all of the other relevant methods. See post #229 on Piazza for a link to
+	 * the lecture (the post can be found under the homework/jsonwriter folder).
+	 */
 
 	/**
 	 * Writes the elements as a pretty JSON array.
@@ -225,6 +232,11 @@ public class JsonWriter {
 			return null;
 		}
 	}
+	
+	/*
+	 * TODO Reorder the methods here using the Outline view in Eclipse so that
+	 * overloaded methods with the same name are grouped together.
+	 */
 
 	/**
 	 * Writes the elements as a pretty JSON object with nested arrays. The generic
@@ -268,6 +280,22 @@ public class JsonWriter {
 		writeIndent(writer, indent);
 		writer.write("}");
 	}
+	
+	/*
+	 * TODO Try to make this type more generic so that it works with any type of map
+	 * and collection and number. Use the other methods as a clue of how to make
+	 * this work. The ? extends syntax is important for nested types! Reach out on
+	 * Piazza if you run into issues---it is a really hard generic type to get just
+	 * right!
+	 */
+	
+	/*
+	 * TODO Notice how all the other methods here have 3 versions? There is the
+	 * super general and reusable version that takes a writer and indent level, but
+	 * then there are two convenience methods that make common operations (writing
+	 * to file or generating a String) more reusable. Try to do the same thing with
+	 * your method to output the inverted index!
+	 */
 
 	/**
 	 * Writes the inverted index as a pretty JSON object
@@ -424,7 +452,7 @@ public class JsonWriter {
 	 *
 	 * @param args unused
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) { // TODO Can delete these old main methods used for debugging at this point!
 		Set<Integer> empty = Collections.emptySet();
 		Set<Integer> single = Set.of(42);
 		List<Integer> simple = List.of(65, 66, 67);
