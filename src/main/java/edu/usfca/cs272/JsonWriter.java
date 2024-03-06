@@ -13,7 +13,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -439,32 +438,36 @@ public class JsonWriter {
 	 * @param indent        the initial indentation level for the JSON output
 	 * @throws IOException if an I/O error occurs while writing
 	 */
-	public static void writeIndex(TreeMap<String, TreeMap<String, TreeSet<Integer>>> invertedIndex,
+	public static void writeIndex(TreeMap<String, ? extends Map<String, ? extends TreeSet<Integer>>> invertedIndex,
 			BufferedWriter writer, int indent) throws IOException {
 		writer.write("{");
 		writer.write("\n");
-
 		var iterator = invertedIndex.entrySet().iterator();
 
-		while (iterator.hasNext()) {
-			Entry<String, TreeMap<String, TreeSet<Integer>>> entry = iterator.next();
-			String word = entry.getKey();
-			Map<String, TreeSet<Integer>> filePositions = entry.getValue();
-
-			writeIndent(writer, indent + 1);
-			writeQuote(word, writer, 0);
-			writer.write(": ");
-
-			writeObjectArrays(filePositions, writer, indent + 1);
-
-			if (iterator.hasNext()) {
+		if (iterator.hasNext()) {
+			writeEntry(iterator.next(), writer, indent + 1);
+			while (iterator.hasNext()) {
 				writer.write(",");
+				writer.write("\n");
+				writeEntry(iterator.next(), writer, indent + 1);
 			}
+
 			writer.write("\n");
 		}
-
 		writeIndent(writer, indent);
 		writer.write("}");
+	}
+
+	private static void writeEntry(Map.Entry<String, ? extends Map<String, ? extends TreeSet<Integer>>> entry,
+			BufferedWriter writer, int indent) throws IOException {
+		String word = entry.getKey();
+		Map<String, ? extends TreeSet<Integer>> filePositions = entry.getValue();
+
+		writeIndent(writer, indent);
+		writeQuote(word, writer, 0);
+		writer.write(": ");
+
+		writeObjectArrays(filePositions, writer, indent);
 	}
 
 	/**
