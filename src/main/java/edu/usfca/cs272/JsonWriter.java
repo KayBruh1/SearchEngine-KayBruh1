@@ -48,8 +48,8 @@ public class JsonWriter {
 	 * Indents and then writes the String element.
 	 *
 	 * @param element the element to write
-	 * @param writer the writer to use
-	 * @param indent the number of times to indent
+	 * @param writer  the writer to use
+	 * @param indent  the number of times to indent
 	 * @throws IOException if an IO error occurs
 	 */
 	public static void writeIndent(String element, Writer writer, int indent) throws IOException {
@@ -62,8 +62,8 @@ public class JsonWriter {
 	 * marks.
 	 *
 	 * @param element the element to write
-	 * @param writer the writer to use
-	 * @param indent the number of times to indent
+	 * @param writer  the writer to use
+	 * @param indent  the number of times to indent
 	 * @throws IOException if an IO error occurs
 	 */
 	public static void writeQuote(String element, Writer writer, int indent) throws IOException {
@@ -72,7 +72,7 @@ public class JsonWriter {
 		writer.write(element);
 		writer.write('"');
 	}
-	
+
 	/*
 	 * TODO Refactor your approach based on the discussion from the Feb 22nd remote
 	 * lecture. Start with writeArray then when that is working, use that approach
@@ -84,10 +84,10 @@ public class JsonWriter {
 	 * Writes the elements as a pretty JSON array.
 	 *
 	 * @param elements the elements to write
-	 * @param writer the writer to use
-	 * @param indent the initial indent level; the first bracket is not indented,
-	 *   inner elements are indented by one, and the last bracket is indented at the
-	 *   initial indentation level
+	 * @param writer   the writer to use
+	 * @param indent   the initial indent level; the first bracket is not indented,
+	 *                 inner elements are indented by one, and the last bracket is
+	 *                 indented at the initial indentation level
 	 * @throws IOException if an IO error occurs
 	 *
 	 * @see Writer#write(String)
@@ -96,33 +96,30 @@ public class JsonWriter {
 	 */
 	public static void writeArray(Collection<? extends Number> elements, Writer writer, int indent) throws IOException {
 		writer.write("[");
-		writer.write("\n");
-
 		Iterator<? extends Number> iterator = elements.iterator();
-
+		if (iterator.hasNext()) {
+			Number value = iterator.next();
+			writer.write("\n");
+			writeIndent(value.toString(), writer, indent + 1);
+		}
 		while (iterator.hasNext()) {
 			Number value = iterator.next();
-			writeIndent(value.toString(), writer, indent + 1);
-
-			if (iterator.hasNext()) {
-				writer.write(",");
-			}
-
+			writer.write(",");
 			writer.write("\n");
+			writeIndent(value.toString(), writer, indent + 1);
 		}
-
-		writeIndent(writer, indent);
+		if (!elements.isEmpty()) {
+			writer.write("\n");
+			writeIndent(writer, indent);
+		}
 		writer.write("]");
 	}
-
-
-
 
 	/**
 	 * Writes the elements as a pretty JSON array to file.
 	 *
 	 * @param elements the elements to write
-	 * @param path the file path to use
+	 * @param path     the file path to use
 	 * @throws IOException if an IO error occurs
 	 *
 	 * @see Files#newBufferedReader(Path, java.nio.charset.Charset)
@@ -149,8 +146,7 @@ public class JsonWriter {
 			StringWriter writer = new StringWriter();
 			writeArray(elements, writer, 0);
 			return writer.toString();
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			return null;
 		}
 	}
@@ -159,17 +155,18 @@ public class JsonWriter {
 	 * Writes the elements as a pretty JSON object.
 	 *
 	 * @param elements the elements to write
-	 * @param writer the writer to use
-	 * @param indent the initial indent level; the first bracket is not indented,
-	 *   inner elements are indented by one, and the last bracket is indented at the
-	 *   initial indentation level
+	 * @param writer   the writer to use
+	 * @param indent   the initial indent level; the first bracket is not indented,
+	 *                 inner elements are indented by one, and the last bracket is
+	 *                 indented at the initial indentation level
 	 * @throws IOException if an IO error occurs
 	 *
 	 * @see Writer#write(String)
 	 * @see #writeIndent(Writer, int)
 	 * @see #writeIndent(String, Writer, int)
 	 */
-	public static void writeObject(Map<String, ? extends Number> elements, Writer writer, int indent) throws IOException {
+	public static void writeObject(Map<String, ? extends Number> elements, Writer writer, int indent)
+			throws IOException {
 		writer.write("{");
 		writer.write("\n");
 
@@ -200,7 +197,7 @@ public class JsonWriter {
 	 * Writes the elements as a pretty JSON object to file.
 	 *
 	 * @param elements the elements to write
-	 * @param path the file path to use
+	 * @param path     the file path to use
 	 * @throws IOException if an IO error occurs
 	 *
 	 * @see Files#newBufferedReader(Path, java.nio.charset.Charset)
@@ -227,12 +224,11 @@ public class JsonWriter {
 			StringWriter writer = new StringWriter();
 			writeObject(elements, writer, 0);
 			return writer.toString();
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			return null;
 		}
 	}
-	
+
 	/*
 	 * TODO Reorder the methods here using the Outline view in Eclipse so that
 	 * overloaded methods with the same name are grouped together.
@@ -244,10 +240,10 @@ public class JsonWriter {
 	 * of nested collection of number objects.
 	 *
 	 * @param elements the elements to write
-	 * @param writer the writer to use
-	 * @param indent the initial indent level; the first bracket is not indented,
-	 *   inner elements are indented by one, and the last bracket is indented at the
-	 *   initial indentation level
+	 * @param writer   the writer to use
+	 * @param indent   the initial indent level; the first bracket is not indented,
+	 *                 inner elements are indented by one, and the last bracket is
+	 *                 indented at the initial indentation level
 	 * @throws IOException if an IO error occurs
 	 *
 	 * @see Writer#write(String)
@@ -255,7 +251,8 @@ public class JsonWriter {
 	 * @see #writeIndent(String, Writer, int)
 	 * @see #writeArray(Collection)
 	 */
-	public static void writeObjectArrays(Map<String, ? extends Collection<? extends Number>> elements, Writer writer, int indent) throws IOException {
+	public static void writeObjectArrays(Map<String, ? extends Collection<? extends Number>> elements, Writer writer,
+			int indent) throws IOException {
 		writer.write("{");
 		writer.write("\n");
 
@@ -280,7 +277,7 @@ public class JsonWriter {
 		writeIndent(writer, indent);
 		writer.write("}");
 	}
-	
+
 	/*
 	 * TODO Try to make this type more generic so that it works with any type of map
 	 * and collection and number. Use the other methods as a clue of how to make
@@ -288,7 +285,7 @@ public class JsonWriter {
 	 * Piazza if you run into issues---it is a really hard generic type to get just
 	 * right!
 	 */
-	
+
 	/*
 	 * TODO Notice how all the other methods here have 3 versions? There is the
 	 * super general and reusable version that takes a writer and indent level, but
@@ -301,11 +298,12 @@ public class JsonWriter {
 	 * Writes the inverted index as a pretty JSON object
 	 *
 	 * @param invertedIndex the inverted index to write
-	 * @param writer   the buffered writer to write to
-	 * @param indent   the initial indentation level for the JSON output
+	 * @param writer        the buffered writer to write to
+	 * @param indent        the initial indentation level for the JSON output
 	 * @throws IOException if an I/O error occurs while writing
 	 */
-	public static void writeIndex(TreeMap<String, TreeMap<String, TreeSet<Integer>>> invertedIndex, BufferedWriter writer, int indent) throws IOException {
+	public static void writeIndex(TreeMap<String, TreeMap<String, TreeSet<Integer>>> invertedIndex,
+			BufferedWriter writer, int indent) throws IOException {
 		writer.write("{");
 		writer.write("\n");
 
@@ -336,14 +334,15 @@ public class JsonWriter {
 	 * Writes the elements as a pretty JSON object with nested arrays to file.
 	 *
 	 * @param elements the elements to write
-	 * @param path the file path to use
+	 * @param path     the file path to use
 	 * @throws IOException if an IO error occurs
 	 *
 	 * @see Files#newBufferedReader(Path, java.nio.charset.Charset)
 	 * @see StandardCharsets#UTF_8
 	 * @see #writeObjectArrays(Map, Writer, int)
 	 */
-	public static void writeObjectArrays(Map<String, ? extends Collection<? extends Number>> elements, Path path) throws IOException {
+	public static void writeObjectArrays(Map<String, ? extends Collection<? extends Number>> elements, Path path)
+			throws IOException {
 		try (BufferedWriter writer = Files.newBufferedWriter(path, UTF_8)) {
 			writeObjectArrays(elements, writer, 0);
 		}
@@ -363,8 +362,7 @@ public class JsonWriter {
 			StringWriter writer = new StringWriter();
 			writeObjectArrays(elements, writer, 0);
 			return writer.toString();
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			return null;
 		}
 	}
@@ -375,10 +373,10 @@ public class JsonWriter {
 	 * any type of nested map of String keys to number objects.
 	 *
 	 * @param elements the elements to write
-	 * @param writer the writer to use
-	 * @param indent the initial indent level; the first bracket is not indented,
-	 *   inner elements are indented by one, and the last bracket is indented at the
-	 *   initial indentation level
+	 * @param writer   the writer to use
+	 * @param indent   the initial indent level; the first bracket is not indented,
+	 *                 inner elements are indented by one, and the last bracket is
+	 *                 indented at the initial indentation level
 	 * @throws IOException if an IO error occurs
 	 *
 	 * @see Writer#write(String)
@@ -386,7 +384,8 @@ public class JsonWriter {
 	 * @see #writeIndent(String, Writer, int)
 	 * @see #writeObject(Map)
 	 */
-	public static void writeArrayObjects(Collection<? extends Map<String, ? extends Number>> elements, Writer writer, int indent) throws IOException {
+	public static void writeArrayObjects(Collection<? extends Map<String, ? extends Number>> elements, Writer writer,
+			int indent) throws IOException {
 		writer.write("[");
 		writer.write("\n");
 
@@ -406,7 +405,6 @@ public class JsonWriter {
 
 		writeIndent(writer, indent);
 
-
 		writer.write("]");
 	}
 
@@ -414,14 +412,15 @@ public class JsonWriter {
 	 * Writes the elements as a pretty JSON array with nested objects to file.
 	 *
 	 * @param elements the elements to write
-	 * @param path the file path to use
+	 * @param path     the file path to use
 	 * @throws IOException if an IO error occurs
 	 *
 	 * @see Files#newBufferedReader(Path, java.nio.charset.Charset)
 	 * @see StandardCharsets#UTF_8
 	 * @see #writeArrayObjects(Collection)
 	 */
-	public static void writeArrayObjects(Collection<? extends Map<String, ? extends Number>> elements, Path path) throws IOException {
+	public static void writeArrayObjects(Collection<? extends Map<String, ? extends Number>> elements, Path path)
+			throws IOException {
 		try (BufferedWriter writer = Files.newBufferedWriter(path, UTF_8)) {
 			writeArrayObjects(elements, writer, 0);
 		}
@@ -441,8 +440,7 @@ public class JsonWriter {
 			StringWriter writer = new StringWriter();
 			writeArrayObjects(elements, writer, 0);
 			return writer.toString();
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			return null;
 		}
 	}
