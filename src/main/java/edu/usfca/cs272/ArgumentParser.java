@@ -130,11 +130,7 @@ public class ArgumentParser {
 	 *   if there is no mapping
 	 */
 	public String getString(String flag, String backup) {
-		// TODO Don't need the containsKey and get != null check... if the key does not exist, get will return null
-		if (map.containsKey(flag) && map.get(flag) != null) {
-			return map.get(flag);
-		}
-		return backup;
+		return map.get(flag) != null ? map.get(flag) : backup;
 	}
 
 	/**
@@ -146,10 +142,7 @@ public class ArgumentParser {
 	 *   there is no mapping
 	 */
 	public String getString(String flag) {
-		if (map.containsKey(flag) && map.get(flag) != null) { // TODO Same as before, only need get != null
-			return map.get(flag);
-		}
-		return null;
+		return map.get(flag);
 	}
 
 	/**
