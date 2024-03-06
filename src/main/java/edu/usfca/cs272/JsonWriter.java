@@ -166,36 +166,39 @@ public class JsonWriter {
 	 */
 	public static void writeObject(Map<String, ? extends Number> elements, Writer writer, int indent)
 			throws IOException {
-	    writer.write("{");
-	    var iterator = elements.entrySet().iterator();
-	    
-        writer.write("\n");
-	    if (iterator.hasNext()) {
-	        Map.Entry<String, ? extends Number> entry = iterator.next();
-	        String key = entry.getKey();
-	        Number value = entry.getValue();
-	        writeIndent(writer, indent + 1);
-	        writeQuote(key, writer, 0);
-	        writer.write(": ");
-	        writeIndent(value.toString(), writer, 0);
-	    }
-	    
-	    while (iterator.hasNext()) {
-	        writer.write(",");
-	        writer.write("\n");
-	        Map.Entry<String, ? extends Number> entry = iterator.next();
-	        String key = entry.getKey();
-	        Number value = entry.getValue();
-	        writeIndent(writer, indent + 1);
-	        writeQuote(key, writer, 0);
-	        writer.write(": ");
-	        writeIndent(value.toString(), writer, 0);
-	    }
-	    if (!elements.isEmpty()) {
-	        writer.write("\n");
-	        writeIndent(writer, indent);
-	    }
-	    writer.write("}");
+		writer.write("{");
+		var iterator = elements.entrySet().iterator();
+		Map.Entry<String, ? extends Number> entry = null;
+		String key = null;
+		Number value = null;
+		writer.write("\n");
+
+		if (iterator.hasNext()) {
+			entry = iterator.next();
+			key = entry.getKey();
+			value = entry.getValue();
+			writeIndent(writer, indent + 1);
+			writeQuote(key, writer, 0);
+			writer.write(": ");
+			writeIndent(value.toString(), writer, 0);
+		}
+
+		while (iterator.hasNext()) {
+			writer.write(",");
+			writer.write("\n");
+			entry = iterator.next();
+			key = entry.getKey();
+			value = entry.getValue();
+			writeIndent(writer, indent + 1);
+			writeQuote(key, writer, 0);
+			writer.write(": ");
+			writeIndent(value.toString(), writer, 0);
+		}
+		if (!elements.isEmpty()) {
+			writer.write("\n");
+			writeIndent(writer, indent);
+		}
+		writer.write("}");
 	}
 
 	/**
@@ -260,27 +263,38 @@ public class JsonWriter {
 			int indent) throws IOException {
 		writer.write("{");
 		writer.write("\n");
-
 		var iterator = elements.entrySet().iterator();
+		Map.Entry<String, ? extends Collection<? extends Number>> entry = null;
+		Collection<? extends Number> values = null;
+		String key = null;
 
-		while (iterator.hasNext()) {
-			Map.Entry<String, ? extends Collection<? extends Number>> entry = iterator.next();
-			String key = entry.getKey();
-			Collection<? extends Number> values = entry.getValue();
+		if (iterator.hasNext()) {
+			entry = iterator.next();
+			key = entry.getKey();
+			values = entry.getValue();
 
 			writeIndent(writer, indent + 1);
 			writeQuote(key, writer, 0);
 			writer.write(": ");
 			writeArray(values, writer, indent + 1);
-
-			if (iterator.hasNext()) {
-				writer.write(",");
-			}
-			writer.write("\n");
 		}
 
+		while (iterator.hasNext()) {
+			writer.write(",");
+			writer.write("\n");
+			entry = iterator.next();
+			key = entry.getKey();
+			values = entry.getValue();
+			writeIndent(writer, indent + 1);
+			writeQuote(key, writer, 0);
+			writer.write(": ");
+			writeArray(values, writer, indent + 1);
+		}
+
+		writer.write("\n");
 		writeIndent(writer, indent);
 		writer.write("}");
+
 	}
 
 	/*
