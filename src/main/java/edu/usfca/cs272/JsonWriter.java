@@ -166,27 +166,36 @@ public class JsonWriter {
 	 */
 	public static void writeObject(Map<String, ? extends Number> elements, Writer writer, int indent)
 			throws IOException {
-		writer.write("{");
-		var iterator = elements.entrySet().iterator();
-		writer.write("\n");
-		while (iterator.hasNext()) {
-			Map.Entry<String, ? extends Number> entry = iterator.next();
-			String key = entry.getKey();
-			Number value = entry.getValue();
-			writeIndent(writer, indent + 1);
-			writeQuote(key, writer, 0);
-			writer.write(": ");
-			writeIndent(value.toString(), writer, 0);
-			if (iterator.hasNext()) {
-				writer.write(",");
-				writer.write("\n");
-			}
-		}
-		if (!elements.isEmpty()) {
-			writer.write("\n");
-			writeIndent(writer, indent);
-		}
-		writer.write("}");
+	    writer.write("{");
+	    var iterator = elements.entrySet().iterator();
+	    
+        writer.write("\n");
+	    if (iterator.hasNext()) {
+	        Map.Entry<String, ? extends Number> entry = iterator.next();
+	        String key = entry.getKey();
+	        Number value = entry.getValue();
+	        writeIndent(writer, indent + 1);
+	        writeQuote(key, writer, 0);
+	        writer.write(": ");
+	        writeIndent(value.toString(), writer, 0);
+	    }
+	    
+	    while (iterator.hasNext()) {
+	        writer.write(",");
+	        writer.write("\n");
+	        Map.Entry<String, ? extends Number> entry = iterator.next();
+	        String key = entry.getKey();
+	        Number value = entry.getValue();
+	        writeIndent(writer, indent + 1);
+	        writeQuote(key, writer, 0);
+	        writer.write(": ");
+	        writeIndent(value.toString(), writer, 0);
+	    }
+	    if (!elements.isEmpty()) {
+	        writer.write("\n");
+	        writeIndent(writer, indent);
+	    }
+	    writer.write("}");
 	}
 
 	/**
