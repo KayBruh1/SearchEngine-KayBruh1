@@ -51,9 +51,8 @@ public class ArgumentParser {
 	 * @see Character#isDigit(int)
 	 * @see Character#isWhitespace(int)
 	 */
-	public static boolean isFlag(String arg) { // TODO Rethink how using blank lines below to be consistent with other code
+	public static boolean isFlag(String arg) {
 		if (arg != null && arg.startsWith("-") && arg.length() > 1) {
-			
 			int secondChar = arg.codePointAt(1);
 			return !Character.isWhitespace(secondChar) && !Character.isDigit(secondChar);
 		}
@@ -79,7 +78,6 @@ public class ArgumentParser {
 	 */
 	public void parse(String[] args) {
 		String holdFlag = null;
-
 		for (int i = 0; i < args.length; i++) {
 			if (isFlag(args[i])) {
 				holdFlag = args[i];
@@ -119,11 +117,7 @@ public class ArgumentParser {
 	 * @return {@code true} if the flag is mapped to a non-null value
 	 */
 	public boolean hasValue(String flag) {
-		if (map.containsKey(flag) && map.get(flag) != null) { // TODO Can make this a single return statement! return map.get(flag) != null
-			return true;
-		}
-		return false;
-
+	    return map.containsKey(flag) && map.get(flag) != null;
 	}
 
 	/**
