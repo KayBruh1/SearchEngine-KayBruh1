@@ -12,7 +12,6 @@ import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Scanner;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
 
@@ -237,27 +236,21 @@ public class FileStemmer {
 	 * @see #uniqueStems(String, Stemmer)
 	 */
 	public static ArrayList<TreeSet<String>> listUniqueStems(Path input) throws IOException { // TODO And here
-		ArrayList<TreeSet<String>> words = new ArrayList<>();
-
-		try (Scanner scanner = new Scanner(input)) {
-			while (scanner.hasNextLine()) {
-				TreeSet<String> unique = new TreeSet<>();
-				String line = scanner.nextLine();
-				String[] clean = parse(line);
-				Stemmer stemmer = new SnowballStemmer(ENGLISH);
-
-				for (String word : clean) {
-					String stem = stemmer.stem(word).toString();
-					unique.add(stem);
-				}
-
-				words.add(unique);
-			}
-		} catch (Exception e) {
-			throw e;
-		}
-
-		return words;
+        ArrayList<TreeSet<String>> words = new ArrayList<>();
+        try (BufferedReader reader = Files.newBufferedReader(input)) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                TreeSet<String> unique = new TreeSet<>();
+                String[] clean = parse(line);
+                SnowballStemmer stemmer = new SnowballStemmer(ENGLISH);
+                for (String word : clean) {
+                    String stem = stemmer.stem(word).toString();
+                    unique.add(stem);
+                }
+                words.add(unique);
+            }
+        }
+        return words;
 	}
 
 	/**
