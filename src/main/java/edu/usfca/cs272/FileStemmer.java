@@ -3,6 +3,7 @@ package edu.usfca.cs272;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static opennlp.tools.stemmer.snowball.SnowballStemmer.ALGORITHM.ENGLISH;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -140,25 +141,17 @@ public class FileStemmer {
 	 * @see #listStems(String, Stemmer)
 	 */
 	public static ArrayList<String> listStems(Path input) throws IOException {
-		if (Files.isDirectory(input)) { // TODO No need, the io exception will happen automatically. Remove this code
-			throw new IOException("Input is a directory");
-		}
-
 		ArrayList<String> words = new ArrayList<>();
-		try (Scanner scanner = new Scanner(input)) { // TODO Use a BufferedReader
-			while (scanner.hasNextLine()) {
-				String line = scanner.nextLine();
+		try (BufferedReader reader = Files.newBufferedReader(input)) {
+			String line;
+			SnowballStemmer stemmer = new SnowballStemmer(ALGORITHM.ENGLISH);
+			while ((line = reader.readLine()) != null) {
 				String[] clean = parse(line);
-				Stemmer stemmer = new SnowballStemmer(ALGORITHM.ENGLISH); // TODO How many stemmers are being created?
-
-				for (String word : clean) { // TODO Figure out how to reuse code
+				for (String word : clean) {
 					String stem = stemmer.stem(word).toString();
 					words.add(stem);
 				}
 			}
-		} catch (Exception e) { // TODO Remove the catch block if just going to re-throw the exception (then it
-								// happens automatically)
-			throw e;
 		}
 		return words;
 	}
