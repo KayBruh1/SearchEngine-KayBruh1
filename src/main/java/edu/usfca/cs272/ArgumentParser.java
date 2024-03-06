@@ -1,6 +1,5 @@
 package edu.usfca.cs272;
 
-import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.HashMap;
 
@@ -117,17 +116,17 @@ public class ArgumentParser {
 	 * @return {@code true} if the flag is mapped to a non-null value
 	 */
 	public boolean hasValue(String flag) {
-	    return map.containsKey(flag) && map.get(flag) != null;
+		return map.containsKey(flag) && map.get(flag) != null;
 	}
 
 	/**
 	 * Returns the value to which the specified flag is mapped as a {@link String}
 	 * or the backup value if there is no mapping.
 	 *
-	 * @param flag the flag whose associated value is to be returned
+	 * @param flag   the flag whose associated value is to be returned
 	 * @param backup the backup value to return if there is no mapping
 	 * @return the value to which the specified flag is mapped, or the backup value
-	 *   if there is no mapping
+	 *         if there is no mapping
 	 */
 	public String getString(String flag, String backup) {
 		return map.get(flag) != null ? map.get(flag) : backup;
@@ -139,7 +138,7 @@ public class ArgumentParser {
 	 *
 	 * @param flag the flag whose associated value is to be returned
 	 * @return the value to which the specified flag is mapped or {@code null} if
-	 *   there is no mapping
+	 *         there is no mapping
 	 */
 	public String getString(String flag) {
 		return map.get(flag);
@@ -152,23 +151,20 @@ public class ArgumentParser {
 	 *
 	 * This method should not throw any exceptions!
 	 *
-	 * @param flag the flag whose associated value will be returned
+	 * @param flag   the flag whose associated value will be returned
 	 * @param backup the backup value to return if there is no valid mapping
 	 * @return the value the specified flag is mapped as a {@link Path}, or the
-	 *   backup value if there is no valid mapping
+	 *         backup value if there is no valid mapping
 	 *
 	 * @see Path#of(String, String...)
 	 */
 	public Path getPath(String flag, Path backup) {
 		try {
-			if (map.containsKey(flag) && map.get(flag) != null) { // TODO Remove check, let exception happen
-				String value = map.get(flag);
-				return Path.of(value);
-			}
-		} catch (Exception e) { // TODO If catching a generic exception, let it handle the null issue too!
+			String value = map.get(flag);
+			return Path.of(value);
+		} catch (Exception e) {
 			return backup;
 		}
-		return backup; // TODO Can remove, Java compiler knows all paths out of this method have a return
 	}
 
 	/**
@@ -180,16 +176,12 @@ public class ArgumentParser {
 	 *
 	 * @param flag the flag whose associated value is to be returned
 	 * @return the value to which the specified flag is mapped, or {@code null} if
-	 *   unable to retrieve this mapping
+	 *         unable to retrieve this mapping
 	 *
 	 * @see #getPath(String, Path)
 	 */
-	public Path getPath(String flag) { // TODO Try to reuse getPath(String, Path) here
-		if (map.containsKey(flag) && map.get(flag) != null) {
-			String value = map.get(flag);
-			return FileSystems.getDefault().getPath(value);
-		}
-		return null;
+	public Path getPath(String flag) {
+		return getPath(flag, null);
 	}
 
 	/**
@@ -197,10 +189,10 @@ public class ArgumentParser {
 	 * value if unable to retrieve this mapping (including being unable to convert
 	 * the value to an int or if no value exists).
 	 *
-	 * @param flag the flag whose associated value will be returned
+	 * @param flag   the flag whose associated value will be returned
 	 * @param backup the backup value to return if there is no valid mapping
 	 * @return the value the specified flag is mapped as an int, or the backup value
-	 *   if there is no valid mapping
+	 *         if there is no valid mapping
 	 *
 	 * @see Integer#parseInt(String)
 	 */
@@ -222,7 +214,7 @@ public class ArgumentParser {
 	 *
 	 * @param flag the flag whose associated value will be returned
 	 * @return the value the specified flag is mapped as an int, or 0 if there is no
-	 *   valid mapping
+	 *         valid mapping
 	 *
 	 * @see #getInteger(String, int)
 	 */
@@ -249,8 +241,8 @@ public class ArgumentParser {
 	public static void main(String[] args) { // TODO Can delete these old main methods used for debugging at this point!
 		// Feel free to modify or delete this method for debugging
 		if (args.length < 1) {
-			args = new String[] { "-max", "false", "-min", "0", "-min", "-10", "hello", "-@debug",
-					"-f", "output.txt", "-verbose" };
+			args = new String[] { "-max", "false", "-min", "0", "-min", "-10", "hello", "-@debug", "-f", "output.txt",
+					"-verbose" };
 		}
 
 		// expected output:
