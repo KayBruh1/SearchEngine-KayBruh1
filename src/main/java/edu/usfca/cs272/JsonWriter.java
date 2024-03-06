@@ -11,7 +11,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -96,7 +95,7 @@ public class JsonWriter {
 	 */
 	public static void writeArray(Collection<? extends Number> elements, Writer writer, int indent) throws IOException {
 		writer.write("[");
-		Iterator<? extends Number> iterator = elements.iterator();
+		var iterator = elements.iterator();
 		if (iterator.hasNext()) {
 			Number value = iterator.next();
 			writer.write("\n");
@@ -168,28 +167,25 @@ public class JsonWriter {
 	public static void writeObject(Map<String, ? extends Number> elements, Writer writer, int indent)
 			throws IOException {
 		writer.write("{");
-		writer.write("\n");
-
 		var iterator = elements.entrySet().iterator();
-
+		writer.write("\n");
 		while (iterator.hasNext()) {
 			Map.Entry<String, ? extends Number> entry = iterator.next();
 			String key = entry.getKey();
 			Number value = entry.getValue();
-
 			writeIndent(writer, indent + 1);
 			writeQuote(key, writer, 0);
 			writer.write(": ");
 			writeIndent(value.toString(), writer, 0);
-
 			if (iterator.hasNext()) {
 				writer.write(",");
+				writer.write("\n");
 			}
-			writer.write("\n");
 		}
-
-		writeIndent(writer, indent);
-
+		if (!elements.isEmpty()) {
+			writer.write("\n");
+			writeIndent(writer, indent);
+		}
 		writer.write("}");
 	}
 
