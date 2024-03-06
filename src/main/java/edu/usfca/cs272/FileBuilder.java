@@ -89,11 +89,7 @@ public class FileBuilder {
 					String relativePath = directory.resolve(path.getFileName()).toString();
 
 					if (relativePath.toLowerCase().endsWith(".txt") || relativePath.toLowerCase().endsWith(".text")) {
-						if (both) {
-							wordCounts = processIndexFiles(path);
-						} else {
-							wordCounts = processCountsFiles(path);
-						}
+						processFile(Path.of(relativePath));
 
 						int totalWords = wordCounts.values().stream().mapToInt(Integer::intValue).sum();
 						if (totalWords > 0) {
