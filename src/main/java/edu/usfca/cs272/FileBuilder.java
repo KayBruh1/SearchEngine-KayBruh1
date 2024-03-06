@@ -45,30 +45,29 @@ public class FileBuilder {
 	 * @throws IOException If an I/O error occurs
 	 */
 	public void buildStructures(Path inputPath) throws IOException {
-		if (inputPath != null && Files.isDirectory(inputPath)) { // TODO Remove null check, an exception SHOULD happen if values are null
+		if (inputPath != null && Files.isDirectory(inputPath)) { // TODO Remove null check, an exception SHOULD happen
+																	// if values are null
 			processDirectory(inputPath, false);
 		} else {
 			processFile(inputPath);
 		}
 	}
-	
+
 	/*
 	 * TODO There is still a bit more complexity in here than recommended last time:
-	 * https://github.com/usf-cs272-spring2024/project-KayBruh1/blob/497875dba651eba029bc70ec23a5d7d3882cf766/src/main/java/edu/usfca/cs272/FileBuilder.java#L21-L37
+	 * https://github.com/usf-cs272-spring2024/project-KayBruh1/blob/
+	 * 497875dba651eba029bc70ec23a5d7d3882cf766/src/main/java/edu/usfca/cs272/
+	 * FileBuilder.java#L21-L37
 	 * 
 	 * There should NOT be separate steps for processing the index or the counts.
-	 * Both should always be done. So processIndexFiles, processCountFiles, and processFile
-	 * all need to be combined into 1 method. And it needs to work with the indexer now,
-	 * not creating its own data structures. Something like:
+	 * Both should always be done. So processIndexFiles, processCountFiles, and
+	 * processFile all need to be combined into 1 method. And it needs to work with
+	 * the indexer now, not creating its own data structures. Something like:
 	 * 
-	 * var location = file.toString();
-	 * var stems = FileStemmer.listStems(file);
+	 * var location = file.toString(); var stems = FileStemmer.listStems(file);
 	 * indexer.addCount(location, stems.size());
 	 * 
-	 * for (...) {
-	 *     ...
-	 *     indexer.addWord(stem, location, ...) 
-	 * }
+	 * for (...) { ... indexer.addWord(stem, location, ...) }
 	 */
 
 	/**
@@ -87,10 +86,8 @@ public class FileBuilder {
 					processDirectory(path, both);
 				} else {
 					String relativePath = directory.resolve(path.getFileName()).toString();
-
 					if (relativePath.toLowerCase().endsWith(".txt") || relativePath.toLowerCase().endsWith(".text")) {
 						processFile(Path.of(relativePath));
-
 						int totalWords = wordCounts.values().stream().mapToInt(Integer::intValue).sum();
 						if (totalWords > 0) {
 							indexer.getFileWordCounts().put(relativePath, totalWords);
