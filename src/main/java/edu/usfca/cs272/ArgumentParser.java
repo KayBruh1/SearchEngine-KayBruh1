@@ -197,11 +197,11 @@ public class ArgumentParser {
 	 * @see Integer#parseInt(String)
 	 */
 	public int getInteger(String flag, int backup) {
-	    try {
-	        return Integer.parseInt(map.getOrDefault(flag, String.valueOf(backup)));
-	    } catch (NumberFormatException e) {
-	        return backup;
-	    }
+		try {
+			return Integer.parseInt(map.getOrDefault(flag, String.valueOf(backup)));
+		} catch (NumberFormatException e) {
+			return backup;
+		}
 	}
 
 	/**
@@ -222,23 +222,5 @@ public class ArgumentParser {
 	@Override
 	public String toString() {
 		return this.map.toString();
-	}
-
-	/**
-	 * Demonstrates this class.
-	 *
-	 * @param args the arguments to test
-	 */
-	public static void main(String[] args) { // TODO Can delete these old main methods used for debugging at this point!
-		// Feel free to modify or delete this method for debugging
-		if (args.length < 1) {
-			args = new String[] { "-max", "false", "-min", "0", "-min", "-10", "hello", "-@debug", "-f", "output.txt",
-					"-verbose" };
-		}
-
-		// expected output:
-		// {-max=false, -min=-10, -verbose=null, -f=output.txt, -@debug=null}
-		ArgumentParser map = new ArgumentParser(args);
-		System.out.println(map);
 	}
 }
