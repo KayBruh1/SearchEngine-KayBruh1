@@ -196,15 +196,12 @@ public class ArgumentParser {
 	 *
 	 * @see Integer#parseInt(String)
 	 */
-	public int getInteger(String flag, int backup) { // TODO See comments from getPath, make approaches look similar!
-		if (map.containsKey(flag) && map.get(flag) != null) {
-			try {
-				return Integer.parseInt(map.get(flag));
-			} catch (Exception e) {
-				return backup;
-			}
-		}
-		return backup;
+	public int getInteger(String flag, int backup) {
+	    try {
+	        return Integer.parseInt(map.getOrDefault(flag, String.valueOf(backup)));
+	    } catch (NumberFormatException e) {
+	        return backup;
+	    }
 	}
 
 	/**
@@ -218,14 +215,8 @@ public class ArgumentParser {
 	 *
 	 * @see #getInteger(String, int)
 	 */
-	public int getInteger(String flag) { // TODO Reuse getInteger(String, Path)
-		if (map.containsKey(flag) && map.get(flag) != null) {
-			try {
-				return Integer.parseInt(map.get(flag));
-			} catch (Exception e) {
-			}
-		}
-		return 0;
+	public int getInteger(String flag) {
+		return getInteger(flag, 0);
 	}
 
 	@Override
