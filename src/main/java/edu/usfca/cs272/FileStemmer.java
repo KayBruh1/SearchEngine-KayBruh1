@@ -144,7 +144,7 @@ public class FileStemmer {
 		ArrayList<String> words = new ArrayList<>();
 		try (BufferedReader reader = Files.newBufferedReader(input)) {
 			String line;
-			SnowballStemmer stemmer = new SnowballStemmer(ALGORITHM.ENGLISH);
+			SnowballStemmer stemmer = new SnowballStemmer(ENGLISH);
 			while ((line = reader.readLine()) != null) {
 				String[] clean = parse(line);
 				for (String word : clean) {
@@ -205,21 +205,18 @@ public class FileStemmer {
 	 * @see StandardCharsets#UTF_8
 	 * @see #uniqueStems(String, Stemmer)
 	 */
-	public static TreeSet<String> uniqueStems(Path input) throws IOException { // TODO Same fixes required here too
+	public static TreeSet<String> uniqueStems(Path input) throws IOException {
 		TreeSet<String> unique = new TreeSet<>();
-		try (Scanner scanner = new Scanner(input)) {
-			while (scanner.hasNextLine()) {
-				String line = scanner.nextLine();
+		try (BufferedReader reader = Files.newBufferedReader(input)) {
+			String line;
+			SnowballStemmer stemmer = new SnowballStemmer(ENGLISH);
+			while ((line = reader.readLine()) != null) {
 				String[] clean = parse(line);
-				Stemmer stemmer = new SnowballStemmer(ENGLISH);
-
 				for (String word : clean) {
 					String stem = stemmer.stem(word).toString();
 					unique.add(stem);
 				}
 			}
-		} catch (Exception e) {
-			throw e;
 		}
 		return unique;
 	}
