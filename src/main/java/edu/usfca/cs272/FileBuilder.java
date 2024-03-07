@@ -15,7 +15,6 @@ import java.util.TreeSet;
  * and an inverted index to write to JSON file
  */
 public class FileBuilder {
-
 	/**
 	 * The InvertedIndex class used for storing word counts and the inverted index
 	 */
