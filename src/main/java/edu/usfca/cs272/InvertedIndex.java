@@ -63,7 +63,6 @@ public class InvertedIndex {
 	public int getCountSize() {
 		return counts.size();
 	}
-	
 
 	/**
 	 * Looks for a word in the inverted index
@@ -71,14 +70,23 @@ public class InvertedIndex {
 	 * @param word The word to add
 	 * @return The findings of the word
 	 */
-    public Map<String, TreeSet<Integer>> getWordInfo(String word) {
-        TreeMap<String, TreeSet<Integer>> wordMap = invertedIndex.get(word);
-        if (wordMap != null) {
-            return Collections.unmodifiableMap(new TreeMap<>(wordMap));
-        } else {
-            return Collections.emptyMap();
-        }
-    }
+	public Map<String, TreeSet<Integer>> getWordInfo(String word) {
+		TreeMap<String, TreeSet<Integer>> wordMap = invertedIndex.get(word);
+		if (wordMap != null) {
+			return Collections.unmodifiableMap(new TreeMap<>(wordMap));
+		} else {
+			return Collections.emptyMap();
+		}
+	}
+
+	public Map<String, TreeSet<Integer>> getLocationInfo(String word) {
+		TreeMap<String, TreeSet<Integer>> locationInfo = invertedIndex.get(word);
+		if (locationInfo != null) {
+			return Collections.unmodifiableMap(new TreeMap<>(locationInfo));
+		} else {
+			return Collections.emptyMap();
+		}
+	}
 
 	/**
 	 * Adds the word count for a file to the inverted index
@@ -100,18 +108,18 @@ public class InvertedIndex {
 	 * @param position The position of the word in the file
 	 */
 	public void addWord(String word, String location, TreeSet<Integer> positions) {
-	    TreeMap<String, TreeSet<Integer>> fileMap = invertedIndex.get(word);
-	    if (fileMap == null) {
-	        fileMap = new TreeMap<>();
-	        invertedIndex.put(word, fileMap);
-	    }
+		TreeMap<String, TreeSet<Integer>> fileMap = invertedIndex.get(word);
+		if (fileMap == null) {
+			fileMap = new TreeMap<>();
+			invertedIndex.put(word, fileMap);
+		}
 
-	    TreeSet<Integer> current = fileMap.get(location);
-	    if (current == null) {
-	        current = new TreeSet<>();
-	        fileMap.put(location, current);
-	    }
-	    current.addAll(positions);
+		TreeSet<Integer> current = fileMap.get(location);
+		if (current == null) {
+			current = new TreeSet<>();
+			fileMap.put(location, current);
+		}
+		current.addAll(positions);
 	}
 
 	public void addWordCounts(String location, HashMap<String, Integer> wordCounts) {
@@ -131,31 +139,31 @@ public class InvertedIndex {
 			}
 		}
 	}
-	
-    public Map<String, Integer> viewCounts() {
-        return Collections.unmodifiableMap(counts);
-    }
-    
-    public Map<String, TreeMap<String, TreeSet<Integer>>> viewIndex() {
-        return Collections.unmodifiableMap(invertedIndex);
-    }
-    
-    public Map<String, TreeSet<Integer>> viewWords(String location) {
-        TreeMap<String, TreeSet<Integer>> wordPositions = invertedIndex.getOrDefault(location, new TreeMap<>());
-        return Collections.unmodifiableMap(wordPositions);
-    }
-    
-    public Map<String, TreeSet<Integer>> viewLocations(String word) {
-        return Collections.unmodifiableMap(invertedIndex.getOrDefault(word, new TreeMap<>()));
-    }
-    
-    public boolean hasLocation(String location) {
-        return counts.containsKey(location);
-    }
-    
-    public boolean hasWord(String word) {
-        return invertedIndex.containsKey(word);
-    }
+
+	public Map<String, Integer> viewCounts() {
+		return Collections.unmodifiableMap(counts);
+	}
+
+	public Map<String, TreeMap<String, TreeSet<Integer>>> viewIndex() {
+		return Collections.unmodifiableMap(invertedIndex);
+	}
+
+	public Map<String, TreeSet<Integer>> viewWords(String location) {
+		TreeMap<String, TreeSet<Integer>> wordPositions = invertedIndex.getOrDefault(location, new TreeMap<>());
+		return Collections.unmodifiableMap(wordPositions);
+	}
+
+	public Map<String, TreeSet<Integer>> viewLocations(String word) {
+		return Collections.unmodifiableMap(invertedIndex.getOrDefault(word, new TreeMap<>()));
+	}
+
+	public boolean hasLocation(String location) {
+		return counts.containsKey(location);
+	}
+
+	public boolean hasWord(String word) {
+		return invertedIndex.containsKey(word);
+	}
 
 	/*
 	 * TODO Still missing many methods. Try to make:
