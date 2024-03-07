@@ -233,21 +233,21 @@ public class FileStemmer {
 	 * @see StandardCharsets#UTF_8
 	 * @see #uniqueStems(String, Stemmer)
 	 */
-	public static ArrayList<TreeSet<String>> listUniqueStems(Path input) throws IOException { // TODO And here
-        ArrayList<TreeSet<String>> words = new ArrayList<>();
-        try (BufferedReader reader = Files.newBufferedReader(input)) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                TreeSet<String> unique = new TreeSet<>();
-                String[] clean = parse(line);
-                SnowballStemmer stemmer = new SnowballStemmer(ENGLISH);
-                for (String word : clean) {
-                    String stem = stemmer.stem(word).toString();
-                    unique.add(stem);
-                }
-                words.add(unique);
-            }
-        }
-        return words;
+	public static ArrayList<TreeSet<String>> listUniqueStems(Path input) throws IOException {
+		ArrayList<TreeSet<String>> words = new ArrayList<>();
+		try (BufferedReader reader = Files.newBufferedReader(input)) {
+			SnowballStemmer stemmer = new SnowballStemmer(ENGLISH);
+			String line;
+			while ((line = reader.readLine()) != null) {
+				TreeSet<String> unique = new TreeSet<>();
+				String[] clean = parse(line);
+				for (String word : clean) {
+					String stem = stemmer.stem(word).toString();
+					unique.add(stem);
+				}
+				words.add(unique);
+			}
+		}
+		return words;
 	}
 }
