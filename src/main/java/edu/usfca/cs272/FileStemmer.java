@@ -117,8 +117,8 @@ public class FileStemmer {
 	 * @see #listStems(String, Stemmer)
 	 */
 	public static ArrayList<String> listStems(String line) {
-	    Stemmer stemmer = new SnowballStemmer(ENGLISH);
-	    return listStems(line, stemmer);
+		Stemmer stemmer = new SnowballStemmer(ENGLISH);
+		return listStems(line, stemmer);
 
 	}
 

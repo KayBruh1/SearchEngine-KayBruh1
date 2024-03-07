@@ -226,11 +226,6 @@ public class JsonWriter {
 		}
 	}
 
-	/*
-	 * TODO Reorder the methods here using the Outline view in Eclipse so that
-	 * overloaded methods with the same name are grouped together.
-	 */
-
 	/**
 	 * Writes the elements as a pretty JSON object with nested arrays. The generic
 	 * notation used allows this method to be used for any type of map with any type
