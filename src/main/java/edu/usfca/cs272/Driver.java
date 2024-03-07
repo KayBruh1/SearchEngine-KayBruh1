@@ -1,6 +1,5 @@
 package edu.usfca.cs272;
 
-import java.io.IOException;
 import java.nio.file.Path;
 
 /**
@@ -31,7 +30,7 @@ public class Driver {
 			inputPath = parser.getPath("-text");
 			try {
 				fileBuilder.buildStructures(inputPath);
-			} catch (IOException e) {
+			} catch (Exception e) {
 				System.out.println("Error building the structures " + inputPath);
 			}
 		}
