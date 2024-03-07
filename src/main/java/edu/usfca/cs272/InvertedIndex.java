@@ -103,13 +103,12 @@ public class InvertedIndex {
 	 * @param location The path of the file
 	 * @param position The position of the word in the file
 	 */
-	public void addWord(String word, String location, Integer position) {
-		invertedIndex.putIfAbsent(word, new TreeMap<>());
-		TreeMap<String, TreeSet<Integer>> wordMap = invertedIndex.get(word);
-		wordMap.putIfAbsent(location, new TreeSet<>());
-		TreeSet<Integer> wordPosition = wordMap.get(location);
-		wordPosition.add(position);
-		
+	public void addWord(String word, String location, TreeSet<Integer> positions) {
+	    invertedIndex.putIfAbsent(word, new TreeMap<>());
+	    TreeMap<String, TreeSet<Integer>> fileMap = invertedIndex.get(word);
+	    fileMap.putIfAbsent(location, new TreeSet<>());
+	    TreeSet<Integer> current = fileMap.get(location);
+	    current.addAll(positions);
 		/*
 		 * TODO If you are interested in making this more efficient, there is a
 		 * better way than using putIfAbsent. Otherwise, try to make this as compact
@@ -209,7 +208,7 @@ public class InvertedIndex {
 			FileBuilder fileBuilder = new FileBuilder(indexer);
 			;
 			if (Files.isDirectory(inputPath)) {
-				fileBuilder.processDirectory(inputPath, true);
+				fileBuilder.processDirectory(inputPath);
 			}
 			JsonWriter.writeIndex(invertedIndex, writer, 0);
 		}
