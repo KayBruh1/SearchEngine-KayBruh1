@@ -39,7 +39,7 @@ public class Driver {
 		if (parser.hasFlag("-counts")) {
 			countsPath = parser.getString("-counts", ("counts.json"));
 			try {
-				indexer.writeCounts(inputPath, countsPath);
+				indexer.writeCounts(countsPath);
 			} catch (Exception e) {
 				System.out.println("Error building the file word counts " + inputPath);
 			}

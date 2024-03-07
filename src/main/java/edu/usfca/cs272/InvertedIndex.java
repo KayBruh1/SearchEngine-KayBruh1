@@ -173,19 +173,8 @@ public class InvertedIndex {
 	 * @param countsPath the output path of the JSON file
 	 * @throws IOException if an I/O error occurs
 	 */
-	public void writeCounts(Path inputPath, String countsPath) throws IOException {
-		// TODO Should only need to call 1 JsonWriter method here with nothing else
-		// TODO Let exceptions happen if the parameter is an issue
-		// TODO JsonWriter.writeObject(fileWordCounts, output);
-		
-		if (inputPath != null && Files.isDirectory(inputPath)) {
-			JsonWriter.writeObject(counts, Path.of(countsPath));
-		} else if (inputPath != null) {
-			outputWordCounts(counts, inputPath.toString(), countsPath);
-		} else {
-			counts.put("No input provided", 0);
-			JsonWriter.writeObject(counts, Path.of(countsPath));
-		}
+	public void writeCounts(String countsPath) throws IOException {
+		JsonWriter.writeObject(counts, Path.of(countsPath));
 	}
 
 	/*
@@ -208,34 +197,6 @@ public class InvertedIndex {
 				fileBuilder.processDirectory(inputPath);
 			}
 			JsonWriter.writeIndex(invertedIndex, writer, 0);
-		}
-	}
-
-	// TODO Remove this one, should not be needed anymore
-	/**
-	 * Outputs word counts to a JSON file
-	 *
-	 * @param wordCounts The word counts map to write to file
-	 * @param inputPath  The input path of the file
-	 * @param outputPath The output path of the JSON file
-	 * @throws IOException If an I/O error occurs
-	 */
-	public void outputWordCounts(TreeMap<String, Integer> wordCounts, String inputPath, String outputPath)
-			throws IOException {
-		if (wordCounts.isEmpty()) {
-			HashMap<String, Integer> pathWordCount = new HashMap<>();
-
-			JsonWriter.writeObject(pathWordCount, Path.of(outputPath));
-		} else {
-			HashMap<String, Integer> pathWordCount = new HashMap<>();
-			int totalWords = 0;
-
-			for (int count : wordCounts.values()) {
-				totalWords += count;
-			}
-			pathWordCount.put(inputPath, totalWords);
-
-			JsonWriter.writeObject(pathWordCount, Path.of(outputPath));
 		}
 	}
 }
