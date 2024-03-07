@@ -115,7 +115,13 @@ public class FileBuilder {
 		}
 	}
 
-	private boolean isTextFile(Path file) {
+	/**
+	 * Determines if given a valid file
+	 * 
+	 * @param file The file to be checked
+	 * @return True for a valid file, false otherwise
+	 */
+	private static boolean isTextFile(Path file) {
 		String fileName = file.getFileName().toString().toLowerCase();
 		return Files.isRegularFile(file) && (fileName.endsWith(".txt") || fileName.endsWith(".text"));
 	}
