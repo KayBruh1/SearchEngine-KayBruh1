@@ -180,11 +180,8 @@ public class FileStemmer {
 	 * @see #uniqueStems(String, Stemmer)
 	 */
 	public static TreeSet<String> uniqueStems(String line) {
-		// TODO Figure out how to reuse uniqueStems(line, stemmer) here
-		TreeSet<String> unique = new TreeSet<>();
 		Stemmer stemmer = new SnowballStemmer(ENGLISH);
-		addStems(line, stemmer, unique);
-		return unique;
+		return uniqueStems(line, stemmer);
 	}
 
 	/**
