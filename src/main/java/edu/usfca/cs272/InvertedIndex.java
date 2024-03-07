@@ -170,6 +170,11 @@ public class InvertedIndex {
 		return Collections.unmodifiableMap(counts);
 	}
 
+	/**
+	 * Returns an unmodifiable view of the inverted index
+	 *
+	 * @return an unmodifiable view of the inverted index
+	 */
 	public Map<String, TreeMap<String, TreeSet<Integer>>> viewIndex() {
 		return Collections.unmodifiableMap(invertedIndex);
 	}
