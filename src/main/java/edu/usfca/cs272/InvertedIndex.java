@@ -100,16 +100,18 @@ public class InvertedIndex {
 	 * @param position The position of the word in the file
 	 */
 	public void addWord(String word, String location, TreeSet<Integer> positions) {
-		invertedIndex.putIfAbsent(word, new TreeMap<>());
-		TreeMap<String, TreeSet<Integer>> fileMap = invertedIndex.get(word);
-		fileMap.putIfAbsent(location, new TreeSet<>());
-		TreeSet<Integer> current = fileMap.get(location);
-		current.addAll(positions);
-		/*
-		 * TODO If you are interested in making this more efficient, there is a better
-		 * way than using putIfAbsent. Otherwise, try to make this as compact as
-		 * possible. (Choose one to be more important than the other in this class.)
-		 */
+	    TreeMap<String, TreeSet<Integer>> fileMap = invertedIndex.get(word);
+	    if (fileMap == null) {
+	        fileMap = new TreeMap<>();
+	        invertedIndex.put(word, fileMap);
+	    }
+
+	    TreeSet<Integer> current = fileMap.get(location);
+	    if (current == null) {
+	        current = new TreeSet<>();
+	        fileMap.put(location, current);
+	    }
+	    current.addAll(positions);
 	}
 
 	public void addWordCounts(String location, HashMap<String, Integer> wordCounts) {
