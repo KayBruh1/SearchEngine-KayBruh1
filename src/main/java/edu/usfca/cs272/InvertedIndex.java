@@ -136,6 +136,10 @@ public class InvertedIndex {
         return Collections.unmodifiableMap(counts);
     }
     
+    public Map<String, TreeMap<String, TreeSet<Integer>>> viewIndex() {
+        return Collections.unmodifiableMap(invertedIndex);
+    }
+    
     public Map<String, TreeSet<Integer>> viewWords(String location) {
         TreeMap<String, TreeSet<Integer>> wordPositions = invertedIndex.getOrDefault(location, new TreeMap<>());
         return Collections.unmodifiableMap(wordPositions);
