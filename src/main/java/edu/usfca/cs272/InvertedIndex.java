@@ -148,6 +148,10 @@ public class InvertedIndex {
     public Map<String, TreeSet<Integer>> viewLocations(String word) {
         return Collections.unmodifiableMap(invertedIndex.getOrDefault(word, new TreeMap<>()));
     }
+    
+    public boolean hasWord(String word) {
+        return invertedIndex.containsKey(word);
+    }
 
 	/*
 	 * TODO Still missing many methods. Try to make:
