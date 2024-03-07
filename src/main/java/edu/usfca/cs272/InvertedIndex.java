@@ -143,8 +143,7 @@ public class InvertedIndex {
 	}
 
 	/**
-	 * Adds to the inverted index for a given file location to the overall inverted
-	 * index.
+	 * Adds to the inverted index for a given file location
 	 *
 	 * @param location      The path of the file to be added
 	 * @param invertedIndex The inverted index map containing words to file
@@ -162,6 +161,11 @@ public class InvertedIndex {
 		}
 	}
 
+	/**
+	 * Returns an unmodifiable view of the word counts
+	 *
+	 * @return an unmodifiable view of the word counts
+	 */
 	public Map<String, Integer> viewCounts() {
 		return Collections.unmodifiableMap(counts);
 	}
