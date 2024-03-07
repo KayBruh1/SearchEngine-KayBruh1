@@ -25,7 +25,7 @@ public class InvertedIndex {
 	 */
 	
 	/** TreeMap storing word counts for each file */
-	private TreeMap<String, Integer> fileWordCounts; // TODO Call just counts or wordCounts? We won't always work with files
+	private TreeMap<String, Integer> counts; 
 
 	/** TreeMap storing inverted index for files and word positions */
 	private TreeMap<String, TreeMap<String, TreeSet<Integer>>> invertedIndex;
@@ -34,7 +34,7 @@ public class InvertedIndex {
 	 * Constructs a new InvertedIndex for fileWordCounts and invertedIndex
 	 */
 	public InvertedIndex() {
-		this.fileWordCounts = new TreeMap<>();
+		this.counts = new TreeMap<>();
 		this.invertedIndex = new TreeMap<>();
 	}
 
@@ -50,7 +50,7 @@ public class InvertedIndex {
 	 * @return the TreeMap containing file word counts
 	 */
 	public TreeMap<String, Integer> getFileWordCounts() {
-		return fileWordCounts;
+		return counts;
 	}
 
 	/**
@@ -62,29 +62,6 @@ public class InvertedIndex {
 		return invertedIndex;
 	}
 
-	/*
-	 * TODO Remove these set methods---it will allow for invalid data to be placed
-	 * into our data structure and break encapsulation.
-	 */
-	
-	/**
-	 * Sets the TreeMap storing the word counts for each file
-	 *
-	 * @param fileWordCounts the TreeMap storing the word counts
-	 */
-	public void setFileWordCounts(TreeMap<String, Integer> fileWordCounts) {
-		this.fileWordCounts = fileWordCounts;
-	}
-
-	/**
-	 * Sets the TreeMap storing the inverted index
-	 *
-	 * @param invertedIndex the TreeMap storing the inverted index
-	 */
-	public void setInvertedIndex(TreeMap<String, TreeMap<String, TreeSet<Integer>>> invertedIndex) {
-		this.invertedIndex = invertedIndex;
-	}
-
 	/**
 	 * Adds the word count for a file to the inverted index
 	 *
@@ -93,7 +70,7 @@ public class InvertedIndex {
 	 */
 	public void addWordCount(String location, Integer count) {
 		if (count > 0) {
-			fileWordCounts.put(location, count);
+			counts.put(location, count);
 		}
 	}
 
@@ -118,9 +95,9 @@ public class InvertedIndex {
 	}
 	
 	public void addWordCounts(String location, HashMap<String, Integer> wordCounts) {
-	    int totalCount = fileWordCounts.getOrDefault(location, 0);
+	    int totalCount = counts.getOrDefault(location, 0);
 	    int newCount = wordCounts.values().stream().mapToInt(Integer::intValue).sum();
-	    fileWordCounts.put(location, totalCount + newCount);
+	    counts.put(location, totalCount + newCount);
 	}
 
 
@@ -165,7 +142,7 @@ public class InvertedIndex {
 	 * @return The number of files
 	 */
 	public int getFileCount() { // TODO getCountSize
-		return fileWordCounts.size();
+		return counts.size();
 	}
 	
 	/*
@@ -202,12 +179,12 @@ public class InvertedIndex {
 		// TODO JsonWriter.writeObject(fileWordCounts, output);
 		
 		if (inputPath != null && Files.isDirectory(inputPath)) {
-			JsonWriter.writeObject(fileWordCounts, Path.of(countsPath));
+			JsonWriter.writeObject(counts, Path.of(countsPath));
 		} else if (inputPath != null) {
-			outputWordCounts(fileWordCounts, inputPath.toString(), countsPath);
+			outputWordCounts(counts, inputPath.toString(), countsPath);
 		} else {
-			fileWordCounts.put("No input provided", 0);
-			JsonWriter.writeObject(fileWordCounts, Path.of(countsPath));
+			counts.put("No input provided", 0);
+			JsonWriter.writeObject(counts, Path.of(countsPath));
 		}
 	}
 
