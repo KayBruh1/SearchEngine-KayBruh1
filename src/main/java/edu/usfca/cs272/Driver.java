@@ -48,7 +48,7 @@ public class Driver {
 		if (parser.hasFlag("-index")) {
 			indexPath = parser.getString("-index", ("index.json"));
 			try {
-				indexer.writeIndex(inputPath, indexPath, indexer);
+				indexer.writeIndex(indexPath);
 			} catch (Exception e) {
 				System.out.println("Error building the inverted index " + inputPath);
 			}

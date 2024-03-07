@@ -1,9 +1,6 @@
 package edu.usfca.cs272;
 
-import java.io.BufferedWriter;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -19,13 +16,12 @@ import java.util.TreeSet;
  */
 public class InvertedIndex {
 	/*
-	 * TODO Can use either the static -or- final keywords on the two private
-	 * members below without having to change any other code. Which one should
-	 * you use?
+	 * TODO Can use either the static -or- final keywords on the two private members
+	 * below without having to change any other code. Which one should you use?
 	 */
-	
+
 	/** TreeMap storing word counts for each file */
-	private TreeMap<String, Integer> counts; 
+	private TreeMap<String, Integer> counts;
 
 	/** TreeMap storing inverted index for files and word positions */
 	private TreeMap<String, TreeMap<String, TreeSet<Integer>>> invertedIndex;
@@ -43,7 +39,7 @@ public class InvertedIndex {
 	 * this problem. The PrefixMap example from the lectures illustrates how to fix
 	 * this problem efficiently.
 	 */
-	
+
 	/**
 	 * Returns the file word counts
 	 *
@@ -82,35 +78,34 @@ public class InvertedIndex {
 	 * @param position The position of the word in the file
 	 */
 	public void addWord(String word, String location, TreeSet<Integer> positions) {
-	    invertedIndex.putIfAbsent(word, new TreeMap<>());
-	    TreeMap<String, TreeSet<Integer>> fileMap = invertedIndex.get(word);
-	    fileMap.putIfAbsent(location, new TreeSet<>());
-	    TreeSet<Integer> current = fileMap.get(location);
-	    current.addAll(positions);
+		invertedIndex.putIfAbsent(word, new TreeMap<>());
+		TreeMap<String, TreeSet<Integer>> fileMap = invertedIndex.get(word);
+		fileMap.putIfAbsent(location, new TreeSet<>());
+		TreeSet<Integer> current = fileMap.get(location);
+		current.addAll(positions);
 		/*
-		 * TODO If you are interested in making this more efficient, there is a
-		 * better way than using putIfAbsent. Otherwise, try to make this as compact
-		 * as possible. (Choose one to be more important than the other in this class.)
+		 * TODO If you are interested in making this more efficient, there is a better
+		 * way than using putIfAbsent. Otherwise, try to make this as compact as
+		 * possible. (Choose one to be more important than the other in this class.)
 		 */
 	}
-	
+
 	public void addWordCounts(String location, HashMap<String, Integer> wordCounts) {
-	    int totalCount = counts.getOrDefault(location, 0);
-	    int newCount = wordCounts.values().stream().mapToInt(Integer::intValue).sum();
-	    counts.put(location, totalCount + newCount);
+		int totalCount = counts.getOrDefault(location, 0);
+		int newCount = wordCounts.values().stream().mapToInt(Integer::intValue).sum();
+		counts.put(location, totalCount + newCount);
 	}
 
-
 	public void addInvertedIndex(String location, TreeMap<String, TreeMap<String, TreeSet<Integer>>> invertedIndex) {
-	    for (Map.Entry<String, TreeMap<String, TreeSet<Integer>>> entry : invertedIndex.entrySet()) {
-	        String word = entry.getKey();
-	        TreeMap<String, TreeSet<Integer>> fileMap = entry.getValue();
-	        for (Map.Entry<String, TreeSet<Integer>> fileEntry : fileMap.entrySet()) {
-	            String fileLocation = fileEntry.getKey();
-	            TreeSet<Integer> positions = fileEntry.getValue();
-	            addWord(word, fileLocation, positions);
-	        }
-	    }
+		for (Map.Entry<String, TreeMap<String, TreeSet<Integer>>> entry : invertedIndex.entrySet()) {
+			String word = entry.getKey();
+			TreeMap<String, TreeSet<Integer>> fileMap = entry.getValue();
+			for (Map.Entry<String, TreeSet<Integer>> fileEntry : fileMap.entrySet()) {
+				String fileLocation = fileEntry.getKey();
+				TreeSet<Integer> positions = fileEntry.getValue();
+				addWord(word, fileLocation, positions);
+			}
+		}
 	}
 
 	/**
@@ -119,7 +114,9 @@ public class InvertedIndex {
 	 * @param word The word to add
 	 * @return The findings of the word
 	 */
-	public List<String> findWord(String word) { // TODO Looks like a get method, not a find method? Not efficient way of doing this (copying from one type to the other). See PrefixMap for a better approach!
+	public List<String> findWord(String word) { // TODO Looks like a get method, not a find method? Not efficient way of
+												// doing this (copying from one type to the other). See PrefixMap for a
+												// better approach!
 		if (invertedIndex.containsKey(word)) {
 			TreeMap<String, TreeSet<Integer>> wordMap = invertedIndex.get(word);
 			return new ArrayList<>(wordMap.keySet());
@@ -144,25 +141,22 @@ public class InvertedIndex {
 	public int getFileCount() { // TODO getCountSize
 		return counts.size();
 	}
-	
+
 	/*
 	 * TODO Still missing many methods. Try to make:
 	 * 
-	 * get or view methods, viewCounts, viewWords, viewLocations, etc.
-	 * has or contains methods, hasWord, etc.
-	 * num or size methods, numWords, etc.
+	 * get or view methods, viewCounts, viewWords, viewLocations, etc. has or
+	 * contains methods, hasWord, etc. num or size methods, numWords, etc.
 	 * 
-	 * (each of the above usually has the same number of methods to make sure
-	 * all data is safely accessible)
+	 * (each of the above usually has the same number of methods to make sure all
+	 * data is safely accessible)
 	 * 
-	 * toString
-	 * addAll
-	 * etc.
+	 * toString addAll etc.
 	 */
 
 	/*
-	 * TODO This method should take ONLY the file PATH to produce the output
-	 * (to avoid too much string to path to string conversion back and forth)
+	 * TODO This method should take ONLY the file PATH to produce the output (to
+	 * avoid too much string to path to string conversion back and forth)
 	 * 
 	 * writeCounts(Path output) throws IOException
 	 */
@@ -177,10 +171,6 @@ public class InvertedIndex {
 		JsonWriter.writeObject(counts, Path.of(countsPath));
 	}
 
-	/*
-	 * TODO Same as writeCounts, should only need 1 output Path parameter
-	 * and 1 JsonWriter call (should create the bufferd writer in JsonWriter)
-	 */
 	/**
 	 * Writes the inverted index to a JSON file
 	 *
@@ -189,14 +179,7 @@ public class InvertedIndex {
 	 * @param indexer   the InvertedIndex object
 	 * @throws IOException if an I/O error occurs
 	 */
-	public void writeIndex(Path inputPath, String indexPath, InvertedIndex indexer) throws IOException {
-		try (BufferedWriter writer = Files.newBufferedWriter(Path.of(indexPath), StandardCharsets.UTF_8)) {
-			FileBuilder fileBuilder = new FileBuilder(indexer);
-			;
-			if (Files.isDirectory(inputPath)) {
-				fileBuilder.processDirectory(inputPath);
-			}
-			JsonWriter.writeIndex(invertedIndex, writer, 0);
-		}
+	public void writeIndex(String indexPath) throws IOException {
+		JsonWriter.writeIndex(invertedIndex, indexPath, 0);
 	}
 }
