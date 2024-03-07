@@ -200,6 +200,12 @@ public class InvertedIndex {
 		return Collections.unmodifiableMap(invertedIndex.getOrDefault(word, new TreeMap<>()));
 	}
 
+	/**
+	 * Checks if the location exists in the word counts
+	 *
+	 * @param location The location to check
+	 * @return True if the location exists, false otherwise
+	 */
 	public boolean hasLocation(String location) {
 		return counts.containsKey(location);
 	}
