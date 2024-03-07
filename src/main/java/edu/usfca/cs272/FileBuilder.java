@@ -46,37 +46,18 @@ public class FileBuilder {
 	 * @throws IOException If an I/O error occurs
 	 */
 	public void buildStructures(Path inputPath) throws IOException {
-		if (inputPath != null && Files.isDirectory(inputPath)) { // TODO Remove null check, an exception SHOULD happen
-																	// if values are null
+		if (Files.isDirectory(inputPath)) {
 			processDirectory(inputPath);
 		} else {
 			processFile(inputPath);
 		}
 	}
 
-	/*
-	 * TODO There is still a bit more complexity in here than recommended last time:
-	 * https://github.com/usf-cs272-spring2024/project-KayBruh1/blob/
-	 * 497875dba651eba029bc70ec23a5d7d3882cf766/src/main/java/edu/usfca/cs272/
-	 * FileBuilder.java#L21-L37
-	 * 
-	 * There should NOT be separate steps for processing the index or the counts.
-	 * Both should always be done. So processIndexFiles, processCountFiles, and
-	 * processFile all need to be combined into 1 method. And it needs to work with
-	 * the indexer now, not creating its own data structures. Something like:
-	 * 
-	 * var location = file.toString(); var stems = FileStemmer.listStems(file);
-	 * indexer.addCount(location, stems.size());
-	 * 
-	 * for (...) { ... indexer.addWord(stem, location, ...) }
-	 */
-
 	/**
 	 * Processes the files in the specified directory to generate word counts and
 	 * the inverted index
 	 *
 	 * @param directory The directory to process
-	 * @param both      A boolean indicating whether to build both structures
 	 * @throws IOException If an I/O error occurs
 	 */
 	public void processDirectory(Path directory) throws IOException {
@@ -85,16 +66,22 @@ public class FileBuilder {
 				if (Files.isDirectory(path)) {
 					processDirectory(path);
 				} else {
-					processFile(path);
+					if (isTextFile(path)) {
+						processFile(path);
+					}
 				}
 			}
 		}
 	}
 
+	/**
+	 * Processes the specified file to generate word counts and an inverted index
+	 *
+	 * @param location The path of the file to process
+	 * @throws IOException If an I/O error occurs
+	 */
 	public void processFile(Path location) throws IOException {
-		String fileName = location.getFileName().toString();
-		if ((fileName.toLowerCase().endsWith(".txt") || fileName.toLowerCase().endsWith(".text"))
-				&& Files.size(location) > 0) {
+		if (Files.size(location) > 0) {
 			List<String> lines = Files.readAllLines(location);
 			HashMap<String, Integer> wordCounts = new HashMap<>();
 			TreeMap<String, TreeSet<Integer>> invertedIndex = new TreeMap<>();
@@ -127,5 +114,10 @@ public class FileBuilder {
 			indexer.addWordCounts(location.toString(), wordCounts);
 			indexer.addInvertedIndex(location.toString(), index);
 		}
+	}
+
+	private boolean isTextFile(Path file) {
+		String fileName = file.getFileName().toString().toLowerCase();
+		return Files.isRegularFile(file) && (fileName.endsWith(".txt") || fileName.endsWith(".text"));
 	}
 }
