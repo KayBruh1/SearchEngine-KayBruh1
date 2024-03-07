@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -29,19 +30,13 @@ public class InvertedIndex {
 		this.invertedIndex = new TreeMap<>();
 	}
 
-	/*
-	 * TODO The get methods here are breaking encapsulation. It is now time to fix
-	 * this problem. The PrefixMap example from the lectures illustrates how to fix
-	 * this problem efficiently.
-	 */
-
 	/**
 	 * Returns the file word counts
 	 *
 	 * @return the TreeMap containing file word counts
 	 */
-	public TreeMap<String, Integer> getWordCounts() {
-		return counts;
+	public SortedMap<String, Integer> getWordCounts() {
+		return Collections.unmodifiableSortedMap(counts);
 	}
 
 	/**
@@ -49,8 +44,26 @@ public class InvertedIndex {
 	 *
 	 * @return the TreeMap containing the inverted index
 	 */
-	public TreeMap<String, TreeMap<String, TreeSet<Integer>>> getInvertedIndex() {
-		return invertedIndex;
+	public SortedMap<String, TreeMap<String, TreeSet<Integer>>> getInvertedIndex() {
+		return Collections.unmodifiableSortedMap(invertedIndex);
+	}
+
+	/**
+	 * Finds the amount of different words
+	 * 
+	 * @return The number of words
+	 */
+	public int getIndexSize() {
+		return invertedIndex.size();
+	}
+
+	/**
+	 * Finds the amount of different files
+	 * 
+	 * @return The number of files
+	 */
+	public int getCountSize() {
+		return counts.size();
 	}
 
 	/**
@@ -117,24 +130,6 @@ public class InvertedIndex {
 			return new ArrayList<>(wordMap.keySet());
 		}
 		return Collections.emptyList();
-	}
-
-	/**
-	 * Finds the amount of different words
-	 * 
-	 * @return The number of words
-	 */
-	public int getIndexSize() {
-		return invertedIndex.size();
-	}
-
-	/**
-	 * Finds the amount of different files
-	 * 
-	 * @return The number of files
-	 */
-	public int getCountSize() {
-		return counts.size();
 	}
 
 	/*
