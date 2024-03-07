@@ -149,6 +149,10 @@ public class InvertedIndex {
         return Collections.unmodifiableMap(invertedIndex.getOrDefault(word, new TreeMap<>()));
     }
     
+    public boolean hasLocation(String location) {
+        return counts.containsKey(location);
+    }
+    
     public boolean hasWord(String word) {
         return invertedIndex.containsKey(word);
     }
