@@ -140,6 +140,10 @@ public class InvertedIndex {
         TreeMap<String, TreeSet<Integer>> wordPositions = invertedIndex.getOrDefault(location, new TreeMap<>());
         return Collections.unmodifiableMap(wordPositions);
     }
+    
+    public Map<String, TreeSet<Integer>> viewLocations(String word) {
+        return Collections.unmodifiableMap(invertedIndex.getOrDefault(word, new TreeMap<>()));
+    }
 
 	/*
 	 * TODO Still missing many methods. Try to make:
