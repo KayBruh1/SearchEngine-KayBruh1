@@ -201,7 +201,7 @@ public class InvertedIndex {
 	}
 
 	/**
-	 * Checks if the location exists in the word counts
+	 * Check if the location exists in the word counts
 	 *
 	 * @param location The location to check
 	 * @return True if the location exists, false otherwise
@@ -210,6 +210,12 @@ public class InvertedIndex {
 		return counts.containsKey(location);
 	}
 
+	/**
+	 * Check if the word exists in the inverted index
+	 *
+	 * @param word The word to check
+	 * @return True if the word exists, false otherwise
+	 */
 	public boolean hasWord(String word) {
 		return invertedIndex.containsKey(word);
 	}
