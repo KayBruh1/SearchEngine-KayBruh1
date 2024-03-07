@@ -400,7 +400,7 @@ public class JsonWriter {
 	 * Writes the inverted index as a pretty JSON object
 	 *
 	 * @param invertedIndex the inverted index to write
-	 * @param indexPath path of the index file
+	 * @param indexPath     path of the index file
 	 * @param indent        the initial indentation level for the JSON output
 	 * @throws IOException if an I/O error occurs while writing
 	 */
@@ -426,11 +426,12 @@ public class JsonWriter {
 	}
 
 	/**
-	 * Writes a single entry (word and its corresponding file positions) to the JSON file.
+	 * Writes a single entry (word and its corresponding file positions) to the JSON
+	 * file.
 	 *
-	 * @param entry   the entry for a word and its file positions
-	 * @param writer  the BufferedWriter to write to the JSON file
-	 * @param indent  the initial indentation level for the JSON output
+	 * @param entry  the entry for a word and its file positions
+	 * @param writer the BufferedWriter to write to the JSON file
+	 * @param indent the initial indentation level for the JSON output
 	 * @throws IOException If an I/O error occurs while writing
 	 */
 	private static void writeEntry(Map.Entry<String, ? extends Map<String, ? extends TreeSet<Integer>>> entry,
