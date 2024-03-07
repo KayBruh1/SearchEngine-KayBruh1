@@ -15,16 +15,11 @@ import java.util.TreeSet;
  * JSON file, and write *
  */
 public class InvertedIndex {
-	/*
-	 * TODO Can use either the static -or- final keywords on the two private members
-	 * below without having to change any other code. Which one should you use?
-	 */
-
 	/** TreeMap storing word counts for each file */
-	private TreeMap<String, Integer> counts;
+	private final TreeMap<String, Integer> counts;
 
 	/** TreeMap storing inverted index for files and word positions */
-	private TreeMap<String, TreeMap<String, TreeSet<Integer>>> invertedIndex;
+	private final TreeMap<String, TreeMap<String, TreeSet<Integer>>> invertedIndex;
 
 	/**
 	 * Constructs a new InvertedIndex for fileWordCounts and invertedIndex
@@ -45,7 +40,7 @@ public class InvertedIndex {
 	 *
 	 * @return the TreeMap containing file word counts
 	 */
-	public TreeMap<String, Integer> getFileWordCounts() {
+	public TreeMap<String, Integer> getWordCounts() {
 		return counts;
 	}
 
@@ -138,7 +133,7 @@ public class InvertedIndex {
 	 * 
 	 * @return The number of files
 	 */
-	public int getFileCount() { // TODO getCountSize
+	public int getCountSize() {
 		return counts.size();
 	}
 
@@ -154,12 +149,6 @@ public class InvertedIndex {
 	 * toString addAll etc.
 	 */
 
-	/*
-	 * TODO This method should take ONLY the file PATH to produce the output (to
-	 * avoid too much string to path to string conversion back and forth)
-	 * 
-	 * writeCounts(Path output) throws IOException
-	 */
 	/**
 	 * Writes the word counts to a JSON file
 	 *
