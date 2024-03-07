@@ -79,6 +79,12 @@ public class InvertedIndex {
 		}
 	}
 
+	/**
+	 * Retrieves the file locations and their positions for a word
+	 *
+	 * @param word The word to get location information for
+	 * @return A map containing file locations
+	 */
 	public Map<String, TreeSet<Integer>> getLocationInfo(String word) {
 		TreeMap<String, TreeSet<Integer>> locationInfo = invertedIndex.get(word);
 		if (locationInfo != null) {
