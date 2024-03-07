@@ -131,6 +131,10 @@ public class InvertedIndex {
 			}
 		}
 	}
+	
+    public Map<String, Integer> viewCounts() {
+        return Collections.unmodifiableMap(counts);
+    }
 
 	/*
 	 * TODO Still missing many methods. Try to make:
