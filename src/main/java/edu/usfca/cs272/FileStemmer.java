@@ -117,11 +117,9 @@ public class FileStemmer {
 	 * @see #listStems(String, Stemmer)
 	 */
 	public static ArrayList<String> listStems(String line) {
-		// TODO Figure out how to reuse listStems(line, stemmer) here
-		ArrayList<String> words = new ArrayList<String>();
-		Stemmer stemmer = new SnowballStemmer(ENGLISH);
-		addStems(line, stemmer, words);
-		return words;
+	    Stemmer stemmer = new SnowballStemmer(ENGLISH);
+	    return listStems(line, stemmer);
+
 	}
 
 	/**
