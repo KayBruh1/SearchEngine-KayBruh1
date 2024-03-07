@@ -21,7 +21,7 @@ public class InvertedIndex {
 	private final TreeMap<String, TreeMap<String, TreeSet<Integer>>> invertedIndex;
 
 	/**
-	 * Constructs a new InvertedIndex for fileWordCounts and invertedIndex
+	 * Constructs a new InvertedIndex for counts and invertedIndex
 	 */
 	public InvertedIndex() {
 		this.counts = new TreeMap<>();
@@ -29,9 +29,9 @@ public class InvertedIndex {
 	}
 
 	/**
-	 * Returns the file word counts
+	 * Returns the word counts
 	 *
-	 * @return the TreeMap containing file word counts
+	 * @return the TreeMap containing word counts
 	 */
 	public SortedMap<String, Integer> getWordCounts() {
 		return Collections.unmodifiableSortedMap(counts);
@@ -111,7 +111,7 @@ public class InvertedIndex {
 	 *
 	 * @param word     The word to add
 	 * @param location The path of the file
-	 * @param position The position of the word in the file
+	 * @param positions The positions of the word in the file
 	 */
 	public void addWord(String word, String location, TreeSet<Integer> positions) {
 		TreeMap<String, TreeSet<Integer>> fileMap = invertedIndex.get(word);
@@ -119,7 +119,6 @@ public class InvertedIndex {
 			fileMap = new TreeMap<>();
 			invertedIndex.put(word, fileMap);
 		}
-
 		TreeSet<Integer> current = fileMap.get(location);
 		if (current == null) {
 			current = new TreeSet<>();
@@ -128,11 +127,22 @@ public class InvertedIndex {
 		current.addAll(positions);
 	}
 
+	
+	/**
+	 * Adds the word counts for a given location
+	 *
+	 * @param location    The path of the file
+	 * @param wordCounts  A map containing word counts for the specified location
+	 */
 	public void addWordCounts(String location, HashMap<String, Integer> wordCounts) {
-		int totalCount = counts.getOrDefault(location, 0);
-		int newCount = wordCounts.values().stream().mapToInt(Integer::intValue).sum();
-		counts.put(location, totalCount + newCount);
+	    int totalCount = counts.getOrDefault(location, 0);
+	    int newCount = 0;
+	    for (int count : wordCounts.values()) {
+	        newCount += count;
+	    }
+	    counts.put(location, totalCount + newCount);
 	}
+
 
 	public void addInvertedIndex(String location, TreeMap<String, TreeMap<String, TreeSet<Integer>>> invertedIndex) {
 		for (Map.Entry<String, TreeMap<String, TreeSet<Integer>>> entry : invertedIndex.entrySet()) {
