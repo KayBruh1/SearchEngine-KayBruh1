@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -114,6 +115,25 @@ public class InvertedIndex {
 		 * better way than using putIfAbsent. Otherwise, try to make this as compact
 		 * as possible. (Choose one to be more important than the other in this class.)
 		 */
+	}
+	
+	public void addWordCounts(String location, HashMap<String, Integer> wordCounts) {
+	    int totalCount = fileWordCounts.getOrDefault(location, 0);
+	    int newCount = wordCounts.values().stream().mapToInt(Integer::intValue).sum();
+	    fileWordCounts.put(location, totalCount + newCount);
+	}
+
+
+	public void addInvertedIndex(String location, TreeMap<String, TreeMap<String, TreeSet<Integer>>> invertedIndex) {
+	    for (Map.Entry<String, TreeMap<String, TreeSet<Integer>>> entry : invertedIndex.entrySet()) {
+	        String word = entry.getKey();
+	        TreeMap<String, TreeSet<Integer>> fileMap = entry.getValue();
+	        for (Map.Entry<String, TreeSet<Integer>> fileEntry : fileMap.entrySet()) {
+	            String fileLocation = fileEntry.getKey();
+	            TreeSet<Integer> positions = fileEntry.getValue();
+	            addWord(word, fileLocation, positions);
+	        }
+	    }
 	}
 
 	/**
