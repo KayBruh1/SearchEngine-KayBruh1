@@ -220,22 +220,9 @@ public class InvertedIndex {
 		return invertedIndex.containsKey(word);
 	}
 
-	/*
-	 * TODO Still missing many methods. Try to make:
-	 * 
-	 * get or view methods, viewCounts, viewWords, viewLocations, etc. has or
-	 * contains methods, hasWord, etc. num or size methods, numWords, etc.
-	 * 
-	 * (each of the above usually has the same number of methods to make sure all
-	 * data is safely accessible)
-	 * 
-	 * toString addAll etc.
-	 */
-
 	/**
 	 * Writes the word counts to a JSON file
 	 *
-	 * @param inputPath  the input path of the file or directory
 	 * @param countsPath the output path of the JSON file
 	 * @throws IOException if an I/O error occurs
 	 */
@@ -246,9 +233,7 @@ public class InvertedIndex {
 	/**
 	 * Writes the inverted index to a JSON file
 	 *
-	 * @param inputPath the input path of the file or directory
 	 * @param indexPath the output path of the JSON file
-	 * @param indexer   the InvertedIndex object
 	 * @throws IOException if an I/O error occurs
 	 */
 	public void writeIndex(String indexPath) throws IOException {
