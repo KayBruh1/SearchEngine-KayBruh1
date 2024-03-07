@@ -179,6 +179,12 @@ public class InvertedIndex {
 		return Collections.unmodifiableMap(invertedIndex);
 	}
 
+	/**
+	 * Returns an unmodifiable view of the word positions for a location
+	 *
+	 * @param location The location to get word positions for
+	 * @return an unmodifiable view of the word positions for the location
+	 */
 	public Map<String, TreeSet<Integer>> viewWords(String location) {
 		TreeMap<String, TreeSet<Integer>> wordPositions = invertedIndex.getOrDefault(location, new TreeMap<>());
 		return Collections.unmodifiableMap(wordPositions);
