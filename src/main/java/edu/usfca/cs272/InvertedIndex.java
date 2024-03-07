@@ -2,10 +2,8 @@ package edu.usfca.cs272;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -65,6 +63,22 @@ public class InvertedIndex {
 	public int getCountSize() {
 		return counts.size();
 	}
+	
+
+	/**
+	 * Looks for a word in the inverted index
+	 *
+	 * @param word The word to add
+	 * @return The findings of the word
+	 */
+    public Map<String, TreeSet<Integer>> getWordInfo(String word) {
+        TreeMap<String, TreeSet<Integer>> wordMap = invertedIndex.get(word);
+        if (wordMap != null) {
+            return Collections.unmodifiableMap(new TreeMap<>(wordMap));
+        } else {
+            return Collections.emptyMap();
+        }
+    }
 
 	/**
 	 * Adds the word count for a file to the inverted index
@@ -114,22 +128,6 @@ public class InvertedIndex {
 				addWord(word, fileLocation, positions);
 			}
 		}
-	}
-
-	/**
-	 * Looks for a word in the inverted index
-	 *
-	 * @param word The word to add
-	 * @return The findings of the word
-	 */
-	public List<String> findWord(String word) { // TODO Looks like a get method, not a find method? Not efficient way of
-												// doing this (copying from one type to the other). See PrefixMap for a
-												// better approach!
-		if (invertedIndex.containsKey(word)) {
-			TreeMap<String, TreeSet<Integer>> wordMap = invertedIndex.get(word);
-			return new ArrayList<>(wordMap.keySet());
-		}
-		return Collections.emptyList();
 	}
 
 	/*
