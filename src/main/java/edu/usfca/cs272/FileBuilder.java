@@ -5,7 +5,9 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -158,16 +160,20 @@ public class FileBuilder {
 		return searchResults;
 	}
 
-	public List<List<String>> processQuery(Path queryPath) throws IOException {
-		List<List<String>> processedQueries = new ArrayList<>();
-		List<String> queryLines = Files.readAllLines(queryPath);
 
-		for (String queryLine : queryLines) {
-			List<String> stemmedWords = FileStemmer.listStems(queryLine);
-			processedQueries.add(stemmedWords);
-		}
-		return processedQueries;
-	}
+    public static List<List<String>> processQuery(Path queryPath) throws IOException {
+        List<List<String>> processedQueries = new ArrayList<>();
+        List<String> queryLines = Files.readAllLines(queryPath);
+
+        for (String queryLine : queryLines) {
+            List<String> stemmedWords = FileStemmer.listStems(queryLine);
+            List<String> processedQuery = new ArrayList<>(new HashSet<>(stemmedWords));
+            Collections.sort(processedQuery);
+            processedQueries.add(processedQuery);
+        }
+
+        return processedQueries;
+    }
 
 	private static int calculateWordCount(InvertedIndex indexer) {
 		int totalWordCount = 0;
