@@ -1,6 +1,10 @@
 package edu.usfca.cs272;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Class responsible for running this project based on the provided command-line
@@ -21,8 +25,8 @@ public class Driver {
 		Path inputPath = null;
 		String countsPath = null;
 		String indexPath = null;
-		Path queryPath = null;
-		String resultsPath = null;
+		Path queryFilePath = null;
+		String resultsOutputPath = null;
 
 		ArgumentParser parser = new ArgumentParser(args);
 		InvertedIndex indexer = new InvertedIndex();
@@ -55,13 +59,45 @@ public class Driver {
 			}
 		}
 		
+		List<List<String>> processedQueries = new ArrayList<>();
+
 		if (parser.hasFlag("-query")) {
-			queryPath = parser.getPath("-query");
+		    queryFilePath = parser.getPath("-query");
+		    if (Files.exists(queryFilePath)) {
+		        try {
+		            List<String> queryLines = Files.readAllLines(queryFilePath);
+
+		            for (String queryLine : queryLines) {
+		                List<String> stemmedWords = FileStemmer.listStems(queryLine);
+		                processedQueries.add(stemmedWords);
+		            }
+		        } catch (Exception e) {
+		            System.out.println("Error reading the query file " + queryFilePath);
+		        }
+		    } else {
+		        System.out.println("Query file does not exist: " + queryFilePath);
+		    }
 		}
 
 		if (parser.hasFlag("-results")) {
-			resultsPath = parser.getString("-results", "results.json");
+		    resultsOutputPath = parser.getString("-results", "results.json");
+		    try {
+		        List<List<Map<String, Object>>> searchResults = fileBuilder.conductSearch(processedQueries, indexer);
+		        for (List<Map<String, Object>> result : searchResults) {
+		            for (Map<String, Object> resultMap : result) {
+		                String location = (String) resultMap.get("where");
+		                int count = (int) resultMap.get("count");
+		                double score = (double) resultMap.get("score");
+		                System.out.println("Location: " + location);
+		                System.out.println("Count: " + count);
+		                System.out.println("Score: " + score);
+		                System.out.println();
+		            }
+		        }
+		    } catch (Exception e) {
+		        System.out.println("Error writing results to file: " + resultsOutputPath);
+		    }
 		}
+		
 	}
-
 }
