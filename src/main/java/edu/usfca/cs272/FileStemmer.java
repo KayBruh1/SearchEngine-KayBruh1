@@ -1,17 +1,15 @@
 package edu.usfca.cs272;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
 import static opennlp.tools.stemmer.snowball.SnowballStemmer.ALGORITHM.ENGLISH;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.Normalizer;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Scanner;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
 
@@ -74,9 +72,9 @@ public class FileStemmer {
 	 * Parses the line into cleaned and stemmed words and adds them to the provided
 	 * collection.
 	 *
-	 * @param line the line of words to clean, split, and stem
+	 * @param line    the line of words to clean, split, and stem
 	 * @param stemmer the stemmer to use
-	 * @param stems the collection to add stems
+	 * @param stems   the collection to add stems
 	 *
 	 * @see #parse(String)
 	 * @see Stemmer#stem(CharSequence)
@@ -93,7 +91,7 @@ public class FileStemmer {
 	/**
 	 * Parses the line into a list of cleaned and stemmed words.
 	 *
-	 * @param line the line of words to clean, split, and stem
+	 * @param line    the line of words to clean, split, and stem
 	 * @param stemmer the stemmer to use
 	 * @return a list of cleaned and stemmed words in parsed order
 	 *
@@ -102,10 +100,9 @@ public class FileStemmer {
 	 * @see #addStems(String, Stemmer, Collection)
 	 */
 	public static ArrayList<String> listStems(String line, Stemmer stemmer) {
-	    ArrayList<String> words = new ArrayList<String>();
-	    addStems(line, stemmer, words);
-	    return words;
-
+		ArrayList<String> words = new ArrayList<String>();
+		addStems(line, stemmer, words);
+		return words;
 	}
 
 	/**
@@ -120,10 +117,9 @@ public class FileStemmer {
 	 * @see #listStems(String, Stemmer)
 	 */
 	public static ArrayList<String> listStems(String line) {
-	    ArrayList<String> words = new ArrayList<String>();
-	    Stemmer stemmer = new SnowballStemmer(ENGLISH);
-	    addStems(line, stemmer, words);
-	    return words;
+		Stemmer stemmer = new SnowballStemmer(ENGLISH);
+		return listStems(line, stemmer);
+
 	}
 
 	/**
@@ -140,31 +136,25 @@ public class FileStemmer {
 	 * @see #listStems(String, Stemmer)
 	 */
 	public static ArrayList<String> listStems(Path input) throws IOException {
-	    if (Files.isDirectory(input)) {
-	        throw new IOException("Input is a directory");
-	    }
-	    
 		ArrayList<String> words = new ArrayList<>();
-		try (Scanner scanner = new Scanner(input)) {
-			while (scanner.hasNextLine()) {
-				String line = scanner.nextLine();
+		try (BufferedReader reader = Files.newBufferedReader(input)) {
+			String line;
+			SnowballStemmer stemmer = new SnowballStemmer(ENGLISH);
+			while ((line = reader.readLine()) != null) {
 				String[] clean = parse(line);
-				Stemmer stemmer = new SnowballStemmer(ALGORITHM.ENGLISH);
-
 				for (String word : clean) {
 					String stem = stemmer.stem(word).toString();
 					words.add(stem);
 				}
 			}
-		} catch (Exception e) {
-			throw e;
 		}
 		return words;
 	}
+
 	/**
 	 * Parses the line into a set of unique, sorted, cleaned, and stemmed words.
 	 *
-	 * @param line the line of words to parse and stem
+	 * @param line    the line of words to parse and stem
 	 * @param stemmer the stemmer to use
 	 * @return a sorted set of unique cleaned and stemmed words
 	 *
@@ -173,9 +163,9 @@ public class FileStemmer {
 	 * @see #addStems(String, Stemmer, Collection)
 	 */
 	public static TreeSet<String> uniqueStems(String line, Stemmer stemmer) {
-		   TreeSet<String> unique = new TreeSet<>();
-		    addStems(line, stemmer, unique);
-		    return unique;
+		TreeSet<String> unique = new TreeSet<>();
+		addStems(line, stemmer, unique);
+		return unique;
 	}
 
 	/**
@@ -190,10 +180,8 @@ public class FileStemmer {
 	 * @see #uniqueStems(String, Stemmer)
 	 */
 	public static TreeSet<String> uniqueStems(String line) {
-	    TreeSet<String> unique = new TreeSet<>();
-	    Stemmer stemmer = new SnowballStemmer(ENGLISH);
-	    addStems(line, stemmer, unique);
-	    return unique;
+		Stemmer stemmer = new SnowballStemmer(ENGLISH);
+		return uniqueStems(line, stemmer);
 	}
 
 	/**
@@ -211,19 +199,16 @@ public class FileStemmer {
 	 */
 	public static TreeSet<String> uniqueStems(Path input) throws IOException {
 		TreeSet<String> unique = new TreeSet<>();
-		try (Scanner scanner = new Scanner(input)) {
-			while (scanner.hasNextLine()) {
-				String line = scanner.nextLine();
+		try (BufferedReader reader = Files.newBufferedReader(input)) {
+			String line;
+			SnowballStemmer stemmer = new SnowballStemmer(ENGLISH);
+			while ((line = reader.readLine()) != null) {
 				String[] clean = parse(line);
-				Stemmer stemmer = new SnowballStemmer(ENGLISH);
-
 				for (String word : clean) {
 					String stem = stemmer.stem(word).toString();
 					unique.add(stem);
 				}
 			}
-		} catch (Exception e) {
-			throw e;
 		}
 		return unique;
 	}
@@ -235,7 +220,7 @@ public class FileStemmer {
 	 *
 	 * @param input the input file to parse and stem
 	 * @return a list where each item is the sets of unique sorted stems parsed from
-	 *   a single line of the input file
+	 *         a single line of the input file
 	 * @throws IOException if unable to read or parse file
 	 *
 	 * @see SnowballStemmer
@@ -244,99 +229,20 @@ public class FileStemmer {
 	 * @see #uniqueStems(String, Stemmer)
 	 */
 	public static ArrayList<TreeSet<String>> listUniqueStems(Path input) throws IOException {
-	    ArrayList<TreeSet<String>> words = new ArrayList<>();
-	    	    
-	    try (Scanner scanner = new Scanner(input)) {
-	        while (scanner.hasNextLine()) {
-	            TreeSet<String> unique = new TreeSet<>();
-	            String line = scanner.nextLine();
-	            String[] clean = parse(line);
-	            Stemmer stemmer = new SnowballStemmer(ENGLISH);
-
-	            for (String word : clean) {
-	                String stem = stemmer.stem(word).toString();
-	                unique.add(stem);
-	            }
-
-	            words.add(unique);
-	        }
-	    } catch (Exception e) {
-	        throw e;
-	    }
-
-	    return words;
-	}
-
-	/**
-	 * Demonstrates this class.
-	 *
-	 * @param args unused
-	 * @throws IOException if an I/O error occurs
-	 */
-	public static void main(String[] args) throws IOException {
-		// demonstrates how to use split, clean, and parse
-		System.out.println("____PARSING DEMO____");
-		System.out.println();
-
-		String sally = """
-				Sally Sue...\t sells 76 sea-shells
-				at THE sEa_shorE soirée!""";
-
-		System.out.println("Original:");
-		System.out.println(sally);
-		System.out.println();
-
-		System.out.println("Cleaned:");
-		System.out.println(clean(sally));
-		System.out.println();
-
-		System.out.println(" Split: " + Arrays.toString(split(sally)));
-		System.out.println("Parsed: " + Arrays.toString(parse(sally)));
-		System.out.println();
-
-		// demonstrates how to use stemmer
-		System.out.println("____STEMMER DEMO____");
-		System.out.println();
-
-		Stemmer stemmer = new SnowballStemmer(ENGLISH);
-		String demo = "practicing";
-		String stem = stemmer.stem(demo).toString();
-
-		System.out.println("Word: " + demo);
-		System.out.println("Stem: " + stem);
-		System.out.println();
-
-		// demonstrates how to use list/uniqueStems methods
-		System.out.println("____STEMMING TEXT____");
-		System.out.println();
-
-		String practice = """
-				practic practical practice practiced practicer practices
-				practicing practis practisants practise practised practiser
-				practisers practises practising practitioner practitioners
-				""";
-
-		System.out.println("Original: \n" + practice);
-		System.out.println("  List: " + listStems(practice));
-		System.out.println("Unique: " + uniqueStems(practice));
-		System.out.println();
-
-		// demonstrates stemming files
-		System.out.println("____STEMMING FILE____");
-		System.out.println();
-
-		Path base = Path.of("src", "test", "resources", "stemmer");
-		Path file = base.resolve("cleaner.txt");
-		String input = Files.readString(file, UTF_8);
-
-		System.out.println("Original:\n" + input);
-
-		System.out.println("       List: " + listStems(file));
-		System.out.println("     Unique: " + uniqueStems(file));
-		System.out.println("List Unique: " + listUniqueStems(file));
-	}
-
-	/** Prevent instantiating this class of static methods. */
-	private FileStemmer() {
+		ArrayList<TreeSet<String>> words = new ArrayList<>();
+		try (BufferedReader reader = Files.newBufferedReader(input)) {
+			SnowballStemmer stemmer = new SnowballStemmer(ENGLISH);
+			String line;
+			while ((line = reader.readLine()) != null) {
+				TreeSet<String> unique = new TreeSet<>();
+				String[] clean = parse(line);
+				for (String word : clean) {
+					String stem = stemmer.stem(word).toString();
+					unique.add(stem);
+				}
+				words.add(unique);
+			}
+		}
+		return words;
 	}
 }

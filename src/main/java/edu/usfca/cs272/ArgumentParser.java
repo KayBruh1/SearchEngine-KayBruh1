@@ -1,6 +1,5 @@
 package edu.usfca.cs272;
 
-import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.HashMap;
 
@@ -51,9 +50,8 @@ public class ArgumentParser {
 	 * @see Character#isDigit(int)
 	 * @see Character#isWhitespace(int)
 	 */
-	public static boolean isFlag(String arg) {		
+	public static boolean isFlag(String arg) {
 		if (arg != null && arg.startsWith("-") && arg.length() > 1) {
-			
 			int secondChar = arg.codePointAt(1);
 			return !Character.isWhitespace(secondChar) && !Character.isDigit(secondChar);
 		}
@@ -79,7 +77,6 @@ public class ArgumentParser {
 	 */
 	public void parse(String[] args) {
 		String holdFlag = null;
-
 		for (int i = 0; i < args.length; i++) {
 			if (isFlag(args[i])) {
 				holdFlag = args[i];
@@ -119,27 +116,20 @@ public class ArgumentParser {
 	 * @return {@code true} if the flag is mapped to a non-null value
 	 */
 	public boolean hasValue(String flag) {
-		if (map.containsKey(flag) && map.get(flag) != null) {
-			return true;
-		}
-		return false;
-
+		return map.containsKey(flag) && map.get(flag) != null;
 	}
 
 	/**
 	 * Returns the value to which the specified flag is mapped as a {@link String}
 	 * or the backup value if there is no mapping.
 	 *
-	 * @param flag the flag whose associated value is to be returned
+	 * @param flag   the flag whose associated value is to be returned
 	 * @param backup the backup value to return if there is no mapping
 	 * @return the value to which the specified flag is mapped, or the backup value
-	 *   if there is no mapping
+	 *         if there is no mapping
 	 */
 	public String getString(String flag, String backup) {
-		if (map.containsKey(flag) && map.get(flag) != null) {
-			return map.get(flag);
-		}
-		return backup;
+		return map.get(flag) != null ? map.get(flag) : backup;
 	}
 
 	/**
@@ -148,13 +138,10 @@ public class ArgumentParser {
 	 *
 	 * @param flag the flag whose associated value is to be returned
 	 * @return the value to which the specified flag is mapped or {@code null} if
-	 *   there is no mapping
+	 *         there is no mapping
 	 */
 	public String getString(String flag) {
-		if (map.containsKey(flag) && map.get(flag) != null) {
-			return map.get(flag);
-		}
-		return null;
+		return map.get(flag);
 	}
 
 	/**
@@ -164,23 +151,20 @@ public class ArgumentParser {
 	 *
 	 * This method should not throw any exceptions!
 	 *
-	 * @param flag the flag whose associated value will be returned
+	 * @param flag   the flag whose associated value will be returned
 	 * @param backup the backup value to return if there is no valid mapping
 	 * @return the value the specified flag is mapped as a {@link Path}, or the
-	 *   backup value if there is no valid mapping
+	 *         backup value if there is no valid mapping
 	 *
 	 * @see Path#of(String, String...)
 	 */
 	public Path getPath(String flag, Path backup) {
 		try {
-			if (map.containsKey(flag) && map.get(flag) != null) {
-				String value = map.get(flag);
-				return Path.of(value);
-			}
+			String value = map.get(flag);
+			return Path.of(value);
 		} catch (Exception e) {
 			return backup;
 		}
-		return backup;
 	}
 
 	/**
@@ -192,16 +176,12 @@ public class ArgumentParser {
 	 *
 	 * @param flag the flag whose associated value is to be returned
 	 * @return the value to which the specified flag is mapped, or {@code null} if
-	 *   unable to retrieve this mapping
+	 *         unable to retrieve this mapping
 	 *
 	 * @see #getPath(String, Path)
 	 */
 	public Path getPath(String flag) {
-		if (map.containsKey(flag) && map.get(flag) != null) {
-			String value = map.get(flag);
-			return FileSystems.getDefault().getPath(value);
-		}
-		return null;
+		return getPath(flag, null);
 	}
 
 	/**
@@ -209,22 +189,19 @@ public class ArgumentParser {
 	 * value if unable to retrieve this mapping (including being unable to convert
 	 * the value to an int or if no value exists).
 	 *
-	 * @param flag the flag whose associated value will be returned
+	 * @param flag   the flag whose associated value will be returned
 	 * @param backup the backup value to return if there is no valid mapping
 	 * @return the value the specified flag is mapped as an int, or the backup value
-	 *   if there is no valid mapping
+	 *         if there is no valid mapping
 	 *
 	 * @see Integer#parseInt(String)
 	 */
 	public int getInteger(String flag, int backup) {
-		if (map.containsKey(flag) && map.get(flag) != null) {
-			try {
-				return Integer.parseInt(map.get(flag));
-			} catch (Exception e) {
-				return backup;
-			}
+		try {
+			return Integer.parseInt(map.getOrDefault(flag, String.valueOf(backup)));
+		} catch (NumberFormatException e) {
+			return backup;
 		}
-		return backup;
 	}
 
 	/**
@@ -234,40 +211,16 @@ public class ArgumentParser {
 	 *
 	 * @param flag the flag whose associated value will be returned
 	 * @return the value the specified flag is mapped as an int, or 0 if there is no
-	 *   valid mapping
+	 *         valid mapping
 	 *
 	 * @see #getInteger(String, int)
 	 */
 	public int getInteger(String flag) {
-		if (map.containsKey(flag) && map.get(flag) != null) {
-			try {
-				return Integer.parseInt(map.get(flag));
-			} catch (Exception e) {
-			}
-		}
-		return 0;
+		return getInteger(flag, 0);
 	}
 
 	@Override
 	public String toString() {
 		return this.map.toString();
-	}
-
-	/**
-	 * Demonstrates this class.
-	 *
-	 * @param args the arguments to test
-	 */
-	public static void main(String[] args) {
-		// Feel free to modify or delete this method for debugging
-		if (args.length < 1) {
-			args = new String[] { "-max", "false", "-min", "0", "-min", "-10", "hello", "-@debug",
-					"-f", "output.txt", "-verbose" };
-		}
-
-		// expected output:
-		// {-max=false, -min=-10, -verbose=null, -f=output.txt, -@debug=null}
-		ArgumentParser map = new ArgumentParser(args);
-		System.out.println(map);
 	}
 }
