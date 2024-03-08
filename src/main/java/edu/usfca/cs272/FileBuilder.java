@@ -130,46 +130,51 @@ public class FileBuilder {
 	}
 
 	public Map<String, List<Map<String, Object>>> conductSearch(List<List<String>> processedQueries)
-			throws IOException {
-		HashMap<String, List<Map<String, Object>>> searchResults = new HashMap<>();
+	        throws IOException {
+	    HashMap<String, List<Map<String, Object>>> searchResults = new HashMap<>();
 
-		for (List<String> query : processedQueries) {
-			String queryWord = String.join(" ", query);
-			List<Map<String, Object>> results = new ArrayList<>();
+	    for (List<String> query : processedQueries) {
+	        String queryWord = String.join(" ", query);
+	        System.out.println(queryWord);
+	        List<Map<String, Object>> results = new ArrayList<>();
+	        int totalQueryWords = query.size();
 
-			for (String word : query) {
-				Map<String, TreeSet<Integer>> locations = indexer.getInvertedIndex().getOrDefault(word,
-						new TreeMap<>());
+	        for (String word : query) {
+	            Map<String, TreeSet<Integer>> locations = indexer.getInvertedIndex().getOrDefault(word,
+	                    new TreeMap<>());
 
-				for (Map.Entry<String, TreeSet<Integer>> entry : locations.entrySet()) {
-					String location = entry.getKey();
-					int count = entry.getValue().size();
-					double score = calculateScore(count);
+	            for (Map.Entry<String, TreeSet<Integer>> entry : locations.entrySet()) {
+	                String location = entry.getKey();
+	                int count = entry.getValue().size();
+	                double score = indexer.calculateScore(count, location, totalQueryWords);
+	                int totalWordCount = indexer.getTotalWordCount(location);
 
-					boolean locationExists = false;
-					for (Map<String, Object> resultMap : results) {
-						if (resultMap.get("where").equals(location)) {
-							int totalCount = (int) resultMap.get("count");
-							resultMap.put("count", totalCount + count);
-							locationExists = true;
-							break;
-						}
-					}
+	                boolean locationExists = false;
+	                for (Map<String, Object> resultMap : results) {
+	                    if (resultMap.get("where").equals(location)) {
+	                        int totalCount = (int) resultMap.get("count");
+	                        resultMap.put("count", totalCount + count);
+	                        locationExists = true;
+	                        break;
+	                    }
+	                }
 
-					if (!locationExists) {
-						HashMap<String, Object> resultMap = new HashMap<>();
-						resultMap.put("count", count);
-						resultMap.put("score", score);
-						resultMap.put("where", location);
-						results.add(resultMap);
-					}
-				}
-			}
-			searchResults.put(queryWord, results);
-		}
+	                if (!locationExists) {
+	                    HashMap<String, Object> resultMap = new HashMap<>();
+	                    resultMap.put("count", count);
+	                    resultMap.put("score", score);
+	                    resultMap.put("where", location);
+	                    resultMap.put("totalWordCount", totalWordCount);
+	                    results.add(resultMap);
+	                }
+	            }
+	        }
+	        searchResults.put(queryWord, results);
+	    }
 
-		return searchResults;
+	    return searchResults;
 	}
+
 
 	public static List<List<String>> processQuery(Path queryPath) throws IOException {
 		List<List<String>> processedQueries = new ArrayList<>();
@@ -183,20 +188,5 @@ public class FileBuilder {
 		}
 
 		return processedQueries;
-	}
-
-	private static int calculateWordCount(InvertedIndex indexer) {
-		int totalWordCount = 0;
-		for (String word : indexer.getInvertedIndex().keySet()) {
-			TreeMap<String, TreeSet<Integer>> wordMap = indexer.getInvertedIndex().get(word);
-			for (String location : wordMap.keySet()) {
-				totalWordCount += wordMap.get(location).size();
-			}
-		}
-		return totalWordCount;
-	}
-
-	private static double calculateScore(int count) {
-		return count;
 	}
 }

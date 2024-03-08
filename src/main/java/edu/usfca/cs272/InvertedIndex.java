@@ -219,6 +219,16 @@ public class InvertedIndex {
 	public boolean hasWord(String word) {
 		return invertedIndex.containsKey(word);
 	}
+	
+	public double calculateScore(int count, String location, int totalQueryWords) {
+	    int totalWordCount = counts.getOrDefault(location, 0);
+	    double percentage = (double) count / totalWordCount;
+	    return percentage;
+	}
+
+    public int getTotalWordCount(String location) {
+        return counts.getOrDefault(location, 0);
+    }
 
 	/**
 	 * Writes the word counts to a JSON file
