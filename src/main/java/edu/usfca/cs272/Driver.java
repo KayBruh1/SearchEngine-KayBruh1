@@ -1,10 +1,6 @@
 package edu.usfca.cs272;
 
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Class responsible for running this project based on the provided command-line
@@ -25,8 +21,8 @@ public class Driver {
 		Path inputPath = null;
 		String countsPath = null;
 		String indexPath = null;
-		Path queryFilePath = null;
-		String resultsOutputPath = null;
+		Path queryPath = null;
+		String resultsPath = null;
 
 		ArgumentParser parser = new ArgumentParser(args);
 		InvertedIndex indexer = new InvertedIndex();
@@ -59,43 +55,13 @@ public class Driver {
 			}
 		}
 		
-		List<List<String>> processedQueries = new ArrayList<>();
-
 		if (parser.hasFlag("-query")) {
-		    queryFilePath = parser.getPath("-query");
-		    if (Files.exists(queryFilePath)) {
-		        try {
-		            List<String> queryLines = Files.readAllLines(queryFilePath);
-
-		            for (String queryLine : queryLines) {
-		                List<String> stemmedWords = FileStemmer.listStems(queryLine);
-		                processedQueries.add(stemmedWords);
-		            }
-		        } catch (Exception e) {
-		            System.out.println("Error reading the query file " + queryFilePath);
-		        }
-		    } else {
-		        System.out.println("Query file does not exist: " + queryFilePath);
-		    }
+			queryPath = parser.getPath("-query");
 		}
 
 		if (parser.hasFlag("-results")) {
-		    resultsOutputPath = parser.getString("-results", "results.json");
-		    try {
-		        List<List<Map<String, Object>>> searchResults = fileBuilder.conductSearch(processedQueries, indexer);
-		        
-		        for (List<Map<String, Object>> queryResult : searchResults) {
-		            for (Map<String, Object> result : queryResult) {
-		                System.out.println("Location: " + result.get("where"));
-		                System.out.println("Count: " + result.get("count"));
-		                System.out.println("Score: " + result.get("score"));
-		                System.out.println();
-		            }
-		        }
-		    } catch (Exception e) {
-		        System.out.println("Error writing results to file: " + resultsOutputPath);
-		    }
+			resultsPath = parser.getString("-results", "results.json");
 		}
-		
 	}
+
 }
