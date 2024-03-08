@@ -126,51 +126,49 @@ public class FileBuilder {
 		String fileName = file.getFileName().toString().toLowerCase();
 		return Files.isRegularFile(file) && (fileName.endsWith(".txt") || fileName.endsWith(".text"));
 	}
-	
-	public static List<List<Map<String, Object>>> conductSearch(List<List<String>> processedQueries, InvertedIndex indexer) {
-	    List<List<Map<String, Object>>> searchResults = new ArrayList<>();
 
-	    for (List<String> query : processedQueries) {
-	        List<Map<String, Object>> result = new ArrayList<>();
+	public static Map<String, List<Map<String, Object>>> conductSearch(List<List<String>> processedQueries,
+			InvertedIndex indexer) {
+		Map<String, List<Map<String, Object>>> searchResults = new HashMap<>();
 
-	        for (String word : query) {
-	            if (indexer.getInvertedIndex().containsKey(word)) {
-	                TreeMap<String, TreeSet<Integer>> wordMap = indexer.getInvertedIndex().get(word);
+		for (List<String> query : processedQueries) {
+			for (String word : query) {
+				if (indexer.getInvertedIndex().containsKey(word)) {
+					TreeMap<String, TreeSet<Integer>> wordMap = indexer.getInvertedIndex().get(word);
 
-	                for (String location : wordMap.keySet()) {
-	                    int matchCount = wordMap.get(location).size();
-	                    int totalWordCount = calculateWordCount(indexer);
-	                    double score = calculateScore(matchCount, totalWordCount);
+					for (String location : wordMap.keySet()) {
+						int matchCount = wordMap.get(location).size();
+						int totalWordCount = calculateWordCount(indexer);
+						double score = calculateScore(matchCount, totalWordCount);
 
-	                    Map<String, Object> resultMap = new HashMap<>();
-	                    resultMap.put("count", matchCount);
-	                    resultMap.put("score", score);
-	                    resultMap.put("where", location);
+						Map<String, Object> resultMap = new HashMap<>();
+						resultMap.put("count", matchCount);
+						resultMap.put("score", score);
+						resultMap.put("where", location);
 
-	                    result.add(resultMap);
-	                }
-	            }
-	        }
-	        searchResults.add(result);
-	    }
-	    return searchResults;
+						if (!searchResults.containsKey(word)) {
+							searchResults.put(word, new ArrayList<>());
+						}
+						searchResults.get(word).add(resultMap);
+					}
+				}
+			}
+		}
+		return searchResults;
 	}
-
-
 
 	private static int calculateWordCount(InvertedIndex indexer) {
-	    int totalWordCount = 0;
-	    for (String word : indexer.getInvertedIndex().keySet()) {
-	        TreeMap<String, TreeSet<Integer>> wordMap = indexer.getInvertedIndex().get(word);
-	        for (String location : wordMap.keySet()) {
-	            totalWordCount += wordMap.get(location).size();
-	        }
-	    }
-	    return totalWordCount;
+		int totalWordCount = 0;
+		for (String word : indexer.getInvertedIndex().keySet()) {
+			TreeMap<String, TreeSet<Integer>> wordMap = indexer.getInvertedIndex().get(word);
+			for (String location : wordMap.keySet()) {
+				totalWordCount += wordMap.get(location).size();
+			}
+		}
+		return totalWordCount;
 	}
 
-
-	    private static double calculateScore(int matchCount, int totalWordCount) {
-	        return (double) matchCount / totalWordCount;
-	    }
+	private static double calculateScore(int matchCount, int totalWordCount) {
+		return (double) matchCount / totalWordCount;
+	}
 }

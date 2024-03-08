@@ -58,46 +58,53 @@ public class Driver {
 				System.out.println("Error building the inverted index " + inputPath);
 			}
 		}
-		
+
 		List<List<String>> processedQueries = new ArrayList<>();
 
 		if (parser.hasFlag("-query")) {
-		    queryFilePath = parser.getPath("-query");
-		    if (Files.exists(queryFilePath)) {
-		        try {
-		            List<String> queryLines = Files.readAllLines(queryFilePath);
+			queryFilePath = parser.getPath("-query");
+			if (Files.exists(queryFilePath)) {
+				try {
+					List<String> queryLines = Files.readAllLines(queryFilePath);
 
-		            for (String queryLine : queryLines) {
-		                List<String> stemmedWords = FileStemmer.listStems(queryLine);
-		                processedQueries.add(stemmedWords);
-		            }
-		        } catch (Exception e) {
-		            System.out.println("Error reading the query file " + queryFilePath);
-		        }
-		    } else {
-		        System.out.println("Query file does not exist: " + queryFilePath);
-		    }
+					for (String queryLine : queryLines) {
+						List<String> stemmedWords = FileStemmer.listStems(queryLine);
+						processedQueries.add(stemmedWords);
+					}
+				} catch (Exception e) {
+					System.out.println("Error reading the query file " + queryFilePath);
+				}
+			} else {
+				System.out.println("Query file does not exist: " + queryFilePath);
+			}
 		}
 
 		if (parser.hasFlag("-results")) {
-		    resultsOutputPath = parser.getString("-results", "results.json");
-		    try {
-		        List<List<Map<String, Object>>> searchResults = fileBuilder.conductSearch(processedQueries, indexer);
-		        for (List<Map<String, Object>> result : searchResults) {
-		            for (Map<String, Object> resultMap : result) {
-		                String location = (String) resultMap.get("where");
-		                int count = (int) resultMap.get("count");
-		                double score = (double) resultMap.get("score");
-		                System.out.println("Location: " + location);
-		                System.out.println("Count: " + count);
-		                System.out.println("Score: " + score);
-		                System.out.println();
-		            }
-		        }
-		    } catch (Exception e) {
-		        System.out.println("Error writing results to file: " + resultsOutputPath);
-		    }
+			resultsOutputPath = parser.getString("-results", "results.json");
+			try {
+				Map<String, List<Map<String, Object>>> searchResults = fileBuilder.conductSearch(processedQueries,
+						indexer);
+
+				for (String word : searchResults.keySet()) {
+					System.out.println("Word: " + word);
+
+					List<Map<String, Object>> results = searchResults.get(word);
+
+					for (Map<String, Object> resultMap : results) {
+						String location = (String) resultMap.get("where");
+						int count = (int) resultMap.get("count");
+						double score = (double) resultMap.get("score");
+						System.out.println("Location: " + location);
+						System.out.println("Count: " + count);
+						System.out.println("Score: " + score);
+						System.out.println();
+					}
+
+				}
+			} catch (Exception e) {
+				System.out.println("Error writing results to file: " + resultsOutputPath);
+			}
 		}
-		
+
 	}
 }
