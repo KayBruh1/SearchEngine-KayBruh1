@@ -64,22 +64,32 @@ public class Driver {
 			if (Files.exists(queryPath)) {
 				try {
 					List<List<String>> processedQueries = fileBuilder.processQuery(queryPath);
-					searchResults = fileBuilder.conductSearch(processedQueries);
+		            searchResults = fileBuilder.conductSearch(processedQueries);
 
+		            for (Map.Entry<String, List<Map<String, Object>>> entry : searchResults.entrySet()) {
+		                System.out.println("Query: " + entry.getKey());
+		                for (Map<String, Object> result : entry.getValue()) {
+		                    int count = (int) result.get("count");
+		                    double score = (double) result.get("score");
+		                    String location = (String) result.get("where");
+		                    System.out.println("Location: " + location + ", Count: " + count + ", Score: " + score);
+		                }
+		                System.out.println();
+		            }
 				} catch (Exception e) {
 					System.out.println("Error reading the query file " + queryPath);
 				}
-			}
+			} 
 		}
 
-		if (parser.hasFlag("-results")) {
-			resultsPath = parser.getString("-results", "results.json");
-			try {
-
-			} catch (Exception e) {
-				System.out.println("Error writing results to file " + resultsPath);
-			}
-		}
+        if (parser.hasFlag("-results")) {
+            resultsPath = parser.getString("-results", "results.json");
+            try {
+                
+            } catch (Exception e) {
+                System.out.println("Error writing results to file " + resultsPath);
+            }
+        }
 
 	}
 }

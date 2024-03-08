@@ -146,12 +146,23 @@ public class FileBuilder {
 					int count = entry.getValue().size();
 					double score = calculateScore(count);
 
-					HashMap<String, Object> resultMap = new HashMap<>();
-					resultMap.put("count", count);
-					resultMap.put("score", score);
-					resultMap.put("where", location);
+					boolean locationExists = false;
+					for (Map<String, Object> resultMap : results) {
+						if (resultMap.get("where").equals(location)) {
+							int totalCount = (int) resultMap.get("count");
+							resultMap.put("count", totalCount + count);
+							locationExists = true;
+							break;
+						}
+					}
 
-					results.add(resultMap);
+					if (!locationExists) {
+						HashMap<String, Object> resultMap = new HashMap<>();
+						resultMap.put("count", count);
+						resultMap.put("score", score);
+						resultMap.put("where", location);
+						results.add(resultMap);
+					}
 				}
 			}
 			searchResults.put(queryWord, results);
@@ -160,20 +171,19 @@ public class FileBuilder {
 		return searchResults;
 	}
 
+	public static List<List<String>> processQuery(Path queryPath) throws IOException {
+		List<List<String>> processedQueries = new ArrayList<>();
+		List<String> queryLines = Files.readAllLines(queryPath);
 
-    public static List<List<String>> processQuery(Path queryPath) throws IOException {
-        List<List<String>> processedQueries = new ArrayList<>();
-        List<String> queryLines = Files.readAllLines(queryPath);
+		for (String queryLine : queryLines) {
+			List<String> stemmedWords = FileStemmer.listStems(queryLine);
+			List<String> processedQuery = new ArrayList<>(new HashSet<>(stemmedWords));
+			Collections.sort(processedQuery);
+			processedQueries.add(processedQuery);
+		}
 
-        for (String queryLine : queryLines) {
-            List<String> stemmedWords = FileStemmer.listStems(queryLine);
-            List<String> processedQuery = new ArrayList<>(new HashSet<>(stemmedWords));
-            Collections.sort(processedQuery);
-            processedQueries.add(processedQuery);
-        }
-
-        return processedQueries;
-    }
+		return processedQueries;
+	}
 
 	private static int calculateWordCount(InvertedIndex indexer) {
 		int totalWordCount = 0;
