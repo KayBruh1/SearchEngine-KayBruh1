@@ -127,34 +127,46 @@ public class FileBuilder {
 		return Files.isRegularFile(file) && (fileName.endsWith(".txt") || fileName.endsWith(".text"));
 	}
 
-	public static Map<String, List<Map<String, Object>>> conductSearch(List<List<String>> processedQueries,
-			InvertedIndex indexer) {
-		Map<String, List<Map<String, Object>>> searchResults = new HashMap<>();
+	public Map<String, List<Map<String, Object>>> conductSearch(List<List<String>> processedQueries)
+			throws IOException {
+		HashMap<String, List<Map<String, Object>>> searchResults = new HashMap<>();
 
 		for (List<String> query : processedQueries) {
+			String queryWord = String.join(" ", query);
+			List<Map<String, Object>> results = new ArrayList<>();
+
 			for (String word : query) {
-				if (indexer.getInvertedIndex().containsKey(word)) {
-					TreeMap<String, TreeSet<Integer>> wordMap = indexer.getInvertedIndex().get(word);
+				Map<String, TreeSet<Integer>> locations = indexer.getInvertedIndex().getOrDefault(word,
+						new TreeMap<>());
 
-					for (String location : wordMap.keySet()) {
-						int matchCount = wordMap.get(location).size();
-						int totalWordCount = calculateWordCount(indexer);
-						double score = calculateScore(matchCount, totalWordCount);
+				for (Map.Entry<String, TreeSet<Integer>> entry : locations.entrySet()) {
+					String location = entry.getKey();
+					int count = entry.getValue().size();
+					double score = calculateScore(count);
 
-						Map<String, Object> resultMap = new HashMap<>();
-						resultMap.put("count", matchCount);
-						resultMap.put("score", score);
-						resultMap.put("where", location);
+					HashMap<String, Object> resultMap = new HashMap<>();
+					resultMap.put("count", count);
+					resultMap.put("score", score);
+					resultMap.put("where", location);
 
-						if (!searchResults.containsKey(word)) {
-							searchResults.put(word, new ArrayList<>());
-						}
-						searchResults.get(word).add(resultMap);
-					}
+					results.add(resultMap);
 				}
 			}
+			searchResults.put(queryWord, results);
 		}
+
 		return searchResults;
+	}
+
+	public List<List<String>> processQuery(Path queryPath) throws IOException {
+		List<List<String>> processedQueries = new ArrayList<>();
+		List<String> queryLines = Files.readAllLines(queryPath);
+
+		for (String queryLine : queryLines) {
+			List<String> stemmedWords = FileStemmer.listStems(queryLine);
+			processedQueries.add(stemmedWords);
+		}
+		return processedQueries;
 	}
 
 	private static int calculateWordCount(InvertedIndex indexer) {
@@ -168,7 +180,7 @@ public class FileBuilder {
 		return totalWordCount;
 	}
 
-	private static double calculateScore(int matchCount, int totalWordCount) {
-		return (double) matchCount / totalWordCount;
+	private static double calculateScore(int count) {
+		return count;
 	}
 }
