@@ -198,12 +198,8 @@ public class FileStemmer {
 		try (BufferedReader reader = Files.newBufferedReader(input)) {
 			String line;
 			SnowballStemmer stemmer = new SnowballStemmer(ENGLISH);
-			while ((line = reader.readLine()) != null) { // TODO Same comment as listStems(Path)
-				String[] clean = parse(line);
-				for (String word : clean) {
-					String stem = stemmer.stem(word).toString();
-					unique.add(stem);
-				}
+			while ((line = reader.readLine()) != null) {
+				addStems(line, stemmer, unique);
 			}
 		}
 		return unique;
