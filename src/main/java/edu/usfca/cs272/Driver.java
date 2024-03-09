@@ -85,7 +85,7 @@ public class Driver {
         if (parser.hasFlag("-results")) {
             resultsPath = parser.getString("-results", "results.json");
             try {
-                
+            	
             } catch (Exception e) {
                 System.out.println("Error writing results to file " + resultsPath);
             }
