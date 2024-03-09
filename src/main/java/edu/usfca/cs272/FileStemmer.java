@@ -141,6 +141,7 @@ public class FileStemmer {
 			String line;
 			SnowballStemmer stemmer = new SnowballStemmer(ENGLISH);
 			while ((line = reader.readLine()) != null) {
+				// TODO Duplicate code below... which method could you reuse?
 				String[] clean = parse(line);
 				for (String word : clean) {
 					String stem = stemmer.stem(word).toString();
@@ -202,7 +203,7 @@ public class FileStemmer {
 		try (BufferedReader reader = Files.newBufferedReader(input)) {
 			String line;
 			SnowballStemmer stemmer = new SnowballStemmer(ENGLISH);
-			while ((line = reader.readLine()) != null) {
+			while ((line = reader.readLine()) != null) { // TODO Same comment as listStems(Path)
 				String[] clean = parse(line);
 				for (String word : clean) {
 					String stem = stemmer.stem(word).toString();
@@ -233,7 +234,7 @@ public class FileStemmer {
 		try (BufferedReader reader = Files.newBufferedReader(input)) {
 			SnowballStemmer stemmer = new SnowballStemmer(ENGLISH);
 			String line;
-			while ((line = reader.readLine()) != null) {
+			while ((line = reader.readLine()) != null) { // TODO Same comment as listStems(Path)
 				TreeSet<String> unique = new TreeSet<>();
 				String[] clean = parse(line);
 				for (String word : clean) {
