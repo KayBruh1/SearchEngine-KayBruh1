@@ -80,8 +80,13 @@ public class FileBuilder {
 	 * @throws IOException If an I/O error occurs
 	 */
 	public void processFile(Path location) throws IOException {
-		if (Files.size(location) > 0) {
-			List<String> lines = Files.readAllLines(location);
+		if (Files.size(location) > 0) { // TODO Remove from here
+			List<String> lines = Files.readAllLines(location); // TODO Read the file in a more memory and time efficient way... using a buffered reader and processing one line at a time!
+			
+			/*
+			 * TODO You should no longer need these data structures. They should only appear
+			 * inside the inverted index class.
+			 */
 			HashMap<String, Integer> wordCounts = new HashMap<>();
 			TreeMap<String, TreeSet<Integer>> invertedIndex = new TreeMap<>();
 			int position = 0;
@@ -89,6 +94,7 @@ public class FileBuilder {
 			for (String line : lines) {
 				List<String> wordStems = FileStemmer.listStems(line);
 				for (String stemmedWord : wordStems) {
+					// TODO This should be an indexer.addWord(stemmedWord, location.toString(), position); call only... nothing more in here!
 					position += 1;
 					wordCounts.put(stemmedWord, wordCounts.getOrDefault(stemmedWord, 0) + 1);
 
@@ -121,7 +127,7 @@ public class FileBuilder {
 	 * @param file The file to be checked
 	 * @return True for a valid file, false otherwise
 	 */
-	private static boolean isTextFile(Path file) {
+	private static boolean isTextFile(Path file) { // TODO public
 		String fileName = file.getFileName().toString().toLowerCase();
 		return Files.isRegularFile(file) && (fileName.endsWith(".txt") || fileName.endsWith(".text"));
 	}
