@@ -135,22 +135,17 @@ public class FileStemmer {
 	 * @see StandardCharsets#UTF_8
 	 * @see #listStems(String, Stemmer)
 	 */
-	public static ArrayList<String> listStems(Path input) throws IOException {
-		ArrayList<String> words = new ArrayList<>();
-		try (BufferedReader reader = Files.newBufferedReader(input)) {
-			String line;
-			SnowballStemmer stemmer = new SnowballStemmer(ENGLISH);
-			while ((line = reader.readLine()) != null) {
-				// TODO Duplicate code below... which method could you reuse?
-				String[] clean = parse(line);
-				for (String word : clean) {
-					String stem = stemmer.stem(word).toString();
-					words.add(stem);
-				}
-			}
-		}
-		return words;
-	}
+    public static ArrayList<String> listStems(Path input) throws IOException {
+        ArrayList<String> words = new ArrayList<>();
+        try (BufferedReader reader = Files.newBufferedReader(input)) {
+            SnowballStemmer stemmer = new SnowballStemmer(ENGLISH);
+            String line;
+            while ((line = reader.readLine()) != null) {
+                addStems(line, stemmer, words);
+            }
+        }
+        return words;
+    }
 
 	/**
 	 * Parses the line into a set of unique, sorted, cleaned, and stemmed words.
