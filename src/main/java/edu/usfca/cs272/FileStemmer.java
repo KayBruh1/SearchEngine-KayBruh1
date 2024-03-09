@@ -135,17 +135,17 @@ public class FileStemmer {
 	 * @see StandardCharsets#UTF_8
 	 * @see #listStems(String, Stemmer)
 	 */
-    public static ArrayList<String> listStems(Path input) throws IOException {
-        ArrayList<String> words = new ArrayList<>();
-        try (BufferedReader reader = Files.newBufferedReader(input)) {
-            SnowballStemmer stemmer = new SnowballStemmer(ENGLISH);
-            String line;
-            while ((line = reader.readLine()) != null) {
-                addStems(line, stemmer, words);
-            }
-        }
-        return words;
-    }
+	public static ArrayList<String> listStems(Path input) throws IOException {
+		ArrayList<String> words = new ArrayList<>();
+		try (BufferedReader reader = Files.newBufferedReader(input)) {
+			SnowballStemmer stemmer = new SnowballStemmer(ENGLISH);
+			String line;
+			while ((line = reader.readLine()) != null) {
+				addStems(line, stemmer, words);
+			}
+		}
+		return words;
+	}
 
 	/**
 	 * Parses the line into a set of unique, sorted, cleaned, and stemmed words.
@@ -222,16 +222,12 @@ public class FileStemmer {
 	 */
 	public static ArrayList<TreeSet<String>> listUniqueStems(Path input) throws IOException {
 		ArrayList<TreeSet<String>> words = new ArrayList<>();
+		SnowballStemmer stemmer = new SnowballStemmer(ENGLISH);
 		try (BufferedReader reader = Files.newBufferedReader(input)) {
-			SnowballStemmer stemmer = new SnowballStemmer(ENGLISH);
 			String line;
-			while ((line = reader.readLine()) != null) { // TODO Same comment as listStems(Path)
+			while ((line = reader.readLine()) != null) {
 				TreeSet<String> unique = new TreeSet<>();
-				String[] clean = parse(line);
-				for (String word : clean) {
-					String stem = stemmer.stem(word).toString();
-					unique.add(stem);
-				}
+				addStems(line, stemmer, unique);
 				words.add(unique);
 			}
 		}
