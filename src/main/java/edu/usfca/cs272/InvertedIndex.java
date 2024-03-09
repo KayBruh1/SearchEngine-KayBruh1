@@ -44,6 +44,11 @@ public class InvertedIndex {
 	 */
 	public SortedMap<String, TreeMap<String, TreeSet<Integer>>> getInvertedIndex() {
 		return Collections.unmodifiableSortedMap(invertedIndex);
+		/*
+		 * TODO This get method is breaking encapsulation. Do you understand why? The
+		 * PrefixMap example illustrates what happens when you have nested mutable data.
+		 */
+
 	}
 
 	/**
@@ -63,6 +68,15 @@ public class InvertedIndex {
 	public int getCountSize() {
 		return counts.size();
 	}
+	
+	/*
+	 * TODO There are 4 types of information stored, the counts, the words, 
+	 * the locations per word, and the positions per word. I should see 4 size
+	 * methods, 4 has methods, 4 view methods, etc.
+	 * 
+	 * Make sure the view methods are returning DIFFERENT data, not duplicating
+	 * what a different method did with different names.
+	 */
 
 	/**
 	 * Looks for a word in the inverted index
@@ -70,7 +84,7 @@ public class InvertedIndex {
 	 * @param word The word to add
 	 * @return The findings of the word
 	 */
-	public Map<String, TreeSet<Integer>> getWordInfo(String word) {
+	public Map<String, TreeSet<Integer>> getWordInfo(String word) { // TODO Also breaking encapsulation
 		TreeMap<String, TreeSet<Integer>> wordMap = invertedIndex.get(word);
 		if (wordMap != null) {
 			return Collections.unmodifiableMap(new TreeMap<>(wordMap));
@@ -85,7 +99,7 @@ public class InvertedIndex {
 	 * @param word The word to get location information for
 	 * @return A map containing file locations
 	 */
-	public Map<String, TreeSet<Integer>> getLocationInfo(String word) {
+	public Map<String, TreeSet<Integer>> getLocationInfo(String word) { // TODO Breaking encapsulation, and identical to the other method above?
 		TreeMap<String, TreeSet<Integer>> locationInfo = invertedIndex.get(word);
 		if (locationInfo != null) {
 			return Collections.unmodifiableMap(new TreeMap<>(locationInfo));
@@ -106,6 +120,13 @@ public class InvertedIndex {
 		}
 	}
 
+	/*
+	 * TODO Always start with adding the smallest "item" first, then add methods
+	 * for multiple items. Here, that means 1 word, 1 location, 1 position. I'm
+	 * not sure what happened, as you had this before:
+	 * 
+	 * https://github.com/usf-cs272-spring2024/project-KayBruh1/blob/497875dba651eba029bc70ec23a5d7d3882cf766/src/main/java/edu/usfca/cs272/InvertedIndex.java#L52-L60
+	 */
 	/**
 	 * Adds a word with its position in a file to the inverted index
 	 *
@@ -133,7 +154,7 @@ public class InvertedIndex {
 	 * @param location   The path of the file
 	 * @param wordCounts A map containing word counts for the specified location
 	 */
-	public void addWordCounts(String location, HashMap<String, Integer> wordCounts) {
+	public void addWordCounts(String location, HashMap<String, Integer> wordCounts) { // TODO Remove, not quite how a method like this should work (the keys of wordCounts are ignored) and won't be needed in future
 		int totalCount = counts.getOrDefault(location, 0);
 		int newCount = 0;
 		for (int count : wordCounts.values()) {
@@ -142,6 +163,12 @@ public class InvertedIndex {
 		counts.put(location, totalCount + newCount);
 	}
 
+	/*
+	 * TODO The point of creating an inverted index is to encapsulate this
+	 * difficult nested data structure and so that other code no longer has
+	 * to maintain it! Remove the method below. If you want to combine two
+	 * inverted indexes, there is a different way to go about it.
+	 */
 	/**
 	 * Adds to the inverted index for a given file location
 	 *
@@ -175,7 +202,7 @@ public class InvertedIndex {
 	 *
 	 * @return an unmodifiable view of the inverted index
 	 */
-	public Map<String, TreeMap<String, TreeSet<Integer>>> viewIndex() {
+	public Map<String, TreeMap<String, TreeSet<Integer>>> viewIndex() { // TODO Still breaking encapsulation
 		return Collections.unmodifiableMap(invertedIndex);
 	}
 
@@ -185,7 +212,7 @@ public class InvertedIndex {
 	 * @param location The location to get word positions for
 	 * @return an unmodifiable view of the word positions for the location
 	 */
-	public Map<String, TreeSet<Integer>> viewWords(String location) {
+	public Map<String, TreeSet<Integer>> viewWords(String location) { // TODO Remove, encapsulation
 		TreeMap<String, TreeSet<Integer>> wordPositions = invertedIndex.getOrDefault(location, new TreeMap<>());
 		return Collections.unmodifiableMap(wordPositions);
 	}
@@ -196,7 +223,7 @@ public class InvertedIndex {
 	 * @param word The word to get locations for
 	 * @return an unmodifiable view of the locations for the word
 	 */
-	public Map<String, TreeSet<Integer>> viewLocations(String word) {
+	public Map<String, TreeSet<Integer>> viewLocations(String word) { // TODO Remove... encapsulation, duplicate logic
 		return Collections.unmodifiableMap(invertedIndex.getOrDefault(word, new TreeMap<>()));
 	}
 
