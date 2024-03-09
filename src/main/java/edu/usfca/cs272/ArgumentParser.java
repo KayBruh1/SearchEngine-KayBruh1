@@ -116,13 +116,7 @@ public class ArgumentParser {
 	 * @return {@code true} if the flag is mapped to a non-null value
 	 */
 	public boolean hasValue(String flag) {
-		/*
-		 * TODO You don't need to check containsKey(...) here. The get(...) method
-		 * returns null if the key is missing or if the value is missing, so it is the
-		 * only check you need for this.
-		 */
-
-		return map.containsKey(flag) && map.get(flag) != null;
+		return map.get(flag) != null;
 	}
 
 	/**
