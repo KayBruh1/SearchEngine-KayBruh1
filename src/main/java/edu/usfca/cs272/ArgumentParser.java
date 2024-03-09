@@ -198,8 +198,7 @@ public class ArgumentParser {
 	 */
 	public int getInteger(String flag, int backup) {
 		try {
-			// TODO return Integer.parseInt(map.get(flag));
-			return Integer.parseInt(map.getOrDefault(flag, String.valueOf(backup)));
+			return Integer.parseInt(map.get(flag));
 		} catch (NumberFormatException e) {
 			return backup;
 		}
