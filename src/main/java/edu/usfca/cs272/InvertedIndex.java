@@ -54,7 +54,7 @@ public class InvertedIndex {
 	public int countSize() {
 		return counts.size();
 	}
-	
+
 	/**
 	 * Finds the amount of different words
 	 * 
@@ -63,35 +63,35 @@ public class InvertedIndex {
 	public int indexSize() {
 		return invertedIndex.size();
 	}
-	
-    /**
-     * Finds the total count of words in all files
-     *
-     * @return The total count of words
-     */
-    public int totalWordCount() {
-        int totalCount = 0;
-        for (int count : counts.values()) {
-            totalCount += count;
-        }
-        return totalCount;
-    }
-    
-    /**
-     * Finds the total count of positions for a word
-     *
-     * @param word The word to count positions for
-     * @return The total count of positions for the word
-     */
-    public int totalPositionCount(String word) {
-        int totalPositions = 0;
-        TreeMap<String, TreeSet<Integer>> fileMap = invertedIndex.getOrDefault(word, new TreeMap<>());
-        for (TreeSet<Integer> positions : fileMap.values()) {
-            totalPositions += positions.size();
-        }
-        return totalPositions;
-    }
-    
+
+	/**
+	 * Finds the total count of words in all files
+	 *
+	 * @return The total count of words
+	 */
+	public int totalWordCount() {
+		int totalCount = 0;
+		for (int count : counts.values()) {
+			totalCount += count;
+		}
+		return totalCount;
+	}
+
+	/**
+	 * Finds the total count of positions for a word
+	 *
+	 * @param word The word to count positions for
+	 * @return The total count of positions for the word
+	 */
+	public int totalPositionCount(String word) {
+		int totalPositions = 0;
+		TreeMap<String, TreeSet<Integer>> fileMap = invertedIndex.getOrDefault(word, new TreeMap<>());
+		for (TreeSet<Integer> positions : fileMap.values()) {
+			totalPositions += positions.size();
+		}
+		return totalPositions;
+	}
+
 	/**
 	 * Check if the location exists in the word counts
 	 *
@@ -111,30 +111,30 @@ public class InvertedIndex {
 	public boolean hasWord(String word) {
 		return invertedIndex.containsKey(word);
 	}
-	
-    /**
-     * Checks if a word at a specific location exists
-     *
-     * @param word     The word to check
-     * @param location The location to check
-     * @return True if the word at location exists, false otherwise
-     */
-    public boolean hasWordLocation(String word, String location) {
-        return invertedIndex.containsKey(word) && invertedIndex.get(word).containsKey(location);
-    }
-    
-    /**
-     * Checks if a word exists at a specific location position
-     *
-     * @param word     The word to check
-     * @param location The location to check
-     * @param position The position of the word
-     * @return True if the word exists at the location position, false otherwise
-     */
-    public boolean hasWordPosition(String word, String location, int position) {
-        return hasWordLocation(word, location) && invertedIndex.get(word).get(location).contains(position);
-    }
-    
+
+	/**
+	 * Checks if a word at a specific location exists
+	 *
+	 * @param word     The word to check
+	 * @param location The location to check
+	 * @return True if the word at location exists, false otherwise
+	 */
+	public boolean hasWordLocation(String word, String location) {
+		return invertedIndex.containsKey(word) && invertedIndex.get(word).containsKey(location);
+	}
+
+	/**
+	 * Checks if a word exists at a specific location position
+	 *
+	 * @param word     The word to check
+	 * @param location The location to check
+	 * @param position The position of the word
+	 * @return True if the word exists at the location position, false otherwise
+	 */
+	public boolean hasWordPosition(String word, String location, int position) {
+		return hasWordLocation(word, location) && invertedIndex.get(word).get(location).contains(position);
+	}
+
 	/**
 	 * Returns an unmodifiable view of the word counts
 	 *
@@ -152,39 +152,30 @@ public class InvertedIndex {
 	public Map<String, TreeMap<String, TreeSet<Integer>>> viewIndex() {
 		return Collections.unmodifiableMap(new TreeMap<>(invertedIndex));
 	}
-	
-    /**
-     * Returns an unmodifiable view of the word location
-     *
-     * @param word The word to retrieve locations
-     * @return An unmodifiable view of the word locations
-     */
-    public Map<String, TreeSet<Integer>> viewWordLocations(String word) {
-        TreeMap<String, TreeSet<Integer>> locations = invertedIndex.getOrDefault(word, new TreeMap<>());
-        return Collections.unmodifiableMap(locations);
-    }
-    
-    /**
-     * Returns an unmodifiable view of the positions for a word
-     *
-     * @param word     The word to retrieve positions for
-     * @param location The location to retrieve positions for
-     * @return An unmodifiable view of the positions for the word
-     */
-    public TreeSet<Integer> viewWordPositions(String word, String location) {
-        TreeMap<String, TreeSet<Integer>> fileMap = invertedIndex.getOrDefault(word, new TreeMap<>());
-        SortedSet<Integer> positions = fileMap.getOrDefault(location, new TreeSet<>());
-        return new TreeSet<>(positions); 
-    }
 
-	/*
-	 * TODO There are 4 types of information stored, the counts, the words, the
-	 * locations per word, and the positions per word. I should see 4 size methods,
-	 * 4 has methods, 4 view methods, etc.
-	 * 
-	 * Make sure the view methods are returning DIFFERENT data, not duplicating what
-	 * a different method did with different names.
+	/**
+	 * Returns an unmodifiable view of the word location
+	 *
+	 * @param word The word to retrieve locations
+	 * @return An unmodifiable view of the word locations
 	 */
+	public Map<String, TreeSet<Integer>> viewWordLocations(String word) {
+		TreeMap<String, TreeSet<Integer>> locations = invertedIndex.getOrDefault(word, new TreeMap<>());
+		return Collections.unmodifiableMap(locations);
+	}
+
+	/**
+	 * Returns an unmodifiable view of the positions for a word
+	 *
+	 * @param word     The word to retrieve positions for
+	 * @param location The location to retrieve positions for
+	 * @return An unmodifiable view of the positions for the word
+	 */
+	public TreeSet<Integer> viewWordPositions(String word, String location) {
+		TreeMap<String, TreeSet<Integer>> fileMap = invertedIndex.getOrDefault(word, new TreeMap<>());
+		SortedSet<Integer> positions = fileMap.getOrDefault(location, new TreeSet<>());
+		return new TreeSet<>(positions);
+	}
 
 	/**
 	 * Adds the word count for a file to the inverted index
@@ -201,16 +192,16 @@ public class InvertedIndex {
 	/**
 	 * Adds a word with its position in a file to the inverted index
 	 *
-	 * @param word      The word to add
-	 * @param location  The path of the file
+	 * @param word     The word to add
+	 * @param location The path of the file
 	 * @param position The position of the word in the file
 	 */
 	public void addWord(String word, String location, int position) {
-	    TreeMap<String, TreeSet<Integer>> fileMap = invertedIndex.getOrDefault(word, new TreeMap<>());
-	    TreeSet<Integer> positions = fileMap.getOrDefault(location, new TreeSet<>());
-	    positions.add(position);
-	    fileMap.put(location, positions);
-	    invertedIndex.put(word, fileMap);
+		TreeMap<String, TreeSet<Integer>> fileMap = invertedIndex.getOrDefault(word, new TreeMap<>());
+		TreeSet<Integer> positions = fileMap.getOrDefault(location, new TreeSet<>());
+		positions.add(position);
+		fileMap.put(location, positions);
+		invertedIndex.put(word, fileMap);
 		int count = counts.getOrDefault(location, 0);
 		counts.put(location, count + 1);
 	}

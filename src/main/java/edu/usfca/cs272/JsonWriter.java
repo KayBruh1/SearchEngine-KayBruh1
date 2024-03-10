@@ -441,7 +441,6 @@ public class JsonWriter {
 	 * Returns the inverted index as a pretty JSON string
 	 *
 	 * @param invertedIndex the inverted index to use
-	 * @return the inverted index in pretty JSON format
 	 */
 	public static void writeIndex(TreeMap<String, ? extends Map<String, ? extends TreeSet<Integer>>> invertedIndex) {
 		try {
