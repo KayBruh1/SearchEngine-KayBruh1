@@ -6,11 +6,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -130,16 +130,17 @@ public class FileBuilder {
 		return Files.isRegularFile(file) && (fileName.endsWith(".txt") || fileName.endsWith(".text"));
 	}
 
-	public Map<String, List<Map<String, Object>>> conductSearch(List<List<String>> processedQueries)
-			throws IOException {
-		HashMap<String, List<Map<String, Object>>> searchResults = new HashMap<>();
+	public Map<String, List<SearchResult>> conductSearch(List<List<String>> processedQueries) throws IOException {
+		Map<String, List<SearchResult>> searchResultsMap = new HashMap<>();
 
 		for (List<String> query : processedQueries) {
 			if (query.isEmpty()) {
 				continue;
 			}
 			String queryWord = String.join(" ", query);
-			List<Map<String, Object>> results = new ArrayList<>();
+			Set<String> visitedLocations = new HashSet<>();
+
+			List<SearchResult> searchResults = new ArrayList<>();
 
 			for (String word : query) {
 				Map<String, TreeSet<Integer>> locations = indexer.getInvertedIndex().getOrDefault(word,
@@ -147,66 +148,20 @@ public class FileBuilder {
 
 				for (Map.Entry<String, TreeSet<Integer>> entry : locations.entrySet()) {
 					String location = entry.getKey();
+					if (visitedLocations.contains(location)) {
+						continue;
+					}
 					int count = entry.getValue().size();
 					double score = indexer.calculateScore(count, location, query.size());
 
-					boolean locationExists = false;
-					for (Map<String, Object> resultMap : results) {
-						if (resultMap.get("where").equals(location)) {
-							int totalCount = (int) resultMap.get("count");
-							resultMap.put("count", totalCount + count);
-							locationExists = true;
-							break;
-						}
-					}
-
-					if (!locationExists) {
-						HashMap<String, Object> resultMap = new HashMap<>();
-						resultMap.put("count", count);
-						resultMap.put("score", score);
-						resultMap.put("where", location);
-						results.add(resultMap);
-					}
+					SearchResult result = new SearchResult(location, count, score);
+					searchResults.add(result);
+					visitedLocations.add(location);
 				}
 			}
-			searchResults.put(queryWord, results);
+			searchResultsMap.put(queryWord, searchResults);
 		}
-
-		if (!searchResults.isEmpty()) {
-			for (List<Map<String, Object>> resultList : searchResults.values()) {
-				Collections.sort(resultList, new Comparator<Map<String, Object>>() {
-					@Override
-					public int compare(Map<String, Object> query1, Map<String, Object> query2) {
-						double score1 = (double) query1.get("score");
-						double score2 = (double) query2.get("score");
-						if (score2 != score1) {
-							int index1 = resultList.indexOf(query1);
-							int index2 = resultList.indexOf(query2);
-							Collections.swap(resultList, index1, index2);
-						}
-
-						int count1 = (int) query1.get("count");
-						int count2 = (int) query2.get("count");
-						if (count2 != count1) {
-							int index1 = resultList.indexOf(query1);
-							int index2 = resultList.indexOf(query2);
-							Collections.swap(resultList, index1, index2);
-						}
-
-						String location1 = ((String) query1.get("where")).toLowerCase();
-						String location2 = ((String) query2.get("where")).toLowerCase();
-						int locationComparison = location1.compareToIgnoreCase(location2);
-						if (locationComparison > 0) {
-							int index1 = resultList.indexOf(query1);
-							int index2 = resultList.indexOf(query2);
-							Collections.swap(resultList, index1, index2);
-						}
-						return 0;
-					}
-				});
-			}
-		}
-		return searchResults;
+		return searchResultsMap;
 	}
 
 	public static List<List<String>> processQuery(Path queryPath) throws IOException {

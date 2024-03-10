@@ -2,6 +2,7 @@ package edu.usfca.cs272;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -58,38 +59,43 @@ public class Driver {
 			}
 		}
 
-		Map<String, List<Map<String, Object>>> searchResults = null;
+		Map<String, List<SearchResult>> searchResultsMap = null;
 		if (parser.hasFlag("-query")) {
 			queryPath = parser.getPath("-query");
 			if (Files.exists(queryPath)) {
 				try {
-					List<List<String>> processedQueries = fileBuilder.processQuery(queryPath);
-		            searchResults = fileBuilder.conductSearch(processedQueries);
+					List<List<String>> processedQueries = FileBuilder.processQuery(queryPath);
+					searchResultsMap = fileBuilder.conductSearch(processedQueries);
 
-		            for (Map.Entry<String, List<Map<String, Object>>> entry : searchResults.entrySet()) {
-		                System.out.println("Query: " + entry.getKey());
-		                for (Map<String, Object> result : entry.getValue()) {
-		                    int count = (int) result.get("count");
-		                    double score = (double) result.get("score");
-		                    String location = (String) result.get("where");
-		                    System.out.println("Location: " + location + ", Count: " + count + ", Score: " + score);
-		                }
-		                System.out.println();
-		            }
+					for (Map.Entry<String, List<SearchResult>> entry : searchResultsMap.entrySet()) {
+						String query = entry.getKey();
+						List<SearchResult> searchResults = entry.getValue();
+
+						Collections.sort(searchResults);
+
+						System.out.println("Query: " + query);
+						for (SearchResult result : searchResults) {
+							int count = result.getCount();
+							double score = result.getScore();
+							String location = result.getLocation();
+							System.out.println("Location: " + location + ", Count: " + count + ", Score: " + score);
+						}
+						System.out.println();
+					}
 				} catch (Exception e) {
 					System.out.println("Error reading the query file " + queryPath);
 				}
-			} 
+			}
 		}
 
-        if (parser.hasFlag("-results")) {
-            resultsPath = parser.getString("-results", "results.json");
-            try {
-            	
-            } catch (Exception e) {
-                System.out.println("Error writing results to file " + resultsPath);
-            }
-        }
+		if (parser.hasFlag("-results")) {
+			resultsPath = parser.getString("-results", "results.json");
+			try {
+
+			} catch (Exception e) {
+				System.out.println("Error writing results to file " + resultsPath);
+			}
+		}
 
 	}
 }
