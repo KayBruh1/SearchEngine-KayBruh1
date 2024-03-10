@@ -133,6 +133,35 @@ public class InvertedIndex {
     public boolean hasWordPosition(String word, String location, int position) {
         return hasWordLocation(word, location) && invertedIndex.get(word).get(location).contains(position);
     }
+    
+	/**
+	 * Returns an unmodifiable view of the word counts
+	 *
+	 * @return an unmodifiable view of the word counts
+	 */
+	public Map<String, Integer> viewCounts() {
+		return Collections.unmodifiableMap(counts);
+	}
+
+	/**
+	 * Returns an unmodifiable view of the inverted index
+	 *
+	 * @return an unmodifiable view of the inverted index
+	 */
+	public Map<String, TreeMap<String, TreeSet<Integer>>> viewIndex() {
+		return Collections.unmodifiableMap(new TreeMap<>(invertedIndex));
+	}
+	
+    /**
+     * Returns an unmodifiable view of the word location
+     *
+     * @param word The word to retrieve locations
+     * @return An unmodifiable view of the word locations
+     */
+    public Map<String, TreeSet<Integer>> viewWordLocations(String word) {
+        TreeMap<String, TreeSet<Integer>> locations = invertedIndex.getOrDefault(word, new TreeMap<>());
+        return Collections.unmodifiableMap(locations);
+    }
 
 
 	/*
@@ -171,24 +200,6 @@ public class InvertedIndex {
 	    invertedIndex.put(word, fileMap);
 		int count = counts.getOrDefault(location, 0);
 		counts.put(location, count + 1);
-	}
-
-	/**
-	 * Returns an unmodifiable view of the word counts
-	 *
-	 * @return an unmodifiable view of the word counts
-	 */
-	public Map<String, Integer> viewCounts() {
-		return Collections.unmodifiableMap(counts);
-	}
-
-	/**
-	 * Returns an unmodifiable view of the inverted index
-	 *
-	 * @return an unmodifiable view of the inverted index
-	 */
-	public Map<String, TreeMap<String, TreeSet<Integer>>> viewIndex() {
-		return Collections.unmodifiableMap(new TreeMap<>(invertedIndex));
 	}
 
 	/**
