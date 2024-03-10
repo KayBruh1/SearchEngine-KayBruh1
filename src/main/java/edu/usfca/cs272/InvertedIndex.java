@@ -118,9 +118,22 @@ public class InvertedIndex {
      * @param location The location to check
      * @return True if the word at location exists, false otherwise
      */
-    public boolean hasWordAtLocation(String word, String location) {
+    public boolean hasWordLocation(String word, String location) {
         return invertedIndex.containsKey(word) && invertedIndex.get(word).containsKey(location);
     }
+    
+    /**
+     * Checks if a word exists at a specific location position
+     *
+     * @param word     The word to check
+     * @param location The location to check
+     * @param position The position of the word
+     * @return True if the word exists at the location position, false otherwise
+     */
+    public boolean hasWordPosition(String word, String location, int position) {
+        return hasWordLocation(word, location) && invertedIndex.get(word).get(location).contains(position);
+    }
+
 
 	/*
 	 * TODO There are 4 types of information stored, the counts, the words, the
