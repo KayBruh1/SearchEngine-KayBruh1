@@ -2,7 +2,6 @@ package edu.usfca.cs272;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -70,8 +69,6 @@ public class Driver {
 					for (Map.Entry<String, List<SearchResult>> entry : searchResultsMap.entrySet()) {
 						String query = entry.getKey();
 						List<SearchResult> searchResults = entry.getValue();
-
-						Collections.sort(searchResults);
 
 						System.out.println("Query: " + query);
 						for (SearchResult result : searchResults) {

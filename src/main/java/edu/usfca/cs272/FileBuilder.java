@@ -137,9 +137,9 @@ public class FileBuilder {
 			if (query.isEmpty()) {
 				continue;
 			}
+
 			String queryWord = String.join(" ", query);
 			Set<String> visitedLocations = new HashSet<>();
-
 			List<SearchResult> searchResults = new ArrayList<>();
 
 			for (String word : query) {
@@ -161,6 +161,11 @@ public class FileBuilder {
 			}
 			searchResultsMap.put(queryWord, searchResults);
 		}
+
+		for (List<SearchResult> results : searchResultsMap.values()) {
+			Collections.sort(results);
+		}
+
 		return searchResultsMap;
 	}
 
