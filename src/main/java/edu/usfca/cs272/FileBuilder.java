@@ -131,43 +131,42 @@ public class FileBuilder {
 	}
 
 	public Map<String, List<SearchResult>> conductSearch(List<List<String>> processedQueries) throws IOException {
-		Map<String, List<SearchResult>> searchResultsMap = new HashMap<>();
+	    Map<String, List<SearchResult>> searchResultsMap = new HashMap<>();
 
-		for (List<String> query : processedQueries) {
-			if (query.isEmpty()) {
-				continue;
-			}
+	    for (List<String> query : processedQueries) {
+	        if (query.isEmpty()) {
+	            continue;
+	        }
 
-			String queryWord = String.join(" ", query);
-			Set<String> visitedLocations = new HashSet<>();
-			List<SearchResult> searchResults = new ArrayList<>();
+	        String queryWord = String.join(" ", query);
+	        Set<String> visitedLocations = new HashSet<>();
+	        List<SearchResult> searchResults = new ArrayList<>();
 
-			for (String word : query) {
-				Map<String, TreeSet<Integer>> locations = indexer.getInvertedIndex().getOrDefault(word,
-						new TreeMap<>());
+	        for (String word : query) {
+	            Map<String, TreeSet<Integer>> locations = indexer.getInvertedIndex().getOrDefault(word, new TreeMap<>());
 
-				for (Map.Entry<String, TreeSet<Integer>> entry : locations.entrySet()) {
-					String location = entry.getKey();
-					if (visitedLocations.contains(location)) {
-						continue;
-					}
-					int count = entry.getValue().size();
-					double score = indexer.calculateScore(count, location, query.size());
+	            for (Map.Entry<String, TreeSet<Integer>> entry : locations.entrySet()) {
+	                String location = entry.getKey();
+	                if (visitedLocations.contains(location)) {
+	                    continue;
+	                }
+	                int count = entry.getValue().size();
+	                double score = indexer.calculateScore(count, location, query.size());
 
-					SearchResult result = new SearchResult(location, count, score);
-					searchResults.add(result);
-					visitedLocations.add(location);
-				}
-			}
-			searchResultsMap.put(queryWord, searchResults);
-		}
+	                SearchResult result = new SearchResult(location, count, score);
+	                searchResults.add(result);
+	                visitedLocations.add(location);
+	            }
+	        }
+	        
+	        Collections.sort(searchResults);
 
-		for (List<SearchResult> results : searchResultsMap.values()) {
-			Collections.sort(results);
-		}
+	        searchResultsMap.put(queryWord, searchResults);
+	    }
 
-		return searchResultsMap;
+	    return searchResultsMap;
 	}
+
 
 	public static List<List<String>> processQuery(Path queryPath) throws IOException {
 		List<List<String>> processedQueries = new ArrayList<>();

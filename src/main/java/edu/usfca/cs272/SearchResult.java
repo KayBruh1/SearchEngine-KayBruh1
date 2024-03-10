@@ -25,15 +25,22 @@ public class SearchResult implements Comparable<SearchResult> {
 
 	@Override
 	public int compareTo(SearchResult other) {
+		System.out.println("here ");
 		int scoreComparison = Double.compare(other.score, this.score);
 		if (scoreComparison != 0) {
+			System.out.println("1 ");
+
 			return scoreComparison;
 		}
 
 		int countComparison = Integer.compare(other.count, this.count);
 		if (countComparison != 0) {
+			System.out.println("2 ");
+
 			return countComparison;
 		}
+
+		System.out.println("3 ");
 
 		return this.location.compareToIgnoreCase(other.location);
 	}
