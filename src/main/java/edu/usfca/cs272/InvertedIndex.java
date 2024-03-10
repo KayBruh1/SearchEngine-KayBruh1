@@ -32,7 +32,7 @@ public class InvertedIndex {
 	 *
 	 * @return the TreeMap containing word counts
 	 */
-	public SortedMap<String, Integer> getWordCounts() {
+	public SortedMap<String, Integer> getCounts() {
 		return Collections.unmodifiableSortedMap(counts);
 	}
 
@@ -46,21 +46,21 @@ public class InvertedIndex {
 	}
 
 	/**
-	 * Finds the amount of different words
-	 * 
-	 * @return The number of words
-	 */
-	public int getIndexSize() {
-		return invertedIndex.size();
-	}
-
-	/**
 	 * Finds the amount of different files
 	 * 
 	 * @return The number of files
 	 */
-	public int getCountSize() {
+	public int countSize() {
 		return counts.size();
+	}
+	
+	/**
+	 * Finds the amount of different words
+	 * 
+	 * @return The number of words
+	 */
+	public int indexSize() {
+		return invertedIndex.size();
 	}
 	
     /**
@@ -68,7 +68,7 @@ public class InvertedIndex {
      *
      * @return The total count of words
      */
-    public int getTotalWordCount() {
+    public int totalWordCount() {
         int totalCount = 0;
         for (int count : counts.values()) {
             totalCount += count;
@@ -82,7 +82,7 @@ public class InvertedIndex {
      * @param word The word to count positions for
      * @return The total count of positions for the word
      */
-    public int getTotalPositionCount(String word) {
+    public int totalPositionCount(String word) {
         int totalPositions = 0;
         TreeMap<String, TreeSet<Integer>> fileMap = invertedIndex.getOrDefault(word, new TreeMap<>());
         for (TreeSet<Integer> positions : fileMap.values()) {
@@ -110,6 +110,17 @@ public class InvertedIndex {
 	public boolean hasWord(String word) {
 		return invertedIndex.containsKey(word);
 	}
+	
+    /**
+     * Checks if a word at a specific location exists
+     *
+     * @param word     The word to check
+     * @param location The location to check
+     * @return True if the word at location exists, false otherwise
+     */
+    public boolean hasWordAtLocation(String word, String location) {
+        return invertedIndex.containsKey(word) && invertedIndex.get(word).containsKey(location);
+    }
 
 	/*
 	 * TODO There are 4 types of information stored, the counts, the words, the
