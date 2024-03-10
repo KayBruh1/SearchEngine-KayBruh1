@@ -111,76 +111,19 @@ public class InvertedIndex {
 		}
 	}
 
-	/*
-	 * TODO Always start with adding the smallest "item" first, then add methods for
-	 * multiple items. Here, that means 1 word, 1 location, 1 position. I'm not sure
-	 * what happened, as you had this before:
-	 * 
-	 * https://github.com/usf-cs272-spring2024/project-KayBruh1/blob/
-	 * 497875dba651eba029bc70ec23a5d7d3882cf766/src/main/java/edu/usfca/cs272/
-	 * InvertedIndex.java#L52-L60
-	 */
 	/**
 	 * Adds a word with its position in a file to the inverted index
 	 *
 	 * @param word      The word to add
 	 * @param location  The path of the file
-	 * @param positions The positions of the word in the file
+	 * @param position The position of the word in the file
 	 */
 	public void addWord(String word, String location, int position) {
-		TreeMap<String, TreeSet<Integer>> fileMap = invertedIndex.get(word);
-		if (fileMap == null) {
-			fileMap = new TreeMap<>();
-			invertedIndex.put(word, fileMap);
-		}
-		TreeSet<Integer> positions = fileMap.get(location);
-		if (positions == null) {
-			positions = new TreeSet<>();
-			fileMap.put(location, positions);
-		}
-		positions.add(position);
-	}
-
-	/**
-	 * Update the inverted index and word counts
-	 *
-	 * @param word     The word to add
-	 * @param location The path of the file
-	 * @param position The position of the word in the file
-	 */
-	public void updateStructures(String word, String location, int position) {
-		updateIndex(word, location, position);
-		updateCounts(location, word);
-	}
-
-	/**
-	 * Adds a word to the inverted index
-	 *
-	 * @param word     The word to add
-	 * @param location The path of the file
-	 * @param position The position of the word in the file
-	 */
-	private void updateIndex(String word, String location, int position) {
-		TreeMap<String, TreeSet<Integer>> fileMap = invertedIndex.get(word);
-		if (fileMap == null) {
-			fileMap = new TreeMap<>();
-			invertedIndex.put(word, fileMap);
-		}
-		TreeSet<Integer> positions = fileMap.get(location);
-		if (positions == null) {
-			positions = new TreeSet<>();
-			fileMap.put(location, positions);
-		}
-		positions.add(position);
-	}
-
-	/**
-	 * Updates word counts for a given file.
-	 *
-	 * @param location The path of the file
-	 * @param word     The word to update counts for
-	 */
-	private void updateCounts(String location, String word) {
+	    TreeMap<String, TreeSet<Integer>> fileMap = invertedIndex.getOrDefault(word, new TreeMap<>());
+	    TreeSet<Integer> positions = fileMap.getOrDefault(location, new TreeSet<>());
+	    positions.add(position);
+	    fileMap.put(location, positions);
+	    invertedIndex.put(word, fileMap);
 		int count = counts.getOrDefault(location, 0);
 		counts.put(location, count + 1);
 	}

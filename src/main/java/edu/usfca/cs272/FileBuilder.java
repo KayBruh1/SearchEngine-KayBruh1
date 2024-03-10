@@ -84,7 +84,7 @@ public class FileBuilder {
 				List<String> wordStems = FileStemmer.listStems(line);
 				for (String stemmedWord : wordStems) {
 					position += 1;
-					indexer.updateStructures(stemmedWord, location.toString(), position);
+					indexer.addWord(stemmedWord, location.toString(), position);
 				}
 			}
 		}
