@@ -79,14 +79,10 @@ public class InvertedIndex {
 	 * @param word The word to add
 	 * @return The findings of the word
 	 */
-	public Map<String, TreeSet<Integer>> getWordInfo(String word) { // TODO Also breaking encapsulation
-		TreeMap<String, TreeSet<Integer>> wordMap = invertedIndex.get(word);
-		if (wordMap != null) {
-			return Collections.unmodifiableMap(new TreeMap<>(wordMap));
-		} else {
-			return Collections.emptyMap();
-		}
-	}
+    public Map<String, TreeSet<Integer>> getWordInfo(String word) {
+        TreeMap<String, TreeSet<Integer>> wordMap = invertedIndex.getOrDefault(word, new TreeMap<>());
+        return Collections.unmodifiableMap(new TreeMap<>(wordMap));
+    }
 
 	/**
 	 * Retrieves the file locations and their positions for a word
