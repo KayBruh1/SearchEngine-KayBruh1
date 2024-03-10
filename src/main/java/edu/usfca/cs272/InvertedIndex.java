@@ -3,7 +3,6 @@ package edu.usfca.cs272;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -143,25 +142,6 @@ public class InvertedIndex {
 	}
 
 	/**
-	 * Adds the word counts for a given location
-	 *
-	 * @param location   The path of the file
-	 * @param wordCounts A map containing word counts for the specified location
-	 */
-	public void addWordCounts(String location, HashMap<String, Integer> wordCounts) { // TODO Remove, not quite how a
-																						// method like this should work
-																						// (the keys of wordCounts are
-																						// ignored) and won't be needed
-																						// in future
-		int totalCount = counts.getOrDefault(location, 0);
-		int newCount = 0;
-		for (int count : wordCounts.values()) {
-			newCount += count;
-		}
-		counts.put(location, totalCount + newCount);
-	}
-
-	/**
 	 * Update the inverted index and word counts
 	 *
 	 * @param word     The word to add
@@ -221,27 +201,6 @@ public class InvertedIndex {
 	 */
 	public Map<String, TreeMap<String, TreeSet<Integer>>> viewIndex() {
 		return Collections.unmodifiableMap(new TreeMap<>(invertedIndex));
-	}
-
-	/**
-	 * Returns an unmodifiable view of the word positions for a location
-	 *
-	 * @param location The location to get word positions for
-	 * @return an unmodifiable view of the word positions for the location
-	 */
-	public Map<String, TreeSet<Integer>> viewWords(String location) { // TODO Remove, encapsulation
-		TreeMap<String, TreeSet<Integer>> wordPositions = invertedIndex.getOrDefault(location, new TreeMap<>());
-		return Collections.unmodifiableMap(wordPositions);
-	}
-
-	/**
-	 * Returns an unmodifiable view of the locations for a word
-	 *
-	 * @param word The word to get locations for
-	 * @return an unmodifiable view of the locations for the word
-	 */
-	public Map<String, TreeSet<Integer>> viewLocations(String word) { // TODO Remove... encapsulation, duplicate logic
-		return Collections.unmodifiableMap(invertedIndex.getOrDefault(word, new TreeMap<>()));
 	}
 
 	/**
