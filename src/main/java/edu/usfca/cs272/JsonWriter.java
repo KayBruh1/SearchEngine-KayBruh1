@@ -159,9 +159,9 @@ public class JsonWriter {
 		Map.Entry<String, ? extends Number> entry = null;
 		String key = null;
 		Number value = null;
-		writer.write("\n");
 
 		if (iterator.hasNext()) {
+			writer.write("\n");
 			entry = iterator.next();
 			key = entry.getKey();
 			value = entry.getValue();
