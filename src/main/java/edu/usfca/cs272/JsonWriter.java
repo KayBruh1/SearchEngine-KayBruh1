@@ -405,40 +405,22 @@ public class JsonWriter {
 	 * @throws IOException if an I/O error occurs while writing
 	 */
 	public static void writeIndex(TreeMap<String, ? extends Map<String, ? extends TreeSet<Integer>>> invertedIndex,
-			String indexPath, int indent) throws IOException {
-		/*
-		 * TODO Try to make this type more generic so that it works with any type of map
-		 * and collection and number. Use the other methods as a clue of how to make
-		 * this work. The ? extends syntax is important for nested types! Reach out on
-		 * Piazza if you run into issues---it is a really hard generic type to get just
-		 * right!
-		 */
+			Writer writer, int indent) throws IOException {
+		writer.write("{");
+		writer.write("\n");
+		var iterator = invertedIndex.entrySet().iterator();
 
-		/*
-		 * TODO Notice how all the other methods here have 3 versions? There is the
-		 * super general and reusable version that takes a writer and indent level, but
-		 * then there are two convenience methods that make common operations (writing
-		 * to file or generating a String) more reusable. Try to do the same thing with
-		 * your method to output the inverted index!
-		 */
-
-		try (BufferedWriter writer = Files.newBufferedWriter(Path.of(indexPath), UTF_8)) {
-			writer.write("{");
-			writer.write("\n");
-			var iterator = invertedIndex.entrySet().iterator();
-
-			if (iterator.hasNext()) {
-				writeEntry(iterator.next(), writer, indent + 1);
-				while (iterator.hasNext()) {
-					writer.write(",");
-					writer.write("\n");
-					writeEntry(iterator.next(), writer, indent + 1);
-				}
+		if (iterator.hasNext()) {
+			writeEntry(iterator.next(), writer, indent + 1);
+			while (iterator.hasNext()) {
+				writer.write(",");
 				writer.write("\n");
+				writeEntry(iterator.next(), writer, indent + 1);
 			}
-			writeIndent(writer, indent);
-			writer.write("}");
+			writer.write("\n");
 		}
+		writeIndent(writer, indent);
+		writer.write("}");
 	}
 
 	/**
@@ -451,7 +433,7 @@ public class JsonWriter {
 	 * @throws IOException If an I/O error occurs while writing
 	 */
 	private static void writeEntry(Map.Entry<String, ? extends Map<String, ? extends TreeSet<Integer>>> entry,
-			BufferedWriter writer, int indent) throws IOException {
+			Writer writer, int indent) throws IOException {
 		String word = entry.getKey();
 		Map<String, ? extends TreeSet<Integer>> filePositions = entry.getValue();
 
