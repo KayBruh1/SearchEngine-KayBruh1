@@ -219,8 +219,8 @@ public class InvertedIndex {
 	 *
 	 * @return an unmodifiable view of the inverted index
 	 */
-	public Map<String, TreeMap<String, TreeSet<Integer>>> viewIndex() { // TODO Still breaking encapsulation
-		return Collections.unmodifiableMap(invertedIndex);
+	public Map<String, TreeMap<String, TreeSet<Integer>>> viewIndex() {
+		return Collections.unmodifiableMap(new TreeMap<>(invertedIndex));
 	}
 
 	/**
