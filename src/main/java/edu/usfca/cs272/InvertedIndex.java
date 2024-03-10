@@ -75,6 +75,41 @@ public class InvertedIndex {
         }
         return totalCount;
     }
+    
+    /**
+     * Finds the total count of positions for a word
+     *
+     * @param word The word to count positions for
+     * @return The total count of positions for the word
+     */
+    public int getTotalPositionCount(String word) {
+        int totalPositions = 0;
+        TreeMap<String, TreeSet<Integer>> fileMap = invertedIndex.getOrDefault(word, new TreeMap<>());
+        for (TreeSet<Integer> positions : fileMap.values()) {
+            totalPositions += positions.size();
+        }
+        return totalPositions;
+    }
+    
+	/**
+	 * Check if the location exists in the word counts
+	 *
+	 * @param location The location to check
+	 * @return True if the location exists, false otherwise
+	 */
+	public boolean hasLocation(String location) {
+		return counts.containsKey(location);
+	}
+
+	/**
+	 * Check if the word exists in the inverted index
+	 *
+	 * @param word The word to check
+	 * @return True if the word exists, false otherwise
+	 */
+	public boolean hasWord(String word) {
+		return invertedIndex.containsKey(word);
+	}
 
 	/*
 	 * TODO There are 4 types of information stored, the counts, the words, the
@@ -130,26 +165,6 @@ public class InvertedIndex {
 	 */
 	public Map<String, TreeMap<String, TreeSet<Integer>>> viewIndex() {
 		return Collections.unmodifiableMap(new TreeMap<>(invertedIndex));
-	}
-
-	/**
-	 * Check if the location exists in the word counts
-	 *
-	 * @param location The location to check
-	 * @return True if the location exists, false otherwise
-	 */
-	public boolean hasLocation(String location) {
-		return counts.containsKey(location);
-	}
-
-	/**
-	 * Check if the word exists in the inverted index
-	 *
-	 * @param word The word to check
-	 * @return True if the word exists, false otherwise
-	 */
-	public boolean hasWord(String word) {
-		return invertedIndex.containsKey(word);
 	}
 
 	/**
