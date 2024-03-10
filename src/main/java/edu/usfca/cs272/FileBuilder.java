@@ -77,16 +77,14 @@ public class FileBuilder {
 	 * @throws IOException If an I/O error occurs
 	 */
 	public void processFile(Path location) throws IOException {
-		if (Files.size(location) > 0) {
-			int position = 0;
-			try (BufferedReader reader = Files.newBufferedReader(location)) {
-				String line;
-				while ((line = reader.readLine()) != null) {
-					List<String> wordStems = FileStemmer.listStems(line);
-					for (String stemmedWord : wordStems) {
-						position += 1;
-						indexer.updateStructures(stemmedWord, location.toString(), position);
-					}
+		int position = 0;
+		try (BufferedReader reader = Files.newBufferedReader(location)) {
+			String line;
+			while ((line = reader.readLine()) != null) {
+				List<String> wordStems = FileStemmer.listStems(line);
+				for (String stemmedWord : wordStems) {
+					position += 1;
+					indexer.updateStructures(stemmedWord, location.toString(), position);
 				}
 			}
 		}
