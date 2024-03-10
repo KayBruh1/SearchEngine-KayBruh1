@@ -443,13 +443,11 @@ public class JsonWriter {
 	 * @param invertedIndex the inverted index to use
 	 * @return the inverted index in pretty JSON format
 	 */
-	public static String writeIndex(TreeMap<String, ? extends Map<String, ? extends TreeSet<Integer>>> invertedIndex) {
+	public static void writeIndex(TreeMap<String, ? extends Map<String, ? extends TreeSet<Integer>>> invertedIndex) {
 		try {
 			StringWriter writer = new StringWriter();
 			writeIndex(invertedIndex, writer, 0);
-			return writer.toString();
 		} catch (IOException e) {
-			return null;
 		}
 	}
 

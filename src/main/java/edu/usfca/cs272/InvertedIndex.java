@@ -240,6 +240,6 @@ public class InvertedIndex {
 	 * @throws IOException if an I/O error occurs
 	 */
 	public void writeIndex(String indexPath) throws IOException {
-		String indexWrite = JsonWriter.writeIndex(invertedIndex, Path.of(indexPath));
+		JsonWriter.writeIndex(invertedIndex, Path.of(indexPath));
 	}
 }
