@@ -1,14 +1,11 @@
 package edu.usfca.cs272;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.TreeSet;
 
 /**
  * Class for building and processing files/directories to generate word counts
@@ -80,44 +77,18 @@ public class FileBuilder {
 	 * @throws IOException If an I/O error occurs
 	 */
 	public void processFile(Path location) throws IOException {
-		if (Files.size(location) > 0) { // TODO Remove from here
-			List<String> lines = Files.readAllLines(location); // TODO Read the file in a more memory and time efficient way... using a buffered reader and processing one line at a time!
-			
-			/*
-			 * TODO You should no longer need these data structures. They should only appear
-			 * inside the inverted index class.
-			 */
-			HashMap<String, Integer> wordCounts = new HashMap<>();
-			TreeMap<String, TreeSet<Integer>> invertedIndex = new TreeMap<>();
+		if (Files.size(location) > 0) {
 			int position = 0;
-
-			for (String line : lines) {
-				List<String> wordStems = FileStemmer.listStems(line);
-				for (String stemmedWord : wordStems) {
-					// TODO This should be an indexer.addWord(stemmedWord, location.toString(), position); call only... nothing more in here!
-					position += 1;
-					wordCounts.put(stemmedWord, wordCounts.getOrDefault(stemmedWord, 0) + 1);
-
-					TreeSet<Integer> positions = invertedIndex.get(stemmedWord);
-					if (positions == null) {
-						positions = new TreeSet<>();
-						invertedIndex.put(stemmedWord, positions);
+			try (BufferedReader reader = Files.newBufferedReader(location)) {
+				String line;
+				while ((line = reader.readLine()) != null) {
+					List<String> wordStems = FileStemmer.listStems(line);
+					for (String stemmedWord : wordStems) {
+						position += 1;
+						indexer.updateStructures(stemmedWord, location.toString(), position);
 					}
-					positions.add(position);
 				}
 			}
-
-			TreeMap<String, TreeMap<String, TreeSet<Integer>>> index = new TreeMap<>();
-			for (Map.Entry<String, TreeSet<Integer>> entry : invertedIndex.entrySet()) {
-				String word = entry.getKey();
-				TreeSet<Integer> positions = entry.getValue();
-				TreeMap<String, TreeSet<Integer>> fileMap = new TreeMap<>();
-				fileMap.put(location.toString(), positions);
-				index.put(word, fileMap);
-			}
-
-			indexer.addWordCounts(location.toString(), wordCounts);
-			indexer.addInvertedIndex(location.toString(), index);
 		}
 	}
 

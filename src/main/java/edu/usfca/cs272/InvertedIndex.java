@@ -79,10 +79,10 @@ public class InvertedIndex {
 	 * @param word The word to add
 	 * @return The findings of the word
 	 */
-    public Map<String, TreeSet<Integer>> getWordInfo(String word) {
-        TreeMap<String, TreeSet<Integer>> wordMap = invertedIndex.getOrDefault(word, new TreeMap<>());
-        return Collections.unmodifiableMap(new TreeMap<>(wordMap));
-    }
+	public Map<String, TreeSet<Integer>> getWordInfo(String word) {
+		TreeMap<String, TreeSet<Integer>> wordMap = invertedIndex.getOrDefault(word, new TreeMap<>());
+		return Collections.unmodifiableMap(new TreeMap<>(wordMap));
+	}
 
 	/**
 	 * Retrieves the file locations and their positions for a word
@@ -128,18 +128,18 @@ public class InvertedIndex {
 	 * @param location  The path of the file
 	 * @param positions The positions of the word in the file
 	 */
-	public void addWord(String word, String location, TreeSet<Integer> positions) {
+	public void addWord(String word, String location, int position) {
 		TreeMap<String, TreeSet<Integer>> fileMap = invertedIndex.get(word);
 		if (fileMap == null) {
 			fileMap = new TreeMap<>();
 			invertedIndex.put(word, fileMap);
 		}
-		TreeSet<Integer> current = fileMap.get(location);
-		if (current == null) {
-			current = new TreeSet<>();
-			fileMap.put(location, current);
+		TreeSet<Integer> positions = fileMap.get(location);
+		if (positions == null) {
+			positions = new TreeSet<>();
+			fileMap.put(location, positions);
 		}
-		current.addAll(positions);
+		positions.add(position);
 	}
 
 	/**
@@ -161,29 +161,48 @@ public class InvertedIndex {
 		counts.put(location, totalCount + newCount);
 	}
 
-	/*
-	 * TODO The point of creating an inverted index is to encapsulate this difficult
-	 * nested data structure and so that other code no longer has to maintain it!
-	 * Remove the method below. If you want to combine two inverted indexes, there
-	 * is a different way to go about it.
-	 */
 	/**
-	 * Adds to the inverted index for a given file location
+	 * Update the inverted index and word counts
 	 *
-	 * @param location      The path of the file to be added
-	 * @param invertedIndex The inverted index map containing words to file
-	 *                      locations and positions
+	 * @param word     The word to add
+	 * @param location The path of the file
+	 * @param position The position of the word in the file
 	 */
-	public void addInvertedIndex(String location, TreeMap<String, TreeMap<String, TreeSet<Integer>>> invertedIndex) {
-		for (Map.Entry<String, TreeMap<String, TreeSet<Integer>>> entry : invertedIndex.entrySet()) {
-			String word = entry.getKey();
-			TreeMap<String, TreeSet<Integer>> fileMap = entry.getValue();
-			for (Map.Entry<String, TreeSet<Integer>> fileEntry : fileMap.entrySet()) {
-				String fileLocation = fileEntry.getKey();
-				TreeSet<Integer> positions = fileEntry.getValue();
-				addWord(word, fileLocation, positions);
-			}
+	public void updateStructures(String word, String location, int position) {
+		updateIndex(word, location, position);
+		updateCounts(location, word);
+	}
+
+	/**
+	 * Adds a word to the inverted index
+	 *
+	 * @param word     The word to add
+	 * @param location The path of the file
+	 * @param position The position of the word in the file
+	 */
+	private void updateIndex(String word, String location, int position) {
+		TreeMap<String, TreeSet<Integer>> fileMap = invertedIndex.get(word);
+		if (fileMap == null) {
+			fileMap = new TreeMap<>();
+			invertedIndex.put(word, fileMap);
 		}
+		TreeSet<Integer> positions = fileMap.get(location);
+		if (positions == null) {
+			positions = new TreeSet<>();
+			fileMap.put(location, positions);
+		}
+		positions.add(position);
+	}
+
+	/**
+	 * Updates word counts for a given file.
+	 *
+	 * @param location The path of the file
+	 * @param word     The word to update counts for
+	 */
+	private void updateCounts(String location, String word) {
+		int count = counts.getOrDefault(location, 0);
+		counts.put(location, count + 1);
 	}
 
 	/**
