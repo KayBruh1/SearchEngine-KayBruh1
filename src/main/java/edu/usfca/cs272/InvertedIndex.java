@@ -62,6 +62,19 @@ public class InvertedIndex {
 	public int getCountSize() {
 		return counts.size();
 	}
+	
+    /**
+     * Finds the total count of words in all files
+     *
+     * @return The total count of words
+     */
+    public int getTotalWordCount() {
+        int totalCount = 0;
+        for (int count : counts.values()) {
+            totalCount += count;
+        }
+        return totalCount;
+    }
 
 	/*
 	 * TODO There are 4 types of information stored, the counts, the words, the
@@ -71,33 +84,6 @@ public class InvertedIndex {
 	 * Make sure the view methods are returning DIFFERENT data, not duplicating what
 	 * a different method did with different names.
 	 */
-
-	/**
-	 * Looks for a word in the inverted index
-	 *
-	 * @param word The word to add
-	 * @return The findings of the word
-	 */
-	public Map<String, TreeSet<Integer>> getWordInfo(String word) {
-		TreeMap<String, TreeSet<Integer>> wordMap = invertedIndex.getOrDefault(word, new TreeMap<>());
-		return Collections.unmodifiableMap(new TreeMap<>(wordMap));
-	}
-
-	/**
-	 * Retrieves the file locations and their positions for a word
-	 *
-	 * @param word The word to get location information for
-	 * @return A map containing file locations
-	 */
-	public Map<String, TreeSet<Integer>> getLocationInfo(String word) { // TODO Breaking encapsulation, and identical to
-																		// the other method above?
-		TreeMap<String, TreeSet<Integer>> locationInfo = invertedIndex.get(word);
-		if (locationInfo != null) {
-			return Collections.unmodifiableMap(new TreeMap<>(locationInfo));
-		} else {
-			return Collections.emptyMap();
-		}
-	}
 
 	/**
 	 * Adds the word count for a file to the inverted index
