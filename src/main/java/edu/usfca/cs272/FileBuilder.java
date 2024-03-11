@@ -153,7 +153,9 @@ public class FileBuilder {
 	                int count = entry.getValue().size();
 	                double score = indexer.calculateScore(count, location, query.size());
 
-	                SearchResult result = new SearchResult(location, count, score);
+	                String formattedScore = String.format("%.8f", score);
+
+	                SearchResult result = new SearchResult(location, count, Double.parseDouble(formattedScore)); // Convert the formatted score back to double
 	                searchResults.add(result);
 	                visitedLocations.add(location);
 	            }
@@ -163,7 +165,6 @@ public class FileBuilder {
 	    }
 	    
 	    searchResultsMap = SearchResult.sortResults(searchResultsMap);
-
 
 	    return searchResultsMap;
 	}

@@ -56,11 +56,15 @@ public class SearchResult implements Comparable<SearchResult> {
 	        }
 	    });
 
+	    // Populate the sorted map
 	    for (Map.Entry<String, List<SearchResult>> entry : entryList) {
+	        Collections.sort(entry.getValue());
+
 	        sortedMap.put(entry.getKey(), entry.getValue());
 	    }
 
 	    return sortedMap;
 	}
+
 
 }
