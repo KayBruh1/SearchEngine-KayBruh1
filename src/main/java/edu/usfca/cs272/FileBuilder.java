@@ -158,15 +158,15 @@ public class FileBuilder {
 	                visitedLocations.add(location);
 	            }
 	        }
-	        
-	        Collections.sort(searchResults);
 
 	        searchResultsMap.put(queryWord, searchResults);
 	    }
+	    
+	    searchResultsMap = SearchResult.sortResults(searchResultsMap);
+
 
 	    return searchResultsMap;
 	}
-
 
 	public static List<List<String>> processQuery(Path queryPath) throws IOException {
 		List<List<String>> processedQueries = new ArrayList<>();

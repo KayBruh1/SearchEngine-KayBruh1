@@ -1,5 +1,12 @@
 package edu.usfca.cs272;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 public class SearchResult implements Comparable<SearchResult> {
 	private String location;
 	private int count;
@@ -25,23 +32,35 @@ public class SearchResult implements Comparable<SearchResult> {
 
 	@Override
 	public int compareTo(SearchResult other) {
-		System.out.println("here ");
 		int scoreComparison = Double.compare(other.score, this.score);
 		if (scoreComparison != 0) {
-			System.out.println("1 ");
-
 			return scoreComparison;
 		}
 
 		int countComparison = Integer.compare(other.count, this.count);
 		if (countComparison != 0) {
-			System.out.println("2 ");
-
 			return countComparison;
 		}
-
-		System.out.println("3 ");
-
+		
 		return this.location.compareToIgnoreCase(other.location);
 	}
+	
+	public static Map<String, List<SearchResult>> sortResults(Map<String, List<SearchResult>> unsortedMap) {
+	    Map<String, List<SearchResult>> sortedMap = new LinkedHashMap<>();
+
+	    List<Map.Entry<String, List<SearchResult>>> entryList = new ArrayList<>(unsortedMap.entrySet());
+	    Collections.sort(entryList, new Comparator<Map.Entry<String, List<SearchResult>>>() {
+	        @Override
+	        public int compare(Map.Entry<String, List<SearchResult>> entry1, Map.Entry<String, List<SearchResult>> entry2) {
+	            return entry1.getKey().compareTo(entry2.getKey());
+	        }
+	    });
+
+	    for (Map.Entry<String, List<SearchResult>> entry : entryList) {
+	        sortedMap.put(entry.getKey(), entry.getValue());
+	    }
+
+	    return sortedMap;
+	}
+
 }
