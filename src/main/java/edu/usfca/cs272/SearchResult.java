@@ -10,19 +10,22 @@ import java.util.Map;
 public class SearchResult implements Comparable<SearchResult> {
     private String location;
     private int totalWords;
-    private int matchCount;
+    private int count;
     private double score;
 
-    public SearchResult(String location, int totalWords, int matchCount, double score) {
+    public SearchResult(String location, int totalWords, int count, double score) {
         this.location = location;
         this.totalWords = totalWords;
-        this.matchCount = matchCount;
+        this.count = count;
         this.score = score;
     }
-
+    
+    public void updateMatchCount(int matches) {
+        this.count += matches;
+    }
 
 	public int getCount() {
-		return matchCount;
+		return count;
 	}
 
 	public double getScore() {
@@ -40,7 +43,7 @@ public class SearchResult implements Comparable<SearchResult> {
 			return scoreComparison;
 		}
 
-		int countComparison = Integer.compare(other.matchCount, this.matchCount);
+		int countComparison = Integer.compare(other.count, this.count);
 		if (countComparison != 0) {
 			return countComparison;
 		}

@@ -125,17 +125,24 @@ public class FileBuilder {
 
 	            for (Map.Entry<String, TreeSet<Integer>> entry : locations.entrySet()) {
 	                String location = entry.getKey();
-	                if (visitedLocations.contains(location)) {
-	                    continue;
-	                }
 	                TreeSet<Integer> positions = entry.getValue();
-	                int totalWords = indexer.getTotalWordCount(location); 
-	                int matchCount = countMatches(query, positions);
-	                double score = calculateScore(matchCount, totalWords);
+	                int totalWords = indexer.getTotalWordCount(location);
+	                int count = countMatches(query, positions);
 
-	                SearchResult result = new SearchResult(location, totalWords, matchCount, score);
-	                searchResults.add(result);
-	                visitedLocations.add(location);
+	                if (!visitedLocations.contains(location)) {
+	                    double score = calculateScore(count, totalWords);
+
+	                    SearchResult result = new SearchResult(location, totalWords, count, score);
+	                    searchResults.add(result);
+	                    visitedLocations.add(location);
+	                } else {
+	                	for (SearchResult result : searchResults) {
+	                	    if (result.getLocation().equals(location)) {
+	                	        result.updateMatchCount(count);
+	                	        break;
+	                	    }
+	                	}
+	                }
 	            }
 	        }
 
@@ -146,6 +153,8 @@ public class FileBuilder {
 
 	    return searchResultsMap;
 	}
+
+
 
 
     private int countMatches(List<String> query, TreeSet<Integer> positions) {

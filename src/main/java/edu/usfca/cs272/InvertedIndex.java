@@ -197,15 +197,13 @@ public class InvertedIndex {
 	 * @param position The position of the word in the file
 	 */
 	public void addWord(String word, String location, int position) {
-		TreeMap<String, TreeSet<Integer>> fileMap = invertedIndex.getOrDefault(word, new TreeMap<>());
-		TreeSet<Integer> positions = fileMap.getOrDefault(location, new TreeSet<>());
-		positions.add(position);
-		fileMap.put(location, positions);
-		invertedIndex.put(word, fileMap);
-		int count = counts.getOrDefault(location, 0);
-		counts.put(location, count + 1);
+	    TreeMap<String, TreeSet<Integer>> fileMap = invertedIndex.getOrDefault(word, new TreeMap<>());
+	    TreeSet<Integer> positions = fileMap.getOrDefault(location, new TreeSet<>());
+	    positions.add(position);
+	    fileMap.put(location, positions);
+	    invertedIndex.put(word, fileMap);
+	    counts.put(location, counts.getOrDefault(location, 0) + 1);
 	}
-
 	public int getTotalWordCount(String location) {
 		return counts.getOrDefault(location, 0);
 	}
