@@ -8,18 +8,21 @@ import java.util.List;
 import java.util.Map;
 
 public class SearchResult implements Comparable<SearchResult> {
-	private String location;
-	private int count;
-	private double score;
+    private String location;
+    private int totalWords;
+    private int matchCount;
+    private double score;
 
-	public SearchResult(String location, int count, double score) {
-		this.location = location;
-		this.count = count;
-		this.score = score;
-	}
+    public SearchResult(String location, int totalWords, int matchCount, double score) {
+        this.location = location;
+        this.totalWords = totalWords;
+        this.matchCount = matchCount;
+        this.score = score;
+    }
+
 
 	public int getCount() {
-		return count;
+		return matchCount;
 	}
 
 	public double getScore() {
@@ -37,7 +40,7 @@ public class SearchResult implements Comparable<SearchResult> {
 			return scoreComparison;
 		}
 
-		int countComparison = Integer.compare(other.count, this.count);
+		int countComparison = Integer.compare(other.matchCount, this.matchCount);
 		if (countComparison != 0) {
 			return countComparison;
 		}
@@ -56,7 +59,6 @@ public class SearchResult implements Comparable<SearchResult> {
 	        }
 	    });
 
-	    // Populate the sorted map
 	    for (Map.Entry<String, List<SearchResult>> entry : entryList) {
 	        Collections.sort(entry.getValue());
 
