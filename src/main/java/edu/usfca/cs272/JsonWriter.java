@@ -96,10 +96,9 @@ public class JsonWriter {
 			writer.write("\n");
 			writeIndent(value.toString(), writer, indent + 1);
 		}
-		if (!elements.isEmpty()) {
-			writer.write("\n");
-			writeIndent(writer, indent);
-		}
+
+		writer.write("\n");
+		writeIndent(writer, indent);
 		writer.write("]");
 	}
 
@@ -160,9 +159,9 @@ public class JsonWriter {
 		Map.Entry<String, ? extends Number> entry = null;
 		String key = null;
 		Number value = null;
-		writer.write("\n");
 
 		if (iterator.hasNext()) {
+			writer.write("\n");
 			entry = iterator.next();
 			key = entry.getKey();
 			value = entry.getValue();
@@ -183,10 +182,9 @@ public class JsonWriter {
 			writer.write(": ");
 			writeIndent(value.toString(), writer, 0);
 		}
-		if (!elements.isEmpty()) {
-			writer.write("\n");
-			writeIndent(writer, indent);
-		}
+
+		writer.write("\n");
+		writeIndent(writer, indent);
 		writer.write("}");
 	}
 
@@ -400,28 +398,55 @@ public class JsonWriter {
 	 * Writes the inverted index as a pretty JSON object
 	 *
 	 * @param invertedIndex the inverted index to write
-	 * @param indexPath     path of the index file
+	 * @param writer        writer to help file write
 	 * @param indent        the initial indentation level for the JSON output
 	 * @throws IOException if an I/O error occurs while writing
 	 */
 	public static void writeIndex(TreeMap<String, ? extends Map<String, ? extends TreeSet<Integer>>> invertedIndex,
-			String indexPath, int indent) throws IOException {
-		try (BufferedWriter writer = Files.newBufferedWriter(Path.of(indexPath), UTF_8)) {
-			writer.write("{");
-			writer.write("\n");
-			var iterator = invertedIndex.entrySet().iterator();
+			Writer writer, int indent) throws IOException {
+		writer.write("{");
+		writer.write("\n");
+		var iterator = invertedIndex.entrySet().iterator();
 
-			if (iterator.hasNext()) {
-				writeEntry(iterator.next(), writer, indent + 1);
-				while (iterator.hasNext()) {
-					writer.write(",");
-					writer.write("\n");
-					writeEntry(iterator.next(), writer, indent + 1);
-				}
+		if (iterator.hasNext()) {
+			writeEntry(iterator.next(), writer, indent + 1);
+			while (iterator.hasNext()) {
+				writer.write(",");
 				writer.write("\n");
+				writeEntry(iterator.next(), writer, indent + 1);
 			}
-			writeIndent(writer, indent);
-			writer.write("}");
+			writer.write("\n");
+		}
+		writeIndent(writer, indent);
+		writer.write("}");
+	}
+
+	/**
+	 * Writes the inverted index as a pretty JSON object to file
+	 *
+	 * @param invertedIndex the inverted index to write
+	 * @param path          the file path to use
+	 * @return done
+	 * @throws IOException if an I/O error occurs
+	 */
+	public static String writeIndex(TreeMap<String, ? extends Map<String, ? extends TreeSet<Integer>>> invertedIndex,
+			Path path) throws IOException {
+		try (BufferedWriter writer = Files.newBufferedWriter(path, UTF_8)) {
+			writeIndex(invertedIndex, writer, 0);
+		}
+		return null;
+	}
+
+	/**
+	 * Returns the inverted index as a pretty JSON string
+	 *
+	 * @param invertedIndex the inverted index to use
+	 */
+	public static void writeIndex(TreeMap<String, ? extends Map<String, ? extends TreeSet<Integer>>> invertedIndex) {
+		try {
+			StringWriter writer = new StringWriter();
+			writeIndex(invertedIndex, writer, 0);
+		} catch (IOException e) {
 		}
 	}
 
@@ -435,7 +460,7 @@ public class JsonWriter {
 	 * @throws IOException If an I/O error occurs while writing
 	 */
 	private static void writeEntry(Map.Entry<String, ? extends Map<String, ? extends TreeSet<Integer>>> entry,
-			BufferedWriter writer, int indent) throws IOException {
+			Writer writer, int indent) throws IOException {
 		String word = entry.getKey();
 		Map<String, ? extends TreeSet<Integer>> filePositions = entry.getValue();
 

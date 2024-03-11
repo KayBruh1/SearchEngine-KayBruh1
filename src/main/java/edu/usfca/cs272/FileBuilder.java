@@ -1,5 +1,6 @@
 package edu.usfca.cs272;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
@@ -84,48 +85,25 @@ public class FileBuilder {
 	 * @throws IOException If an I/O error occurs
 	 */
 	public void processFile(Path location) throws IOException {
-		if (Files.size(location) > 0) {
-			List<String> lines = Files.readAllLines(location);
-			HashMap<String, Integer> wordCounts = new HashMap<>();
-			TreeMap<String, TreeSet<Integer>> invertedIndex = new TreeMap<>();
-			int position = 0;
-
-			for (String line : lines) {
+		int position = 0;
+		try (BufferedReader reader = Files.newBufferedReader(location)) {
+			String line;
+			while ((line = reader.readLine()) != null) {
 				List<String> wordStems = FileStemmer.listStems(line);
 				for (String stemmedWord : wordStems) {
 					position += 1;
-					wordCounts.put(stemmedWord, wordCounts.getOrDefault(stemmedWord, 0) + 1);
-
-					TreeSet<Integer> positions = invertedIndex.get(stemmedWord);
-					if (positions == null) {
-						positions = new TreeSet<>();
-						invertedIndex.put(stemmedWord, positions);
-					}
-					positions.add(position);
+					indexer.addWord(stemmedWord, location.toString(), position);
 				}
 			}
-
-			TreeMap<String, TreeMap<String, TreeSet<Integer>>> index = new TreeMap<>();
-			for (Map.Entry<String, TreeSet<Integer>> entry : invertedIndex.entrySet()) {
-				String word = entry.getKey();
-				TreeSet<Integer> positions = entry.getValue();
-				TreeMap<String, TreeSet<Integer>> fileMap = new TreeMap<>();
-				fileMap.put(location.toString(), positions);
-				index.put(word, fileMap);
-			}
-
-			indexer.addWordCounts(location.toString(), wordCounts);
-			indexer.addInvertedIndex(location.toString(), index);
 		}
 	}
-
 	/**
 	 * Determines if given a valid file
 	 * 
 	 * @param file The file to be checked
 	 * @return True for a valid file, false otherwise
 	 */
-	private static boolean isTextFile(Path file) {
+	public static boolean isTextFile(Path file) {
 		String fileName = file.getFileName().toString().toLowerCase();
 		return Files.isRegularFile(file) && (fileName.endsWith(".txt") || fileName.endsWith(".text"));
 	}
