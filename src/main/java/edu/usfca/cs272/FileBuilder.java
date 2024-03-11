@@ -128,12 +128,12 @@ public class FileBuilder {
 	                if (visitedLocations.contains(location)) {
 	                    continue;
 	                }
-	                int count = entry.getValue().size();
-	                double score = indexer.calculateScore(count, location, query.size());
+	                TreeSet<Integer> positions = entry.getValue();
+	                int totalWords = indexer.getTotalWordCount(location); 
+	                int matchCount = countMatches(query, positions);
+	                double score = calculateScore(matchCount, totalWords);
 
-	                String formattedScore = String.format("%.8f", score);
-
-	                SearchResult result = new SearchResult(location, count, Double.parseDouble(formattedScore)); // Convert the formatted score back to double
+	                SearchResult result = new SearchResult(location, totalWords, matchCount, score);
 	                searchResults.add(result);
 	                visitedLocations.add(location);
 	            }
@@ -141,11 +141,33 @@ public class FileBuilder {
 
 	        searchResultsMap.put(queryWord, searchResults);
 	    }
-	    
+
 	    searchResultsMap = SearchResult.sortResults(searchResultsMap);
 
 	    return searchResultsMap;
 	}
+
+
+    private int countMatches(List<String> query, TreeSet<Integer> positions) {
+        int count = 0;
+        for (int position : positions) {
+            if (queryMatches(query, position)) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    private boolean queryMatches(List<String> query, int position) {
+        return true;
+    }
+
+    private double calculateScore(int matchCount, int totalWords) {
+        return (double) matchCount / totalWords;
+    }
+
+
+
 
 	public static List<List<String>> processQuery(Path queryPath) throws IOException {
 		List<List<String>> processedQueries = new ArrayList<>();

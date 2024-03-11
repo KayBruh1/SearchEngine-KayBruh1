@@ -206,6 +206,10 @@ public class InvertedIndex {
 		counts.put(location, count + 1);
 	}
 
+	public int getTotalWordCount(String location) {
+		return counts.getOrDefault(location, 0);
+	}
+
 	/**
 	 * Writes the word counts to a JSON file
 	 *
