@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -160,9 +161,10 @@ public class FileBuilder {
     }
 
     public static double calculateScore(int matchCount, int totalWords) {
-        return (double) matchCount / totalWords;
+        double score = (double) matchCount / totalWords;
+        DecimalFormat formatter = new DecimalFormat("0.00000000");
+        return Double.parseDouble(formatter.format(score));
     }
-
 
 	public static List<List<String>> processQuery(Path queryPath) throws IOException {
 		List<List<String>> processedQueries = new ArrayList<>();
