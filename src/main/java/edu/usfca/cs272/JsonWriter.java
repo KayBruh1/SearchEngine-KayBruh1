@@ -3,6 +3,7 @@ package edu.usfca.cs272;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
@@ -10,6 +11,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -468,5 +470,35 @@ public class JsonWriter {
 		writeQuote(word, writer, 0);
 		writer.write(": ");
 		writeObjectArrays(filePositions, writer, indent);
+	}
+
+	public static void writeResults(Map<String, List<SearchResult>> data, String outputPath) throws IOException {
+		try (BufferedWriter writer = new BufferedWriter(new FileWriter(outputPath))) {
+			writer.write("{\n");
+			int count = 0;
+			for (Map.Entry<String, List<SearchResult>> entry : data.entrySet()) {
+				if (count > 0) {
+					writer.write(",\n");
+				}
+				writeQuote("\"" + entry.getKey() + "\": [\n", writer, 1);
+				List<SearchResult> resultList = entry.getValue();
+				int resultCount = 0;
+				for (SearchResult result : resultList) {
+					if (resultCount > 0) {
+						writer.write(",\n");
+					}
+					writeIndent("{\n", writer, 2);
+					writeQuote("\"count\": " + result.getCount() + ",\n", writer, 3);
+					writeQuote("\"score\": " + String.format("%.8f", result.getScore()) + ",\n", writer, 3);
+					writeQuote("\"where\": \"" + result.getLocation() + "\"\n", writer, 3);
+					writeIndent("}", writer, 2);
+					resultCount++;
+				}
+				writer.write("\n");
+				writeIndent("]", writer, 1);
+				count++;
+			}
+			writer.write("\n}");
+		}
 	}
 }
