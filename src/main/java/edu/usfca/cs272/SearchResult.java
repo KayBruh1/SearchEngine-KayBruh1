@@ -20,8 +20,12 @@ public class SearchResult implements Comparable<SearchResult> {
         this.score = score;
     }
     
-    public void updateMatchCount(int matches) {
+    public void updateCount(int matches) {
         this.count += matches;
+    }
+
+    public void setScore(double score) {
+        this.score = score;
     }
 
 	public int getCount() {

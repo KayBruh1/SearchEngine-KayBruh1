@@ -11,7 +11,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -117,8 +116,7 @@ public class FileBuilder {
 	        }
 
 	        String queryWord = String.join(" ", query);
-	        Set<String> visitedLocations = new HashSet<>();
-	        List<SearchResult> searchResults = new ArrayList<>();
+	        Map<String, SearchResult> resultMap = new HashMap<>();
 
 	        for (String word : query) {
 	            Map<String, TreeSet<Integer>> locations = indexer.getInvertedIndex().getOrDefault(word, new TreeMap<>());
@@ -128,24 +126,16 @@ public class FileBuilder {
 	                TreeSet<Integer> positions = entry.getValue();
 	                int totalWords = indexer.getTotalWordCount(location);
 	                int count = countMatches(query, positions);
+	                double score = calculateScore(count, totalWords);
 
-	                if (!visitedLocations.contains(location)) {
-	                    double score = calculateScore(count, totalWords);
-
-	                    SearchResult result = new SearchResult(location, totalWords, count, score);
-	                    searchResults.add(result);
-	                    visitedLocations.add(location);
-	                } else {
-	                	for (SearchResult result : searchResults) {
-	                	    if (result.getLocation().equals(location)) {
-	                	        result.updateMatchCount(count);
-	                	        break;
-	                	    }
-	                	}
-	                }
+	                SearchResult result = resultMap.getOrDefault(location, new SearchResult(location, totalWords, 0, 0.0));
+	                result.updateCount(count);
+	                result.setScore(calculateScore(result.getCount(), totalWords));
+	                resultMap.put(location, result);
 	            }
 	        }
 
+	        List<SearchResult> searchResults = new ArrayList<>(resultMap.values());
 	        searchResultsMap.put(queryWord, searchResults);
 	    }
 
@@ -153,8 +143,6 @@ public class FileBuilder {
 
 	    return searchResultsMap;
 	}
-
-
 
 
     private int countMatches(List<String> query, TreeSet<Integer> positions) {
@@ -171,11 +159,9 @@ public class FileBuilder {
         return true;
     }
 
-    private double calculateScore(int matchCount, int totalWords) {
+    public static double calculateScore(int matchCount, int totalWords) {
         return (double) matchCount / totalWords;
     }
-
-
 
 
 	public static List<List<String>> processQuery(Path queryPath) throws IOException {
