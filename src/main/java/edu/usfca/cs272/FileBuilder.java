@@ -108,7 +108,7 @@ public class FileBuilder {
 		return Files.isRegularFile(file) && (fileName.endsWith(".txt") || fileName.endsWith(".text"));
 	}
 
-	public Map<String, List<SearchResult>> conductSearch(List<List<String>> processedQueries) throws IOException {
+	public Map<String, List<SearchResult>> exactSearch(List<List<String>> processedQueries) throws IOException {
 		Map<String, List<SearchResult>> searchResultsMap = new HashMap<>();
 
 		for (List<String> query : processedQueries) {
@@ -145,6 +145,11 @@ public class FileBuilder {
 		searchResultsMap = SearchResult.sortResults(searchResultsMap);
 
 		return searchResultsMap;
+	}
+	
+	public Map<String, List<SearchResult>> partialSearch(List<List<String>> processedQueries) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	private int countMatches(List<String> query, TreeSet<Integer> positions) {

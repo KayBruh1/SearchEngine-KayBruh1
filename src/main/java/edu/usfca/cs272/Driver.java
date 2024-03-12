@@ -64,7 +64,12 @@ public class Driver {
 			if (Files.exists(queryPath)) {
 				try {
 					List<List<String>> processedQueries = FileBuilder.processQuery(queryPath);
-					searchResultsMap = fileBuilder.conductSearch(processedQueries);
+					
+					if (parser.hasFlag("-partial")) {
+						searchResultsMap = fileBuilder.partialSearch(processedQueries);
+					} else {		
+						searchResultsMap = fileBuilder.exactSearch(processedQueries);
+					}
 
 					for (Map.Entry<String, List<SearchResult>> entry : searchResultsMap.entrySet()) {
 						String query = entry.getKey();
