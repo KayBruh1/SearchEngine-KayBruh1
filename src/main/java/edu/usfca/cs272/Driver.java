@@ -93,6 +93,5 @@ public class Driver {
 				System.out.println("Error writing results to file " + resultsPath);
 			}
 		}
-
 	}
 }

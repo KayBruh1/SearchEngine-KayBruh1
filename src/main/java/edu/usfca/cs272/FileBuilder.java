@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -97,6 +96,7 @@ public class FileBuilder {
 			}
 		}
 	}
+
 	/**
 	 * Determines if given a valid file
 	 * 
@@ -109,62 +109,62 @@ public class FileBuilder {
 	}
 
 	public Map<String, List<SearchResult>> conductSearch(List<List<String>> processedQueries) throws IOException {
-	    Map<String, List<SearchResult>> searchResultsMap = new HashMap<>();
+		Map<String, List<SearchResult>> searchResultsMap = new HashMap<>();
 
-	    for (List<String> query : processedQueries) {
-	        if (query.isEmpty()) {
-	            continue;
-	        }
+		for (List<String> query : processedQueries) {
+			if (query.isEmpty()) {
+				continue;
+			}
 
-	        String queryWord = String.join(" ", query);
-	        Map<String, SearchResult> resultMap = new HashMap<>();
+			String queryWord = String.join(" ", query);
+			Map<String, SearchResult> resultMap = new HashMap<>();
 
-	        for (String word : query) {
-	            Map<String, TreeSet<Integer>> locations = indexer.getInvertedIndex().getOrDefault(word, new TreeMap<>());
+			for (String word : query) {
+				Map<String, TreeSet<Integer>> locations = indexer.getInvertedIndex().getOrDefault(word,
+						new TreeMap<>());
 
-	            for (Map.Entry<String, TreeSet<Integer>> entry : locations.entrySet()) {
-	                String location = entry.getKey();
-	                TreeSet<Integer> positions = entry.getValue();
-	                int totalWords = indexer.getTotalWordCount(location);
-	                int count = countMatches(query, positions);
-	                double score = calculateScore(count, totalWords);
+				for (Map.Entry<String, TreeSet<Integer>> entry : locations.entrySet()) {
+					String location = entry.getKey();
+					TreeSet<Integer> positions = entry.getValue();
+					int totalWords = indexer.getTotalWordCount(location);
+					int count = countMatches(query, positions);
+					double score = calculateScore(count, totalWords);
 
-	                SearchResult result = resultMap.getOrDefault(location, new SearchResult(location, totalWords, 0, 0.0));
-	                result.updateCount(count);
-	                result.setScore(calculateScore(result.getCount(), totalWords));
-	                resultMap.put(location, result);
-	            }
-	        }
+					SearchResult result = resultMap.getOrDefault(location,
+							new SearchResult(location, totalWords, 0, 0.00000000));
+					result.updateCount(count);
+					result.setScore(calculateScore(result.getCount(), totalWords));
+					resultMap.put(location, result);
+				}
+			}
 
-	        List<SearchResult> searchResults = new ArrayList<>(resultMap.values());
-	        searchResultsMap.put(queryWord, searchResults);
-	    }
+			List<SearchResult> searchResults = new ArrayList<>(resultMap.values());
+			searchResultsMap.put(queryWord, searchResults);
+		}
 
-	    searchResultsMap = SearchResult.sortResults(searchResultsMap);
+		searchResultsMap = SearchResult.sortResults(searchResultsMap);
 
-	    return searchResultsMap;
+		return searchResultsMap;
 	}
 
+	private int countMatches(List<String> query, TreeSet<Integer> positions) {
+		int count = 0;
+		for (int position : positions) {
+			if (queryMatches(query, position)) {
+				count++;
+			}
+		}
+		return count;
+	}
 
-    private int countMatches(List<String> query, TreeSet<Integer> positions) {
-        int count = 0;
-        for (int position : positions) {
-            if (queryMatches(query, position)) {
-                count++;
-            }
-        }
-        return count;
-    }
+	private boolean queryMatches(List<String> query, int position) {
+		return true;
+	}
 
-    private boolean queryMatches(List<String> query, int position) {
-        return true;
-    }
-
-    public static double calculateScore(int matchCount, int totalWords) {
-        double score = (double) matchCount / totalWords;
-        DecimalFormat formatter = new DecimalFormat("0.00000000");
-        return Double.parseDouble(formatter.format(score));
-    }
+	public static double calculateScore(int matchCount, int totalWords) {
+		double score = (double) matchCount / totalWords;
+		return score;
+	}
 
 	public static List<List<String>> processQuery(Path queryPath) throws IOException {
 		List<List<String>> processedQueries = new ArrayList<>();
