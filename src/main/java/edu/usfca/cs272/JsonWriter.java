@@ -472,11 +472,11 @@ public class JsonWriter {
 		writeObjectArrays(filePositions, writer, indent);
 	}
 
-	public static void writeResults(Map<String, List<SearchResult>> data, String outputPath) throws IOException {
+	public static void writeResults(Map<String, List<SearchResult>> results, String outputPath) throws IOException {
 		try (BufferedWriter writer = new BufferedWriter(new FileWriter(outputPath))) {
 			writer.write("{\n");
 			int count = 0;
-			for (Map.Entry<String, List<SearchResult>> entry : data.entrySet()) {
+			for (Map.Entry<String, List<SearchResult>> entry : results.entrySet()) {
 				if (count > 0) {
 					writer.write(",\n");
 				}
