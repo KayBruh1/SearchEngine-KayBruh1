@@ -474,33 +474,51 @@ public class JsonWriter {
 	}
 
 	public static void writeResults(Map<String, List<SearchResult>> results, String outputPath) throws IOException {
-	    try (BufferedWriter writer = new BufferedWriter(new FileWriter(outputPath))) {
-	        writer.write("{\n");
-	        int count = 0;
-	        DecimalFormat formatter = new DecimalFormat("0.00000000");
-	        for (Map.Entry<String, List<SearchResult>> entry : results.entrySet()) {
-	            if (count > 0) {
-	                writer.write(",\n");
-	            }
-	            writeQuote("\"" + entry.getKey() + "\": [\n", writer, 1);
-	            List<SearchResult> resultList = entry.getValue();
-	            int resultCount = 0;
-	            for (SearchResult result : resultList) {
-	                if (resultCount > 0) {
-	                    writer.write(",\n");
-	                }
-	                writeIndent("{\n", writer, 2);
-	                writeQuote("\"count\": " + result.getCount() + ",\n", writer, 3);
-	                writeQuote("\"score\": " + formatter.format(result.getScore()) + ",\n", writer, 3);
-	                writeQuote("\"where\": \"" + result.getLocation() + "\"\n", writer, 3);
-	                writeIndent("}", writer, 2);
-	                resultCount++;
-	            }
-	            writer.write("\n");
-	            writeIndent("]", writer, 1);
-	            count++;
-	        }
-	        writer.write("\n}");
-	    }
+		DecimalFormat formatter = new DecimalFormat("0.00000000");
+		try (BufferedWriter writer = new BufferedWriter(new FileWriter(outputPath))) {
+			writer.write("{\n");
+			int count = 0;
+			for (Map.Entry<String, List<SearchResult>> entry : results.entrySet()) {
+				List<SearchResult> resultList = entry.getValue();
+				if (count > 0) {
+					writer.write(",\n");
+				}
+				writeIndent(writer, 1);
+				writeQuote(entry.getKey(), writer, 0);
+				writer.write(": ");
+				if (resultList.isEmpty()) {
+					writer.write("[\n");
+					writeIndent(writer, 1);
+					writer.write("]");
+				} else {
+					writer.write("[\n");
+					int resultCount = 0;
+					for (SearchResult result : resultList) {
+						if (resultCount > 0) {
+							writer.write(",\n");
+						}
+						writeIndent(writer, 2);
+						writer.write("{\n");
+						writeIndent(writer, 3);
+						writer.write("\"count\": " + result.getCount() + ",\n");
+						writeIndent(writer, 3);
+						writer.write("\"score\": " + formatter.format(result.getScore()) + ",\n");
+						writeIndent(writer, 3);
+						writeQuote("where", writer, 0);
+						writer.write(": ");
+						writeQuote(result.getLocation(), writer, 0);
+						writer.write("\n");
+						writeIndent(writer, 2);
+						writer.write("}");
+						resultCount++;
+					}
+					writer.write("\n");
+					writeIndent(writer, 1);
+					writer.write("]");
+				}
+				count++;
+			}
+			writer.write("\n}");
+		}
 	}
 }
