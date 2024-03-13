@@ -61,13 +61,14 @@ public class Driver {
 		Map<String, List<SearchResult>> searchResultsMap = null;
 		if (parser.hasFlag("-query")) {
 			queryPath = parser.getPath("-query");
-			if (Files.exists(queryPath)) {
-				try {
+
+			try {
+				if (Files.exists(queryPath)) {
 					List<List<String>> processedQueries = FileBuilder.processQuery(queryPath);
-					
+
 					if (parser.hasFlag("-partial")) {
 						searchResultsMap = fileBuilder.partialSearch(processedQueries);
-					} else {		
+					} else {
 						searchResultsMap = fileBuilder.exactSearch(processedQueries);
 					}
 
@@ -84,10 +85,11 @@ public class Driver {
 						}
 						System.out.println();
 					}
-				} catch (Exception e) {
-					System.out.println("Error reading the query file " + queryPath);
 				}
+			} catch (Exception e) {
+				System.out.println("Error reading the query file " + queryPath);
 			}
+
 		}
 
 		if (parser.hasFlag("-results")) {

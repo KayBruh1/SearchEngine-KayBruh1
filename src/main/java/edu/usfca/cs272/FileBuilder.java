@@ -160,8 +160,8 @@ public class FileBuilder {
 
 	        for (String word : query) {
 	            for (Map.Entry<String, TreeMap<String, TreeSet<Integer>>> entry : indexer.getInvertedIndex().entrySet()) {
-	                String indexedWord = entry.getKey();
-	                if (indexedWord.startsWith(word)) {
+	                String checkWord = entry.getKey();
+	                if (checkWord.startsWith(word)) {
 	                    TreeMap<String, TreeSet<Integer>> locations = entry.getValue();
 
 	                    for (Map.Entry<String, TreeSet<Integer>> locationEntry : locations.entrySet()) {
