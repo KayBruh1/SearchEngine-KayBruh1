@@ -148,22 +148,56 @@ public class FileBuilder {
 	}
 	
 	public Map<String, List<SearchResult>> partialSearch(List<List<String>> processedQueries) {
-		// TODO Auto-generated method stub
-		return null;
+	    Map<String, List<SearchResult>> searchResultsMap = new HashMap<>();
+
+	    for (List<String> query : processedQueries) {
+	        if (query.isEmpty()) {
+	            continue;
+	        }
+
+	        String queryWord = String.join(" ", query);
+	        Map<String, SearchResult> resultMap = new HashMap<>();
+
+	        for (String word : query) {
+	            for (Map.Entry<String, TreeMap<String, TreeSet<Integer>>> entry : indexer.getInvertedIndex().entrySet()) {
+	                String indexedWord = entry.getKey();
+	                if (indexedWord.startsWith(word)) {
+	                    TreeMap<String, TreeSet<Integer>> locations = entry.getValue();
+
+	                    for (Map.Entry<String, TreeSet<Integer>> locationEntry : locations.entrySet()) {
+	                        String location = locationEntry.getKey();
+	                        TreeSet<Integer> positions = locationEntry.getValue();
+	                        int totalWords = indexer.getTotalWordCount(location);
+	                        int count = countMatches(query, positions);
+	                        double score = calculateScore(count, totalWords);
+
+	                        SearchResult result = resultMap.getOrDefault(location,
+	                                new SearchResult(location, totalWords, 0, 0.00000000));
+	                        result.updateCount(count);
+	                        result.setScore(calculateScore(result.getCount(), totalWords));
+	                        resultMap.put(location, result);
+	                    }
+	                }
+	            }
+	        }
+
+	        List<SearchResult> searchResults = new ArrayList<>(resultMap.values());
+	        searchResultsMap.put(queryWord, searchResults);
+	    }
+
+	    searchResultsMap = SearchResult.sortResults(searchResultsMap);
+
+	    return searchResultsMap;
 	}
+
+
 
 	private int countMatches(List<String> query, TreeSet<Integer> positions) {
 		int count = 0;
 		for (int position : positions) {
-			if (queryMatches(query, position)) {
-				count++;
-			}
+			count += 1;
 		}
 		return count;
-	}
-
-	private boolean queryMatches(List<String> query, int position) {
-		return true;
 	}
 
 	public static double calculateScore(int matchCount, int totalWords) {
