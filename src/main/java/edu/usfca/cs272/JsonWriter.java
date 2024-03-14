@@ -394,9 +394,6 @@ public class JsonWriter {
 		}
 	}
 
-	/*
-	 * TODO Almost! Upcast the first TreeMap more, and the last TreeSet more! 
-	 */
 	/**
 	 * Writes the inverted index as a pretty JSON object
 	 *
@@ -470,6 +467,8 @@ public class JsonWriter {
 		writeIndent(writer, indent);
 		writeQuote(word, writer, 0);
 		writer.write(": ");
-		writeObjectArrays(filePositions, writer, indent);
+		writeObjectArrays(
+				filePositions,
+				writer, indent);
 	}
 }
