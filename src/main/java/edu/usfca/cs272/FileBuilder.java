@@ -84,6 +84,7 @@ public class FileBuilder {
 				List<String> wordStems = FileStemmer.listStems(line);
 				for (String stemmedWord : wordStems) {
 					position += 1;
+					// TODO Don't repeat location.toString() in the loop! Save as variable outside of loop and reuse
 					indexer.addWord(stemmedWord, location.toString(), position);
 				}
 			}
