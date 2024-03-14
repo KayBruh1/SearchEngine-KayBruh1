@@ -4,8 +4,8 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
 import java.util.SortedMap;
-import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -145,27 +145,12 @@ public class InvertedIndex {
 	}
 
 	/**
-	 * Returns an unmodifiable view of the word location
+	 * Returns an unmodifiable view of the inverted index words
 	 *
-	 * @param word The word to retrieve locations
-	 * @return An unmodifiable view of the word locations
+	 * @return An unmodifiable view of the words in the inverted index
 	 */
-	public Map<String, TreeSet<Integer>> viewWordLocations(String word) { // TODO Encapsulation and efficiency issues
-		TreeMap<String, TreeSet<Integer>> locations = invertedIndex.getOrDefault(word, new TreeMap<>());
-		return Collections.unmodifiableMap(locations);
-	}
-
-	/**
-	 * Returns an unmodifiable view of the positions for a word
-	 *
-	 * @param word     The word to retrieve positions for
-	 * @param location The location to retrieve positions for
-	 * @return An unmodifiable view of the positions for the word
-	 */
-	public TreeSet<Integer> viewWordPositions(String word, String location) { // TODO Efficiency issues
-		TreeMap<String, TreeSet<Integer>> fileMap = invertedIndex.getOrDefault(word, new TreeMap<>());
-		SortedSet<Integer> positions = fileMap.getOrDefault(location, new TreeSet<>());
-		return new TreeSet<>(positions);
+	public Set<String> viewWords() {
+		return Collections.unmodifiableSet(invertedIndex.keySet());
 	}
 
 	/*
