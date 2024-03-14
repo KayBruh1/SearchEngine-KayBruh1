@@ -256,16 +256,6 @@ public class InvertedIndex {
 		positions.add(position);
 		fileMap.put(location, positions);
 		invertedIndex.put(word, fileMap);
-		
-		/*
-		 * TODO There are two ways to handle counts. Right now, there isn't much
-		 * justification for doing this update inside of this addWord method since you
-		 * have the addWordCount method instead. I don't think you had it in the code
-		 * before, so I recommend you remove it from here.
-		 */
-
-		int count = counts.getOrDefault(location, 0);
-		counts.put(location, count + 1); 
 	}
 
 	/**

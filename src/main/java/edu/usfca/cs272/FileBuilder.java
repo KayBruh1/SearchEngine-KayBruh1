@@ -88,8 +88,7 @@ public class FileBuilder {
 					indexer.addWord(stemmedWord, locationString, position);
 				}
 			}
-			
-			// TODO indexer.addWordCount(location.toString(), position) <-- or position - 1 if off by one
+			indexer.addWordCount(locationString, position);
 		}
 	}
 
