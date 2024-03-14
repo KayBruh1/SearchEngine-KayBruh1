@@ -226,10 +226,8 @@ public class FileStemmer {
 		try (BufferedReader reader = Files.newBufferedReader(input)) {
 			String line;
 			while ((line = reader.readLine()) != null) {
-				TreeSet<String> unique = new TreeSet<>();
-				addStems(line, stemmer, unique);
+				TreeSet<String> unique = uniqueStems(line, stemmer);
 				words.add(unique);
-				// TODO words.add(uniqueStems(line, stemmer));
 			}
 		}
 		return words;
