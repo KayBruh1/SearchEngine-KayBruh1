@@ -78,14 +78,14 @@ public class FileBuilder {
 	 */
 	public void processFile(Path location) throws IOException {
 		int position = 0;
+		String locationString = location.toString();
 		try (BufferedReader reader = Files.newBufferedReader(location)) {
 			String line;
 			while ((line = reader.readLine()) != null) {
 				List<String> wordStems = FileStemmer.listStems(line);
 				for (String stemmedWord : wordStems) {
 					position += 1;
-					// TODO Don't repeat location.toString() in the loop! Save as variable outside of loop and reuse
-					indexer.addWord(stemmedWord, location.toString(), position);
+					indexer.addWord(stemmedWord, locationString, position);
 				}
 			}
 			
