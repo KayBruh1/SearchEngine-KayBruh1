@@ -55,19 +55,6 @@ public class InvertedIndex {
 		return invertedIndex.size();
 	}
 
-	/*
-	 * TODO None of the size methods should need loops. You are just accessing data
-	 * that is already there at this point.
-	 * 
-	 * Based on your other methods names, I suggest changing this as follows:
-	 * 
-	 * numCounts() (instead of countSize) numWords() (instead of indexSize)
-	 * numWordLocations(String word) (essentially size of viewWordLocations
-	 * numWordPositions(String word, String location)
-	 * 
-	 * That makes sure we are getting the size of all the nested data structures!
-	 */
-
 	/**
 	 * Returns the number of locations of a word
 	 *
@@ -77,6 +64,19 @@ public class InvertedIndex {
 	public int numWordLocations(String word) {
 		TreeMap<String, TreeSet<Integer>> locations = invertedIndex.getOrDefault(word, new TreeMap<>());
 		return locations.size();
+	}
+
+	/**
+	 * Returns the number of positions a word appears in a file
+	 *
+	 * @param word     The word to get positions for
+	 * @param location The location to get positions for
+	 * @return The number of positions the word appears in the location
+	 */
+	public int numWordPositions(String word, String location) {
+		TreeMap<String, TreeSet<Integer>> fileMap = invertedIndex.getOrDefault(word, new TreeMap<>());
+		TreeSet<Integer> positions = fileMap.getOrDefault(location, new TreeSet<>());
+		return positions.size();
 	}
 
 	/**
