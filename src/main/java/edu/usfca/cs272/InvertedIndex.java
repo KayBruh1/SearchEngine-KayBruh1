@@ -206,37 +206,9 @@ public class InvertedIndex {
 	 * @param position The position of the word in the file
 	 */
 	public void addWord(String word, String location, int position) {
-		/*
-		 * TODO I feel like we are circling back and forth on your add method away from
-		 * this TODO: https://github.com/usf-cs272-spring2024/project-KayBruh1/blob/
-		 * 497875dba651eba029bc70ec23a5d7d3882cf766/src/main/java/edu/usfca/cs272/
-		 * InvertedIndex.java#L52-L60
-		 * 
-		 * If you don't want to take that approach, that is fine. But this is not a
-		 * better one. It is more lines of code and still accesses the same information
-		 * in the index more times than necessary.
-		 * 
-		 * You have to choose either most efficient -or- most compact, not choose an
-		 * approach in between those two.
-		 * 
-		 * Since you already have code that is compact (but not efficient), I suggest
-		 * putIfAbsent or computeIfAbsent. That is similar to:
-		 * https://github.com/usf-cs272-spring2024/cs272-lectures/blob/
-		 * b58d2cfc1f26c8916ddcb9261bc1143e29923e6d/src/main/java/edu/usfca/cs272/
-		 * lectures/inheritance/word/WordLength.java#L40-L41
-		 * 
-		 * The most compact approach is 1 to 3 statements only.
-		 * 
-		 * Otherwise, the most efficient approach looks like this:
-		 * https://github.com/usf-cs272-spring2024/cs272-lectures/blob/
-		 * b58d2cfc1f26c8916ddcb9261bc1143e29923e6d/src/main/java/edu/usfca/cs272/
-		 * lectures/inheritance/word/WordPrefix.java#L79-L86
-		 */
-		TreeMap<String, TreeSet<Integer>> fileMap = invertedIndex.getOrDefault(word, new TreeMap<>());
-		TreeSet<Integer> positions = fileMap.getOrDefault(location, new TreeSet<>());
-		positions.add(position);
-		fileMap.put(location, positions);
-		invertedIndex.put(word, fileMap);
+		invertedIndex.putIfAbsent(word, new TreeMap<>());
+		invertedIndex.get(word).putIfAbsent(location, new TreeSet<>());
+		invertedIndex.get(word).get(location).add(position);
 	}
 
 	/**
