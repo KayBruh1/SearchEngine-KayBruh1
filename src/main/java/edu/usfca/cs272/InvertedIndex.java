@@ -54,15 +54,14 @@ public class InvertedIndex {
 	public int numWords() {
 		return invertedIndex.size();
 	}
-	
+
 	/*
-	 * TODO None of the size methods should need loops. You are just accessing
-	 * data that is already there at this point.
+	 * TODO None of the size methods should need loops. You are just accessing data
+	 * that is already there at this point.
 	 * 
 	 * Based on your other methods names, I suggest changing this as follows:
 	 * 
-	 * numCounts() (instead of countSize)
-	 * numWords() (instead of indexSize)
+	 * numCounts() (instead of countSize) numWords() (instead of indexSize)
 	 * numWordLocations(String word) (essentially size of viewWordLocations
 	 * numWordPositions(String word, String location)
 	 * 
@@ -70,31 +69,14 @@ public class InvertedIndex {
 	 */
 
 	/**
-	 * Finds the total count of words in all files
+	 * Returns the number of locations of a word
 	 *
-	 * @return The total count of words
+	 * @param word The word to get locations for
+	 * @return The number of locations the word appears
 	 */
-	public int totalWordCount() {
-		int totalCount = 0;
-		for (int count : counts.values()) {
-			totalCount += count;
-		}
-		return totalCount;
-	}
-
-	/**
-	 * Finds the total count of positions for a word
-	 *
-	 * @param word The word to count positions for
-	 * @return The total count of positions for the word
-	 */
-	public int totalPositionCount(String word) {
-		int totalPositions = 0;
-		TreeMap<String, TreeSet<Integer>> fileMap = invertedIndex.getOrDefault(word, new TreeMap<>());
-		for (TreeSet<Integer> positions : fileMap.values()) {
-			totalPositions += positions.size();
-		}
-		return totalPositions;
+	public int numWordLocations(String word) {
+		TreeMap<String, TreeSet<Integer>> locations = invertedIndex.getOrDefault(word, new TreeMap<>());
+		return locations.size();
 	}
 
 	/**
@@ -155,7 +137,10 @@ public class InvertedIndex {
 	 * @return an unmodifiable view of the inverted index
 	 */
 	public Map<String, TreeMap<String, TreeSet<Integer>>> viewIndex() {
-		// TODO This is still breaking encapsulation, just less efficiently than before. I encourage you to post on Piazza or stop by office hours (give me a heads up if you want to join remotely) to discuss more since I've commented on the same issue before. 
+		// TODO This is still breaking encapsulation, just less efficiently than before.
+		// I encourage you to post on Piazza or stop by office hours (give me a heads up
+		// if you want to join remotely) to discuss more since I've commented on the
+		// same issue before.
 		return Collections.unmodifiableMap(new TreeMap<>(invertedIndex));
 	}
 
@@ -186,17 +171,21 @@ public class InvertedIndex {
 	/*
 	 * TODO To be more explicit, you should have a viewWords() that looks like this:
 	 * 
-	 * https://github.com/usf-cs272-spring2024/cs272-lectures/blob/b58d2cfc1f26c8916ddcb9261bc1143e29923e6d/src/main/java/edu/usfca/cs272/lectures/basics/objects/PrefixMap.java#L165-L167
+	 * https://github.com/usf-cs272-spring2024/cs272-lectures/blob/
+	 * b58d2cfc1f26c8916ddcb9261bc1143e29923e6d/src/main/java/edu/usfca/cs272/
+	 * lectures/basics/objects/PrefixMap.java#L165-L167
 	 * 
 	 * And a viewLocations SIMILAR (but not exactly the same as) this:
 	 * 
-	 * https://github.com/usf-cs272-spring2024/cs272-lectures/blob/b58d2cfc1f26c8916ddcb9261bc1143e29923e6d/src/main/java/edu/usfca/cs272/lectures/basics/objects/PrefixMap.java#L175-L181
+	 * https://github.com/usf-cs272-spring2024/cs272-lectures/blob/
+	 * b58d2cfc1f26c8916ddcb9261bc1143e29923e6d/src/main/java/edu/usfca/cs272/
+	 * lectures/basics/objects/PrefixMap.java#L175-L181
 	 * 
-	 * If you aren't understanding why you need those and why your code is breaking 
-	 * encapsulation, PLEASE ask followup questions. Encapsulation is going to be 
+	 * If you aren't understanding why you need those and why your code is breaking
+	 * encapsulation, PLEASE ask followup questions. Encapsulation is going to be
 	 * important for multithreading too.
 	 */
-	
+
 	/**
 	 * Adds the word count for a file to the inverted index
 	 *
@@ -218,21 +207,30 @@ public class InvertedIndex {
 	 */
 	public void addWord(String word, String location, int position) {
 		/*
-		 * TODO I feel like we are circling back and forth on your add method away from this TODO:
-		 * https://github.com/usf-cs272-spring2024/project-KayBruh1/blob/497875dba651eba029bc70ec23a5d7d3882cf766/src/main/java/edu/usfca/cs272/InvertedIndex.java#L52-L60
+		 * TODO I feel like we are circling back and forth on your add method away from
+		 * this TODO: https://github.com/usf-cs272-spring2024/project-KayBruh1/blob/
+		 * 497875dba651eba029bc70ec23a5d7d3882cf766/src/main/java/edu/usfca/cs272/
+		 * InvertedIndex.java#L52-L60
 		 * 
-		 * If you don't want to take that approach, that is fine. But this is not a better one. 
-		 * It is more lines of code and still accesses the same information in the index more times than necessary.
+		 * If you don't want to take that approach, that is fine. But this is not a
+		 * better one. It is more lines of code and still accesses the same information
+		 * in the index more times than necessary.
 		 * 
-		 * You have to choose either most efficient -or- most compact, not choose an approach in between those two.
+		 * You have to choose either most efficient -or- most compact, not choose an
+		 * approach in between those two.
 		 * 
-		 * Since you already have code that is compact (but not efficient), I suggest putIfAbsent or computeIfAbsent. That is similar to:
-		 * https://github.com/usf-cs272-spring2024/cs272-lectures/blob/b58d2cfc1f26c8916ddcb9261bc1143e29923e6d/src/main/java/edu/usfca/cs272/lectures/inheritance/word/WordLength.java#L40-L41
+		 * Since you already have code that is compact (but not efficient), I suggest
+		 * putIfAbsent or computeIfAbsent. That is similar to:
+		 * https://github.com/usf-cs272-spring2024/cs272-lectures/blob/
+		 * b58d2cfc1f26c8916ddcb9261bc1143e29923e6d/src/main/java/edu/usfca/cs272/
+		 * lectures/inheritance/word/WordLength.java#L40-L41
 		 * 
 		 * The most compact approach is 1 to 3 statements only.
 		 * 
 		 * Otherwise, the most efficient approach looks like this:
-		 * https://github.com/usf-cs272-spring2024/cs272-lectures/blob/b58d2cfc1f26c8916ddcb9261bc1143e29923e6d/src/main/java/edu/usfca/cs272/lectures/inheritance/word/WordPrefix.java#L79-L86
+		 * https://github.com/usf-cs272-spring2024/cs272-lectures/blob/
+		 * b58d2cfc1f26c8916ddcb9261bc1143e29923e6d/src/main/java/edu/usfca/cs272/
+		 * lectures/inheritance/word/WordPrefix.java#L79-L86
 		 */
 		TreeMap<String, TreeSet<Integer>> fileMap = invertedIndex.getOrDefault(word, new TreeMap<>());
 		TreeSet<Integer> positions = fileMap.getOrDefault(location, new TreeSet<>());
@@ -260,6 +258,6 @@ public class InvertedIndex {
 	public void writeIndex(Path indexPath) throws IOException {
 		JsonWriter.writeIndex(invertedIndex, indexPath);
 	}
-	
+
 	// TODO Missing toString method
 }
