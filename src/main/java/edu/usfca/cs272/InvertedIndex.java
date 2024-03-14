@@ -264,8 +264,8 @@ public class InvertedIndex {
 	 * @param countsPath the output path of the JSON file
 	 * @throws IOException if an I/O error occurs
 	 */
-	public void writeCounts(String countsPath) throws IOException { // TODO Take a Path parameter instead of String parameter here
-		JsonWriter.writeObject(counts, Path.of(countsPath));
+	public void writeCounts(Path countsPath) throws IOException {
+		JsonWriter.writeObject(counts, countsPath);
 	}
 
 	/**
@@ -274,8 +274,8 @@ public class InvertedIndex {
 	 * @param indexPath the output path of the JSON file
 	 * @throws IOException if an I/O error occurs
 	 */
-	public void writeIndex(String indexPath) throws IOException { // TODO Take a Path parameter instead of String parameter here
-		JsonWriter.writeIndex(invertedIndex, Path.of(indexPath));
+	public void writeIndex(Path indexPath) throws IOException {
+		JsonWriter.writeIndex(invertedIndex, indexPath);
 	}
 	
 	// TODO Missing toString method

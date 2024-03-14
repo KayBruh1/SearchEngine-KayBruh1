@@ -32,7 +32,7 @@ public class Driver {
 		}
 
 		if (parser.hasFlag("-counts")) {
-			String countsPath = parser.getString("-counts", "counts.json");
+			Path countsPath = parser.getPath("-counts", Path.of("counts.json"));
 			try {
 				indexer.writeCounts(countsPath);
 			} catch (Exception e) {
@@ -41,7 +41,7 @@ public class Driver {
 		}
 
 		if (parser.hasFlag("-index")) {
-			String indexPath = parser.getString("-index", "index.json");
+			Path indexPath = parser.getPath("-index", Path.of("index.json"));
 			try {
 				indexer.writeIndex(indexPath);
 			} catch (Exception e) {
