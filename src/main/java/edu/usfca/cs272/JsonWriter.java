@@ -394,6 +394,9 @@ public class JsonWriter {
 		}
 	}
 
+	/*
+	 * TODO Almost! Upcast the first TreeMap more, and the last TreeSet more! 
+	 */
 	/**
 	 * Writes the inverted index as a pretty JSON object
 	 *
