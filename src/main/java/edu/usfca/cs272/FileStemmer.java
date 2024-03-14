@@ -229,6 +229,7 @@ public class FileStemmer {
 				TreeSet<String> unique = new TreeSet<>();
 				addStems(line, stemmer, unique);
 				words.add(unique);
+				// TODO words.add(uniqueStems(line, stemmer));
 			}
 		}
 		return words;
