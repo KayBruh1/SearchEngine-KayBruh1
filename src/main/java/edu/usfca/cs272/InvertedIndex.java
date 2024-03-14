@@ -38,23 +38,6 @@ public class InvertedIndex {
 	}
 
 	/**
-	 * Returns the InvertedIndex
-	 *
-	 * @return the TreeMap containing the inverted index
-	 */
-	public SortedMap<String, TreeMap<String, TreeSet<Integer>>> getInvertedIndex() {
-		/*
-		 * TODO This get method is breaking encapsulation. Do you understand why? The
-		 * PrefixMap example illustrates what happens when you have nested mutable data.
-		 * The extra copy isn't fixing things.
-		 * 
-		 * Just remove this method. It isn't necessary since you have the other view methods!
-		 */
-
-		return Collections.unmodifiableSortedMap(new TreeMap<>(invertedIndex));
-	}
-
-	/**
 	 * Finds the amount of different files
 	 * 
 	 * @return The number of files
