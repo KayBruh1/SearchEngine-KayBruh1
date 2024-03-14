@@ -3,6 +3,7 @@ package edu.usfca.cs272;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
@@ -136,12 +137,15 @@ public class InvertedIndex {
 	 *
 	 * @return an unmodifiable view of the inverted index
 	 */
-	public Map<String, TreeMap<String, TreeSet<Integer>>> viewIndex() {
-		// TODO This is still breaking encapsulation, just less efficiently than before.
-		// I encourage you to post on Piazza or stop by office hours (give me a heads up
-		// if you want to join remotely) to discuss more since I've commented on the
-		// same issue before.
-		return Collections.unmodifiableMap(new TreeMap<>(invertedIndex));
+	public Map<String, Set<String>> viewIndex() {
+		Map<String, Set<String>> copiedView = new TreeMap<>();
+		for (Map.Entry<String, TreeMap<String, TreeSet<Integer>>> entry : invertedIndex.entrySet()) {
+			String word = entry.getKey();
+			TreeMap<String, TreeSet<Integer>> locations = entry.getValue();
+			Set<String> wordLocations = new HashSet<>(locations.keySet());
+			copiedView.put(word, Collections.unmodifiableSet(wordLocations));
+		}
+		return Collections.unmodifiableMap(copiedView);
 	}
 
 	/**
@@ -163,24 +167,6 @@ public class InvertedIndex {
 		TreeMap<String, TreeSet<Integer>> locations = invertedIndex.getOrDefault(word, new TreeMap<>());
 		return Collections.unmodifiableSet(locations.keySet());
 	}
-
-	/*
-	 * TODO To be more explicit, you should have a viewWords() that looks like this:
-	 * 
-	 * https://github.com/usf-cs272-spring2024/cs272-lectures/blob/
-	 * b58d2cfc1f26c8916ddcb9261bc1143e29923e6d/src/main/java/edu/usfca/cs272/
-	 * lectures/basics/objects/PrefixMap.java#L165-L167
-	 * 
-	 * And a viewLocations SIMILAR (but not exactly the same as) this:
-	 * 
-	 * https://github.com/usf-cs272-spring2024/cs272-lectures/blob/
-	 * b58d2cfc1f26c8916ddcb9261bc1143e29923e6d/src/main/java/edu/usfca/cs272/
-	 * lectures/basics/objects/PrefixMap.java#L175-L181
-	 * 
-	 * If you aren't understanding why you need those and why your code is breaking
-	 * encapsulation, PLEASE ask followup questions. Encapsulation is going to be
-	 * important for multithreading too.
-	 */
 
 	/**
 	 * Adds the word count for a file to the inverted index
