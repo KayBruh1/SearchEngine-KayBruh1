@@ -199,7 +199,7 @@ public class ArgumentParser {
 	public int getInteger(String flag, int backup) {
 		try {
 			return Integer.parseInt(map.get(flag));
-		} catch (NumberFormatException /* TODO | NullPointerException */ e) {
+		} catch (NumberFormatException | NullPointerException e) {
 			return backup;
 		}
 	}
