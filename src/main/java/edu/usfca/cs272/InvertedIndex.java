@@ -42,7 +42,7 @@ public class InvertedIndex {
 	 * 
 	 * @return The number of files
 	 */
-	public int countSize() {
+	public int numCounts() {
 		return counts.size();
 	}
 
@@ -51,7 +51,7 @@ public class InvertedIndex {
 	 * 
 	 * @return The number of words
 	 */
-	public int indexSize() {
+	public int numWords() {
 		return invertedIndex.size();
 	}
 	
