@@ -3,7 +3,6 @@ package edu.usfca.cs272;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
@@ -133,19 +132,19 @@ public class InvertedIndex {
 	}
 
 	/**
-	 * Returns an unmodifiable view of the inverted index
+	 * Returns an unmodifiable view of the positions of a word's location
 	 *
-	 * @return an unmodifiable view of the inverted index
+	 * @param word     The word to get positions for
+	 * @param location The location to get positions for
+	 * @return An unmodifiable view of the word location's position
 	 */
-	public Map<String, Set<String>> viewIndex() {
-		Map<String, Set<String>> copiedView = new TreeMap<>();
-		for (Map.Entry<String, TreeMap<String, TreeSet<Integer>>> entry : invertedIndex.entrySet()) {
-			String word = entry.getKey();
-			TreeMap<String, TreeSet<Integer>> locations = entry.getValue();
-			Set<String> wordLocations = new HashSet<>(locations.keySet());
-			copiedView.put(word, Collections.unmodifiableSet(wordLocations));
+	public Set<Integer> viewPositions(String word, String location) {
+		TreeMap<String, TreeSet<Integer>> wordInfo = invertedIndex.get(word);
+		if (wordInfo != null && wordInfo.containsKey(location)) {
+			TreeSet<Integer> positions = wordInfo.get(location);
+			return Collections.unmodifiableSet(positions);
 		}
-		return Collections.unmodifiableMap(copiedView);
+		return Collections.emptySet();
 	}
 
 	/**
