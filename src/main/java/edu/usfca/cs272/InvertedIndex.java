@@ -164,8 +164,8 @@ public class InvertedIndex {
 	 * @return An unmodifiable view of the word locations
 	 */
 	public Set<String> viewLocations(String word) {
-		TreeMap<String, TreeSet<Integer>> locations = invertedIndex.getOrDefault(word, new TreeMap<>());
-		return Collections.unmodifiableSet(locations.keySet());
+		TreeMap<String, TreeSet<Integer>> locations = invertedIndex.get(word);
+		return locations != null ? Collections.unmodifiableSet(locations.keySet()) : Collections.emptySet();
 	}
 
 	/**
