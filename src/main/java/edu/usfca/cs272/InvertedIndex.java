@@ -140,9 +140,11 @@ public class InvertedIndex {
 	 */
 	public Set<Integer> viewPositions(String word, String location) {
 		TreeMap<String, TreeSet<Integer>> wordInfo = invertedIndex.get(word);
-		if (wordInfo != null && wordInfo.containsKey(location)) {
+		if (wordInfo != null) {
 			TreeSet<Integer> positions = wordInfo.get(location);
-			return Collections.unmodifiableSet(positions);
+			if (positions != null) {
+				return Collections.unmodifiableSet(positions);
+			}
 		}
 		return Collections.emptySet();
 	}
