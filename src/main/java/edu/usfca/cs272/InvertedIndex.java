@@ -214,5 +214,13 @@ public class InvertedIndex {
 		JsonWriter.writeIndex(invertedIndex, indexPath);
 	}
 
-	// TODO Missing toString method
+	/**
+	 * Returns a string representation of the inverted index
+	 * 
+	 * @return a string representation of the inverted index
+	 */
+	@Override
+	public String toString() {
+		return invertedIndex.toString();
+	}
 }
