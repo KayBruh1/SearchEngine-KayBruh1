@@ -429,6 +429,7 @@ public class JsonWriter {
 		writer.write("}");
 	}
 
+	// TODO Why does this return a null String? Maybe return void instead?
 	/**
 	 * Writes the inverted index as a pretty JSON object to file
 	 *
@@ -445,6 +446,7 @@ public class JsonWriter {
 		return null;
 	}
 
+	// TODO Shouldn't this one return a String type?
 	/**
 	 * Returns the inverted index as a pretty JSON string
 	 *
@@ -455,6 +457,7 @@ public class JsonWriter {
 			StringWriter writer = new StringWriter();
 			writeIndex(invertedIndex, writer, 0);
 		} catch (IOException e) {
+			// TODO Return null here?
 		}
 	}
 
@@ -477,6 +480,6 @@ public class JsonWriter {
 		writer.write(": ");
 		writeObjectArrays(
 				filePositions,
-				writer, indent);
+				writer, indent); // TODO weird formatting?
 	}
 }
