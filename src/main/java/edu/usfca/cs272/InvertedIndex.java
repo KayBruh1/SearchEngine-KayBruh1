@@ -62,9 +62,40 @@ public class InvertedIndex {
 	 * @return The number of locations the word appears
 	 */
 	public int numWordLocations(String word) {
+		/*
+		 * TODO Every time this method is called, the getOrDefault approach creates a
+		 * new empty TreeMap regardless of whether a new one is needed. This creates a
+		 * ton of extra empty instances in memory that eventually have to be cleaned up
+		 * by the Java garbage collector.
+		 * 
+		 * Since you are taking a compact approach in your add method and have nice and
+		 * efficient view methods, lets reuse code here to avoid this issue. Try:
+		 * 
+		 * return viewLocations(word).size();
+		 */
 		TreeMap<String, TreeSet<Integer>> locations = invertedIndex.getOrDefault(word, new TreeMap<>());
 		return locations.size();
 	}
+	
+	/*- TODO getOrDefault example
+	 * 
+	 * This is just to illustrate that makeNew() is called both times, even if
+	 * a new data structure was not needed because one already existed.
+
+	public static TreeSet<Integer> makeNew() {
+		TreeSet<Integer> created = new TreeSet<>();
+		System.out.println("Created " + System.identityHashCode(created));
+		return created;
+	}
+	
+	public static void main(String[] args) {
+		TreeMap<String, Set<Integer>> test = new TreeMap<>();
+		test.put("hello", Set.of(1, 2, 3));
+		
+		test.getOrDefault("hello", makeNew());
+		test.getOrDefault("world", makeNew());
+	}
+	*/
 
 	/**
 	 * Returns the number of positions a word appears in a file
