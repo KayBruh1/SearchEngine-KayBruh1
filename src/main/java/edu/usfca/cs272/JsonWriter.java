@@ -397,11 +397,14 @@ public class JsonWriter {
 	/*
 	 * TODO This past comment was not addressed:
 	 * 
-	 * https://github.com/usf-cs272-spring2024/project-KayBruh1/blob/ca082ab5e0eba211b2aab0e2482c96ae0e759a00/src/main/java/edu/usfca/cs272/JsonWriter.java#L397-L399
+	 * https://github.com/usf-cs272-spring2024/project-KayBruh1/blob/
+	 * ca082ab5e0eba211b2aab0e2482c96ae0e759a00/src/main/java/edu/usfca/cs272/
+	 * JsonWriter.java#L397-L399
 	 * 
-	 * It looks like you requested this code review too soon without addressing all of the comments from last time.
+	 * It looks like you requested this code review too soon without addressing all
+	 * of the comments from last time.
 	 */
-	
+
 	/**
 	 * Writes the inverted index as a pretty JSON object
 	 *
@@ -478,8 +481,6 @@ public class JsonWriter {
 		writeIndent(writer, indent);
 		writeQuote(word, writer, 0);
 		writer.write(": ");
-		writeObjectArrays(
-				filePositions,
-				writer, indent); // TODO weird formatting?
+		writeObjectArrays(filePositions, writer, indent);
 	}
 }
