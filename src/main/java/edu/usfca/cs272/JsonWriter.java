@@ -394,6 +394,14 @@ public class JsonWriter {
 		}
 	}
 
+	/*
+	 * TODO This past comment was not addressed:
+	 * 
+	 * https://github.com/usf-cs272-spring2024/project-KayBruh1/blob/ca082ab5e0eba211b2aab0e2482c96ae0e759a00/src/main/java/edu/usfca/cs272/JsonWriter.java#L397-L399
+	 * 
+	 * It looks like you requested this code review too soon without addressing all of the comments from last time.
+	 */
+	
 	/**
 	 * Writes the inverted index as a pretty JSON object
 	 *
@@ -421,6 +429,7 @@ public class JsonWriter {
 		writer.write("}");
 	}
 
+	// TODO Why does this return a null String? Maybe return void instead?
 	/**
 	 * Writes the inverted index as a pretty JSON object to file
 	 *
@@ -437,6 +446,7 @@ public class JsonWriter {
 		return null;
 	}
 
+	// TODO Shouldn't this one return a String type?
 	/**
 	 * Returns the inverted index as a pretty JSON string
 	 *
@@ -447,6 +457,7 @@ public class JsonWriter {
 			StringWriter writer = new StringWriter();
 			writeIndex(invertedIndex, writer, 0);
 		} catch (IOException e) {
+			// TODO Return null here?
 		}
 	}
 
@@ -469,6 +480,6 @@ public class JsonWriter {
 		writer.write(": ");
 		writeObjectArrays(
 				filePositions,
-				writer, indent);
+				writer, indent); // TODO weird formatting?
 	}
 }

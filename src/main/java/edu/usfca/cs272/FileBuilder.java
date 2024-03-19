@@ -82,6 +82,12 @@ public class FileBuilder {
 		try (BufferedReader reader = Files.newBufferedReader(location)) {
 			String line;
 			while ((line = reader.readLine()) != null) {
+				/*
+				 * TODO Using listStems here is still inefficient. It creates 1 list per
+				 * line, 1 stemmer per line, then copies words from the list into the index.
+				 * 
+				 * Instead, parse and stem in here to create a more efficient approach.
+				 */
 				List<String> wordStems = FileStemmer.listStems(line);
 				for (String stemmedWord : wordStems) {
 					position += 1;
