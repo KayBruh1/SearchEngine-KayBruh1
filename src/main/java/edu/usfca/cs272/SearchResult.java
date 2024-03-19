@@ -7,6 +7,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+/*
+ * TODO Nest this inside of inverted index as a non-static inner class.
+ */
+
 /**
  * Represents a single search result containing information on location, total
  * words, count, and score
@@ -20,7 +24,7 @@ public class SearchResult implements Comparable<SearchResult> {
 	/**
 	 * The total number of words in the search result
 	 */
-	private int totalWords;
+	private int totalWords; // TODO Remove, access the word count map directly once this class is inside of inverted index
 
 	/**
 	 * The count of matches for the search query
