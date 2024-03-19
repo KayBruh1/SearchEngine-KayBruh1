@@ -61,9 +61,9 @@ public class Driver {
 				if (Files.exists(queryPath)) {
 					List<List<String>> processedQueries = FileBuilder.processQueries(queryPath);
 					if (parser.hasFlag("-partial")) {
-						searchResultsMap = fileBuilder.partialSearch(processedQueries);
+						searchResultsMap = indexer.partialSearch(fileBuilder, processedQueries);
 					} else {
-						searchResultsMap = fileBuilder.exactSearch(processedQueries);
+						searchResultsMap = indexer.exactSearch(fileBuilder, processedQueries);
 					}
 				}
 			} catch (Exception e) {

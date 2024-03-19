@@ -39,6 +39,16 @@ public class InvertedIndex {
 	}
 
 	/**
+	 * Gets the total word count for a specific location
+	 *
+	 * @param location The location of the document
+	 * @return The total word count at the location
+	 */
+	public int getTotalWordCount(String location) {
+		return counts.getOrDefault(location, 0);
+	}
+
+	/**
 	 * Finds the amount of different files
 	 * 
 	 * @return The number of files
@@ -195,23 +205,27 @@ public class InvertedIndex {
 	}
 
 	/**
-	 * Returns the InvertedIndex
+	 * Performs an exact search with processed queries on the inverted index
 	 *
-	 * @return the TreeMap containing the inverted index
+	 * @param fileBuilder     The file builder to use for searching
+	 * @param processedQueries The processed queries to search for
+	 * @return A map containing the search results
 	 */
-	public SortedMap<String, TreeMap<String, TreeSet<Integer>>> getInvertedIndex() {
-		return Collections.unmodifiableSortedMap(new TreeMap<>(invertedIndex));
+	public Map<String, List<SearchResult>> exactSearch(FileBuilder fileBuilder, List<List<String>> processedQueries) {
+	    return fileBuilder.exactSearch(processedQueries, invertedIndex);
 	}
 
 	/**
-	 * Gets the total word count for a specific location
+	 * Performs a partial search with processed queries on the inverted index
 	 *
-	 * @param location The location of the document
-	 * @return The total word count at the location
+	 * @param fileBuilder     The file builder to use for searching.
+	 * @param processedQueries The processed queries to search for
+	 * @return A map containing the search results
 	 */
-	public int getTotalWordCount(String location) {
-		return counts.getOrDefault(location, 0);
+	public Map<String, List<SearchResult>> partialSearch(FileBuilder fileBuilder, List<List<String>> processedQueries) {
+	    return fileBuilder.partialSearch(processedQueries, invertedIndex);
 	}
+
 
 	/**
 	 * Writes the word counts to a JSON file

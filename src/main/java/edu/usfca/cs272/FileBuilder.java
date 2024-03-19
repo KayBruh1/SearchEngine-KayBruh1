@@ -138,9 +138,11 @@ public class FileBuilder {
 	 * Performs an exact search based on the processed queries
 	 *
 	 * @param processedQueries A list of processed search queries
+	 * @param invertedIndex The inverted index to search
 	 * @return A map containing search results for each query
 	 */
-	public Map<String, List<SearchResult>> exactSearch(List<List<String>> processedQueries) {
+	public Map<String, List<SearchResult>> exactSearch(List<List<String>> processedQueries,
+			TreeMap<String, TreeMap<String, TreeSet<Integer>>> invertedIndex) {
 		Map<String, List<SearchResult>> searchResultsMap = new HashMap<>();
 
 		for (List<String> query : processedQueries) {
@@ -152,8 +154,7 @@ public class FileBuilder {
 			Map<String, SearchResult> resultMap = new HashMap<>();
 
 			for (String word : query) {
-				Map<String, TreeSet<Integer>> locations = indexer.getInvertedIndex().getOrDefault(word,
-						new TreeMap<>());
+				Map<String, TreeSet<Integer>> locations = invertedIndex.getOrDefault(word, new TreeMap<>());
 
 				for (Map.Entry<String, TreeSet<Integer>> entry : locations.entrySet()) {
 					String location = entry.getKey();
@@ -181,9 +182,11 @@ public class FileBuilder {
 	 * Performs a partial based on the processed queries
 	 *
 	 * @param processedQueries A list of processed search queries
+	 * @param invertedIndex The inverted index to search
 	 * @return A map containing search results for each query
 	 */
-	public Map<String, List<SearchResult>> partialSearch(List<List<String>> processedQueries) {
+	public Map<String, List<SearchResult>> partialSearch(List<List<String>> processedQueries,
+			TreeMap<String, TreeMap<String, TreeSet<Integer>>> invertedIndex) {
 		Map<String, List<SearchResult>> searchResultsMap = new HashMap<>();
 
 		for (List<String> query : processedQueries) {
@@ -195,8 +198,7 @@ public class FileBuilder {
 			Map<String, SearchResult> resultMap = new HashMap<>();
 
 			for (String word : query) {
-				for (Map.Entry<String, TreeMap<String, TreeSet<Integer>>> entry : indexer.getInvertedIndex()
-						.entrySet()) {
+				for (Map.Entry<String, TreeMap<String, TreeSet<Integer>>> entry : invertedIndex.entrySet()) {
 					String checkWord = entry.getKey();
 					if (checkWord.startsWith(word)) {
 						TreeMap<String, TreeSet<Integer>> locations = entry.getValue();
@@ -242,7 +244,7 @@ public class FileBuilder {
 	 * @param totalWords The total number of words
 	 * @return The calculated score
 	 */
-	public static double calculateScore(int matches, int totalWords) {
+	public double calculateScore(int matches, int totalWords) {
 		double score = (double) matches / totalWords;
 		return score;
 	}
