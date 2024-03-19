@@ -432,21 +432,18 @@ public class JsonWriter {
 		writer.write("}");
 	}
 
-	// TODO Why does this return a null String? Maybe return void instead?
 	/**
 	 * Writes the inverted index as a pretty JSON object to file
 	 *
 	 * @param invertedIndex the inverted index to write
 	 * @param path          the file path to use
-	 * @return done
 	 * @throws IOException if an I/O error occurs
 	 */
-	public static String writeIndex(TreeMap<String, ? extends Map<String, ? extends TreeSet<Integer>>> invertedIndex,
+	public static void writeIndex(TreeMap<String, ? extends Map<String, ? extends TreeSet<Integer>>> invertedIndex,
 			Path path) throws IOException {
 		try (BufferedWriter writer = Files.newBufferedWriter(path, UTF_8)) {
 			writeIndex(invertedIndex, writer, 0);
 		}
-		return null;
 	}
 
 	// TODO Shouldn't this one return a String type?
