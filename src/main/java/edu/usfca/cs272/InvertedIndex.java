@@ -207,25 +207,24 @@ public class InvertedIndex {
 	/**
 	 * Performs an exact search with processed queries on the inverted index
 	 *
-	 * @param fileBuilder     The file builder to use for searching
+	 * @param fileBuilder      The file builder to use for searching
 	 * @param processedQueries The processed queries to search for
 	 * @return A map containing the search results
 	 */
 	public Map<String, List<SearchResult>> exactSearch(FileBuilder fileBuilder, List<List<String>> processedQueries) {
-	    return fileBuilder.exactSearch(processedQueries, invertedIndex);
+		return fileBuilder.exactSearch(processedQueries, invertedIndex);
 	}
 
 	/**
 	 * Performs a partial search with processed queries on the inverted index
 	 *
-	 * @param fileBuilder     The file builder to use for searching.
+	 * @param fileBuilder      The file builder to use for searching.
 	 * @param processedQueries The processed queries to search for
 	 * @return A map containing the search results
 	 */
 	public Map<String, List<SearchResult>> partialSearch(FileBuilder fileBuilder, List<List<String>> processedQueries) {
-	    return fileBuilder.partialSearch(processedQueries, invertedIndex);
+		return fileBuilder.partialSearch(processedQueries, invertedIndex);
 	}
-
 
 	/**
 	 * Writes the word counts to a JSON file
