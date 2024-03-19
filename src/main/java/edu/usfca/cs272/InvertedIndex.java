@@ -3,6 +3,7 @@ package edu.usfca.cs272;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -29,6 +30,15 @@ public class InvertedIndex {
 		this.invertedIndex = new TreeMap<>();
 	}
 
+	/* TODO 
+	public ArrayList<SearchResult> exactSearch(Set<String> queries) <-- one line of words {
+		Map<String, SearchResult> resultMap = new HashMap<>();
+		etc.
+	}
+	
+	and partial
+	*/
+	
 	/**
 	 * Returns the word counts
 	 *
