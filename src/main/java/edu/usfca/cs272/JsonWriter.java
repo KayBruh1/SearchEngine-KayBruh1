@@ -11,8 +11,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Map;
-import java.util.TreeMap;
-import java.util.TreeSet;
+import java.util.Set;
 
 /**
  * Outputs several simple data structures in "pretty" JSON format where newlines
@@ -394,17 +393,6 @@ public class JsonWriter {
 		}
 	}
 
-	/*
-	 * TODO This past comment was not addressed:
-	 * 
-	 * https://github.com/usf-cs272-spring2024/project-KayBruh1/blob/
-	 * ca082ab5e0eba211b2aab0e2482c96ae0e759a00/src/main/java/edu/usfca/cs272/
-	 * JsonWriter.java#L397-L399
-	 * 
-	 * It looks like you requested this code review too soon without addressing all
-	 * of the comments from last time.
-	 */
-
 	/**
 	 * Writes the inverted index as a pretty JSON object
 	 *
@@ -413,7 +401,7 @@ public class JsonWriter {
 	 * @param indent        the initial indentation level for the JSON output
 	 * @throws IOException if an I/O error occurs while writing
 	 */
-	public static void writeIndex(TreeMap<String, ? extends Map<String, ? extends TreeSet<Integer>>> invertedIndex,
+	public static void writeIndex(Map<String, ? extends Map<String, ? extends Set<Integer>>> invertedIndex,
 			Writer writer, int indent) throws IOException {
 		writer.write("{");
 		writer.write("\n");
@@ -439,7 +427,7 @@ public class JsonWriter {
 	 * @param path          the file path to use
 	 * @throws IOException if an I/O error occurs
 	 */
-	public static void writeIndex(TreeMap<String, ? extends Map<String, ? extends TreeSet<Integer>>> invertedIndex,
+	public static void writeIndex(Map<String, ? extends Map<String, ? extends Set<Integer>>> invertedIndex,
 			Path path) throws IOException {
 		try (BufferedWriter writer = Files.newBufferedWriter(path, UTF_8)) {
 			writeIndex(invertedIndex, writer, 0);
@@ -450,8 +438,9 @@ public class JsonWriter {
 	 * Returns the inverted index as a pretty JSON string
 	 *
 	 * @param invertedIndex the inverted index to use
+	 * @return a containing the elements in pretty JSON format
 	 */
-	public static String writeIndex(TreeMap<String, ? extends Map<String, ? extends TreeSet<Integer>>> invertedIndex) {
+	public static String writeIndex(Map<String, ? extends Map<String, ? extends Set<Integer>>> invertedIndex) {
 		try {
 			StringWriter writer = new StringWriter();
 			writeIndex(invertedIndex, writer, 0);
@@ -470,10 +459,10 @@ public class JsonWriter {
 	 * @param indent the initial indentation level for the JSON output
 	 * @throws IOException If an I/O error occurs while writing
 	 */
-	private static void writeEntry(Map.Entry<String, ? extends Map<String, ? extends TreeSet<Integer>>> entry,
+	private static void writeEntry(Map.Entry<String, ? extends Map<String, ? extends Set<Integer>>> entry,
 			Writer writer, int indent) throws IOException {
 		String word = entry.getKey();
-		Map<String, ? extends TreeSet<Integer>> filePositions = entry.getValue();
+		Map<String, ? extends Set<Integer>> filePositions = entry.getValue();
 
 		writeIndent(writer, indent);
 		writeQuote(word, writer, 0);
