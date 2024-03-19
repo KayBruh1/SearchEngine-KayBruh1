@@ -3,6 +3,7 @@ package edu.usfca.cs272;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
@@ -62,8 +63,7 @@ public class InvertedIndex {
 	 * @return The number of locations the word appears
 	 */
 	public int numWordLocations(String word) {
-		Set<String> locations = viewLocations(word);
-		return locations.size();
+		return viewLocations(word).size();
 	}
 
 	/**
@@ -195,6 +195,25 @@ public class InvertedIndex {
 	}
 
 	/**
+	 * Returns the InvertedIndex
+	 *
+	 * @return the TreeMap containing the inverted index
+	 */
+	public SortedMap<String, TreeMap<String, TreeSet<Integer>>> getInvertedIndex() {
+		return Collections.unmodifiableSortedMap(new TreeMap<>(invertedIndex));
+	}
+
+	/**
+	 * Gets the total word count for a specific location
+	 *
+	 * @param location The location of the document
+	 * @return The total word count at the location
+	 */
+	public int getTotalWordCount(String location) {
+		return counts.getOrDefault(location, 0);
+	}
+
+	/**
 	 * Writes the word counts to a JSON file
 	 *
 	 * @param countsPath the output path of the JSON file
@@ -212,6 +231,17 @@ public class InvertedIndex {
 	 */
 	public void writeIndex(Path indexPath) throws IOException {
 		JsonWriter.writeIndex(invertedIndex, indexPath);
+	}
+
+	/**
+	 * Writes the search results to a JSON file
+	 * 
+	 * @param searchResults The processed search results
+	 * @param resultsPath   the output path of the JSON file
+	 * @throws IOException if an I/O error occurs
+	 */
+	public void writeResults(Map<String, List<SearchResult>> searchResults, String resultsPath) throws IOException {
+		JsonWriter.writeResults(searchResults, resultsPath);
 	}
 
 	/**

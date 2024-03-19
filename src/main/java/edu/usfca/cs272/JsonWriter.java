@@ -3,13 +3,16 @@ package edu.usfca.cs272;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.text.DecimalFormat;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -427,8 +430,8 @@ public class JsonWriter {
 	 * @param path          the file path to use
 	 * @throws IOException if an I/O error occurs
 	 */
-	public static void writeIndex(Map<String, ? extends Map<String, ? extends Set<Integer>>> invertedIndex,
-			Path path) throws IOException {
+	public static void writeIndex(Map<String, ? extends Map<String, ? extends Set<Integer>>> invertedIndex, Path path)
+			throws IOException {
 		try (BufferedWriter writer = Files.newBufferedWriter(path, UTF_8)) {
 			writeIndex(invertedIndex, writer, 0);
 		}
@@ -468,5 +471,61 @@ public class JsonWriter {
 		writeQuote(word, writer, 0);
 		writer.write(": ");
 		writeObjectArrays(filePositions, writer, indent);
+	}
+
+	/**
+	 * Writes the search results as a pretty JSON object
+	 *
+	 * @param results    the search results to write
+	 * @param outputPath the path to the output file
+	 * @throws IOException if an I/O error occurs
+	 */
+	public static void writeResults(Map<String, List<SearchResult>> results, String outputPath) throws IOException {
+		DecimalFormat formatter = new DecimalFormat("0.00000000");
+		try (BufferedWriter writer = new BufferedWriter(new FileWriter(outputPath))) {
+			writer.write("{\n");
+			int count = 0;
+			for (Map.Entry<String, List<SearchResult>> entry : results.entrySet()) {
+				List<SearchResult> resultList = entry.getValue();
+				if (count > 0) {
+					writer.write(",\n");
+				}
+				writeIndent(writer, 1);
+				writeQuote(entry.getKey(), writer, 0);
+				writer.write(": ");
+				if (resultList.isEmpty()) {
+					writer.write("[\n");
+					writeIndent(writer, 1);
+					writer.write("]");
+				} else {
+					writer.write("[\n");
+					int resultCount = 0;
+					for (SearchResult result : resultList) {
+						if (resultCount > 0) {
+							writer.write(",\n");
+						}
+						writeIndent(writer, 2);
+						writer.write("{\n");
+						writeIndent(writer, 3);
+						writer.write("\"count\": " + result.getCount() + ",\n");
+						writeIndent(writer, 3);
+						writer.write("\"score\": " + formatter.format(result.getScore()) + ",\n");
+						writeIndent(writer, 3);
+						writeQuote("where", writer, 0);
+						writer.write(": ");
+						writeQuote(result.getLocation(), writer, 0);
+						writer.write("\n");
+						writeIndent(writer, 2);
+						writer.write("}");
+						resultCount += 1;
+					}
+					writer.write("\n");
+					writeIndent(writer, 1);
+					writer.write("]");
+				}
+				count += 1;
+			}
+			writer.write("\n}");
+		}
 	}
 }

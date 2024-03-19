@@ -1,6 +1,11 @@
+
+
 package edu.usfca.cs272;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Class responsible for running this project based on the provided command-line
@@ -20,10 +25,10 @@ public class Driver {
 	public static void main(String[] args) {
 		ArgumentParser parser = new ArgumentParser(args);
 		InvertedIndex indexer = new InvertedIndex();
+		FileBuilder fileBuilder = new FileBuilder(indexer);
 
 		if (parser.hasFlag("-text")) {
 			Path inputPath = parser.getPath("-text");
-			FileBuilder fileBuilder = new FileBuilder(indexer);
 			try {
 				fileBuilder.buildStructures(inputPath);
 			} catch (Exception e) {
@@ -46,6 +51,33 @@ public class Driver {
 				indexer.writeIndex(indexPath);
 			} catch (Exception e) {
 				System.out.println("Error building the inverted index " + indexPath);
+			}
+		}
+
+		Map<String, List<SearchResult>> searchResultsMap = null;
+		if (parser.hasFlag("-query")) {
+			Path queryPath = parser.getPath("-query");
+			try {
+				if (Files.exists(queryPath)) {
+					List<List<String>> processedQueries = FileBuilder.processQueries(queryPath);
+					if (parser.hasFlag("-partial")) {
+						searchResultsMap = fileBuilder.partialSearch(processedQueries);
+					} else {
+						searchResultsMap = fileBuilder.exactSearch(processedQueries);
+					}
+				}
+			} catch (Exception e) {
+				System.out.println("Error reading the query file " + queryPath);
+			}
+
+		}
+
+		if (parser.hasFlag("-results")) {
+			String resultsPath = parser.getString("-results", "results.json");
+			try {
+				indexer.writeResults(searchResultsMap, resultsPath);
+			} catch (Exception e) {
+				System.out.println("Error writing results to file " + resultsPath);
 			}
 		}
 	}
