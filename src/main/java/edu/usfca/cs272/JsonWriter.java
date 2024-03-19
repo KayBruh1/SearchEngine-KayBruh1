@@ -446,18 +446,18 @@ public class JsonWriter {
 		}
 	}
 
-	// TODO Shouldn't this one return a String type?
 	/**
 	 * Returns the inverted index as a pretty JSON string
 	 *
 	 * @param invertedIndex the inverted index to use
 	 */
-	public static void writeIndex(TreeMap<String, ? extends Map<String, ? extends TreeSet<Integer>>> invertedIndex) {
+	public static String writeIndex(TreeMap<String, ? extends Map<String, ? extends TreeSet<Integer>>> invertedIndex) {
 		try {
 			StringWriter writer = new StringWriter();
 			writeIndex(invertedIndex, writer, 0);
+			return writer.toString();
 		} catch (IOException e) {
-			// TODO Return null here?
+			return null;
 		}
 	}
 
