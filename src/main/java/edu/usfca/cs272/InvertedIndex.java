@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -38,8 +37,8 @@ public class InvertedIndex {
 	 * @param queries The set of queries to search for
 	 * @return A list of search results for each query
 	 */
-	public List<SearchResult> exactSearch(Set<String> queries) {
-		Map<String, SearchResult> resultMap = new HashMap<>();
+	public Map<String, List<SearchResult>> exactSearch(Set<String> queries) {
+		QueryFileProcsesor processor = new QueryFileProcsesor();
 
 		for (String query : queries) {
 			TreeMap<String, TreeSet<Integer>> locations = invertedIndex.getOrDefault(query, new TreeMap<>());
@@ -47,19 +46,13 @@ public class InvertedIndex {
 			for (Map.Entry<String, TreeSet<Integer>> entry : locations.entrySet()) {
 				String location = entry.getKey();
 				TreeSet<Integer> positions = entry.getValue();
-
 				int totalWords = counts.getOrDefault(location, 0);
 				int count = positions.size();
-
-				SearchResult result = resultMap.getOrDefault(location, new SearchResult(location, totalWords, 0, 0.0));
-				result.updateCount(count);
-				result.setScore(calculateScore(count, totalWords));
-
-				resultMap.put(location, result);
+				processor.addToResultMap(location, totalWords, count);
 			}
 		}
 
-		return new ArrayList<>(resultMap.values());
+		return new ArrayList<>(processor.getResultMap().values());
 	}
 
 	/**
@@ -69,47 +62,28 @@ public class InvertedIndex {
 	 * @return A list of search results for each query
 	 */
 	public List<SearchResult> partialSearch(Set<String> queries) {
-		Map<String, SearchResult> resultMap = new HashMap<>();
-
-		for (String query : queries) {
-			for (Map.Entry<String, TreeMap<String, TreeSet<Integer>>> entry : invertedIndex.tailMap(query).entrySet()) {
-				String word = entry.getKey();
-				if (!word.startsWith(query)) {
-					break;
-				}
-
-				TreeMap<String, TreeSet<Integer>> locations = entry.getValue();
-
-				for (Map.Entry<String, TreeSet<Integer>> locationEntry : locations.entrySet()) {
-					String location = locationEntry.getKey();
-					TreeSet<Integer> positions = locationEntry.getValue();
-
-					int totalWords = counts.getOrDefault(location, 0);
-					int count = positions.size();
-
-					SearchResult result = resultMap.getOrDefault(location,
-							new SearchResult(location, totalWords, 0, 0.0));
-					result.updateCount(count);
-					result.setScore(calculateScore(count, totalWords));
-
-					resultMap.put(location, result);
+		QueryFileProcsesor processor = new QueryFileProcsesor();
+					System.out.println(queries);
+			for (String query : queries) {
+				for (Map.Entry<String, TreeMap<String, TreeSet<Integer>>> entry : invertedIndex.tailMap(query)
+						.entrySet()) {
+					String word = entry.getKey();
+					if (word.startsWith(query)) {
+						TreeMap<String, TreeSet<Integer>> locations = entry.getValue();
+						for (Map.Entry<String, TreeSet<Integer>> locationEntry : locations.entrySet()) {
+							String location = locationEntry.getKey();
+							TreeSet<Integer> positions = locationEntry.getValue();
+							int totalWords = counts.getOrDefault(location, 0);
+							int count = positions.size();
+							processor.addToResultMap(location, totalWords, count);
+						}
+					} else {
+						break;
+					}
 				}
 			}
-		}
-
-		return new ArrayList<>(resultMap.values());
-	}
-
-	/**
-	 * Calculates the score for a search result
-	 *
-	 * @param matches    The number of matches
-	 * @param totalWords The total number of words
-	 * @return The calculated score
-	 */
-	public double calculateScore(int matches, int totalWords) {
-		double score = (double) matches / totalWords;
-		return score;
+	
+		return new ArrayList<>(processor.getResultMap().values());
 	}
 
 	/**

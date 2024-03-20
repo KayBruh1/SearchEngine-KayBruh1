@@ -5,10 +5,32 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 public class QueryFileProcsesor {
+    private Map<String, SearchResult> resultMap;
+
+    public QueryFileProcsesor() {
+        this.resultMap = new HashMap<>();
+    }
+
+    public void addToResultMap(String location, int totalWords, int count) {
+        SearchResult result = resultMap.getOrDefault(location, new SearchResult(location, totalWords, 0, 0.0));
+        result.updateCount(count);
+        result.setScore(calculateScore(result.getCount(), totalWords));
+        resultMap.put(location, result);
+    }
+
+    public Map<String, SearchResult> getResultMap() {
+        return resultMap;
+    }
+
+    private double calculateScore(int matches, int totalWords) {
+        return (double) matches / totalWords;
+    }
 	/**
 	 * Processes search queries from a location
 	 *

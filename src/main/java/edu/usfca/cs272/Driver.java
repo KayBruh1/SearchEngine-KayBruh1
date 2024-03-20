@@ -3,6 +3,8 @@ package edu.usfca.cs272;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -52,23 +54,29 @@ public class Driver {
 				System.out.println("Error building the inverted index " + indexPath);
 			}
 		}
+		Map<String, List<SearchResult>> searchResultsMap = new HashMap<>();
 
-		Map<String, List<SearchResult>> searchResultsMap = null;
 		if (parser.hasFlag("-query")) {
 			Path queryPath = parser.getPath("-query");
 			try {
 				if (Files.exists(queryPath)) {
-					List<List<String>> processedQueries = FileBuilder.processQueries(queryPath);
-					if (parser.hasFlag("-partial")) {
-						searchResultsMap = indexer.partialSearch(fileBuilder, processedQueries);
-					} else {
-						searchResultsMap = indexer.exactSearch(fileBuilder, processedQueries);
+					List<List<String>> processedQueries = QueryFileProcsesor.processQueries(queryPath);
+					for (List<String> query : processedQueries) {
+						if (parser.hasFlag("-partial") && !query.isEmpty()) {
+							// Perform partial search for the current query
+							List<SearchResult> searchResults = indexer.partialSearch(new HashSet<>(query));
+							searchResultsMap.put(String.join(" ", query), searchResults);
+						} else {
+							
+							// List<SearchResult> searchResults = indexer.exactSearch(new HashSet<>(query));
+							// searchResultsMap.put(String.join(" ", query), searchResults);
+						}
 					}
+					searchResultsMap = SearchResult.sortResults(searchResultsMap);
 				}
 			} catch (Exception e) {
 				System.out.println("Error reading the query file " + queryPath);
 			}
-
 		}
 
 		if (parser.hasFlag("-results")) {
