@@ -105,8 +105,4 @@ public class FileBuilder {
 		String fileName = file.getFileName().toString().toLowerCase();
 		return Files.isRegularFile(file) && (fileName.endsWith(".txt") || fileName.endsWith(".text"));
 	}
-
-	// TODO Move resultMap into "QueryFileProcsesor"
-	// TODO Move the query related logic out of FileBuidler
-
 }

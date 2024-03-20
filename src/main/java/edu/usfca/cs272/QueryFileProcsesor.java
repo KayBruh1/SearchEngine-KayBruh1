@@ -11,27 +11,23 @@ import java.util.List;
 import java.util.Map;
 
 public class QueryFileProcsesor {
-    private Map<String, SearchResult> resultMap;
+	private final Map<String, SearchResult> resultMap;
 
-    public QueryFileProcsesor() {
-        this.resultMap = new HashMap<>();
-    }
+	public QueryFileProcsesor() {
+		this.resultMap = new HashMap<>();
+	}
 
-    public void addResult(String location, int totalWords, int count) {
-        SearchResult result = resultMap.getOrDefault(location, new SearchResult(location, totalWords, 0, 0.0));
-        result.updateCount(count);
-        result.setScore(calculateScore(result.getCount(), totalWords));
-        resultMap.put(location, result);
-    }
+	public Map<String, SearchResult> getResultMap() {
+		return resultMap;
+	}
 
-    public Map<String, SearchResult> getResultMap() {
-        return resultMap;
-    }
+	public void addResult(String location, int totalWords, int count) {
+		SearchResult result = resultMap.getOrDefault(location, new SearchResult(location, totalWords, 0, 0.0));
+		result.updateCount(count);
+		result.setScore(calculateScore(result.getCount(), totalWords));
+		resultMap.put(location, result);
+	}
 
-    private double calculateScore(int matches, int totalWords) {
-        return (double) matches / totalWords;
-    }
-    
 	/**
 	 * Processes search queries from a location
 	 *
@@ -49,5 +45,16 @@ public class QueryFileProcsesor {
 			processedQueries.add(processedQuery);
 		}
 		return processedQueries;
+	}
+
+	/**
+	 * Calculates the score for a search result
+	 *
+	 * @param matches    The number of matches
+	 * @param totalWords The total number of words
+	 * @return The calculated score
+	 */
+	private static double calculateScore(int matches, int totalWords) {
+		return (double) matches / totalWords;
 	}
 }
