@@ -37,21 +37,18 @@ public class InvertedIndex {
 	 * @param queries The set of queries to search for
 	 * @return A list of search results for each query
 	 */
-	public Map<String, List<SearchResult>> exactSearch(Set<String> queries) {
+	public List<SearchResult> exactSearch(Set<String> queries) {
 		QueryFileProcsesor processor = new QueryFileProcsesor();
-
 		for (String query : queries) {
 			TreeMap<String, TreeSet<Integer>> locations = invertedIndex.getOrDefault(query, new TreeMap<>());
-
 			for (Map.Entry<String, TreeSet<Integer>> entry : locations.entrySet()) {
 				String location = entry.getKey();
 				TreeSet<Integer> positions = entry.getValue();
 				int totalWords = counts.getOrDefault(location, 0);
 				int count = positions.size();
-				processor.addToResultMap(location, totalWords, count);
+				processor.addResult(location, totalWords, count);
 			}
 		}
-
 		return new ArrayList<>(processor.getResultMap().values());
 	}
 
@@ -63,26 +60,23 @@ public class InvertedIndex {
 	 */
 	public List<SearchResult> partialSearch(Set<String> queries) {
 		QueryFileProcsesor processor = new QueryFileProcsesor();
-					System.out.println(queries);
-			for (String query : queries) {
-				for (Map.Entry<String, TreeMap<String, TreeSet<Integer>>> entry : invertedIndex.tailMap(query)
-						.entrySet()) {
-					String word = entry.getKey();
-					if (word.startsWith(query)) {
-						TreeMap<String, TreeSet<Integer>> locations = entry.getValue();
-						for (Map.Entry<String, TreeSet<Integer>> locationEntry : locations.entrySet()) {
-							String location = locationEntry.getKey();
-							TreeSet<Integer> positions = locationEntry.getValue();
-							int totalWords = counts.getOrDefault(location, 0);
-							int count = positions.size();
-							processor.addToResultMap(location, totalWords, count);
-						}
-					} else {
-						break;
+		for (String query : queries) {
+			for (Map.Entry<String, TreeMap<String, TreeSet<Integer>>> entry : invertedIndex.tailMap(query).entrySet()) {
+				String word = entry.getKey();
+				if (word.startsWith(query)) {
+					TreeMap<String, TreeSet<Integer>> locations = entry.getValue();
+					for (Map.Entry<String, TreeSet<Integer>> locationEntry : locations.entrySet()) {
+						String location = locationEntry.getKey();
+						TreeSet<Integer> positions = locationEntry.getValue();
+						int totalWords = counts.getOrDefault(location, 0);
+						int count = positions.size();
+						processor.addResult(location, totalWords, count);
 					}
+				} else {
+					break;
 				}
 			}
-	
+		}
 		return new ArrayList<>(processor.getResultMap().values());
 	}
 
@@ -259,28 +253,6 @@ public class InvertedIndex {
 		invertedIndex.putIfAbsent(word, new TreeMap<>());
 		invertedIndex.get(word).putIfAbsent(location, new TreeSet<>());
 		invertedIndex.get(word).get(location).add(position);
-	}
-
-	/**
-	 * Performs an exact search with processed queries on the inverted index
-	 *
-	 * @param fileBuilder      The file builder to use for searching
-	 * @param processedQueries The processed queries to search for
-	 * @return A map containing the search results
-	 */
-	public Map<String, List<SearchResult>> exactSearch(FileBuilder fileBuilder, List<List<String>> processedQueries) {
-		return fileBuilder.exactSearch(processedQueries, invertedIndex);
-	}
-
-	/**
-	 * Performs a partial search with processed queries on the inverted index
-	 *
-	 * @param fileBuilder      The file builder to use for searching.
-	 * @param processedQueries The processed queries to search for
-	 * @return A map containing the search results
-	 */
-	public Map<String, List<SearchResult>> partialSearch(FileBuilder fileBuilder, List<List<String>> processedQueries) {
-		return fileBuilder.partialSearch(processedQueries, invertedIndex);
 	}
 
 	/**

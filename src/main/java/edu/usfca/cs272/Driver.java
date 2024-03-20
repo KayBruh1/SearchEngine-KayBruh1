@@ -54,8 +54,8 @@ public class Driver {
 				System.out.println("Error building the inverted index " + indexPath);
 			}
 		}
+		
 		Map<String, List<SearchResult>> searchResultsMap = new HashMap<>();
-
 		if (parser.hasFlag("-query")) {
 			Path queryPath = parser.getPath("-query");
 			try {
@@ -63,13 +63,11 @@ public class Driver {
 					List<List<String>> processedQueries = QueryFileProcsesor.processQueries(queryPath);
 					for (List<String> query : processedQueries) {
 						if (parser.hasFlag("-partial") && !query.isEmpty()) {
-							// Perform partial search for the current query
 							List<SearchResult> searchResults = indexer.partialSearch(new HashSet<>(query));
 							searchResultsMap.put(String.join(" ", query), searchResults);
-						} else {
-							
-							// List<SearchResult> searchResults = indexer.exactSearch(new HashSet<>(query));
-							// searchResultsMap.put(String.join(" ", query), searchResults);
+						} else if (!query.isEmpty()) {
+							List<SearchResult> searchResults = indexer.exactSearch(new HashSet<>(query));
+							searchResultsMap.put(String.join(" ", query), searchResults);
 						}
 					}
 					searchResultsMap = SearchResult.sortResults(searchResultsMap);

@@ -17,7 +17,7 @@ public class QueryFileProcsesor {
         this.resultMap = new HashMap<>();
     }
 
-    public void addToResultMap(String location, int totalWords, int count) {
+    public void addResult(String location, int totalWords, int count) {
         SearchResult result = resultMap.getOrDefault(location, new SearchResult(location, totalWords, 0, 0.0));
         result.updateCount(count);
         result.setScore(calculateScore(result.getCount(), totalWords));
@@ -31,6 +31,7 @@ public class QueryFileProcsesor {
     private double calculateScore(int matches, int totalWords) {
         return (double) matches / totalWords;
     }
+    
 	/**
 	 * Processes search queries from a location
 	 *

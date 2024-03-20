@@ -106,7 +106,7 @@ public class FileBuilder {
 		return Files.isRegularFile(file) && (fileName.endsWith(".txt") || fileName.endsWith(".text"));
 	}
 
-			// TODO Move resultMap into "QueryFileProcsesor"
-			// TODO Move the query related logic out of FileBuidler
+	// TODO Move resultMap into "QueryFileProcsesor"
+	// TODO Move the query related logic out of FileBuidler
 
 }
