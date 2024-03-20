@@ -122,7 +122,8 @@ public class FileBuilder {
 	 */
 	public static List<List<String>> processQueries(Path queryPath) throws IOException {
 		List<List<String>> processedQueries = new ArrayList<>();
-		List<String> queryLines = Files.readAllLines(queryPath); // TODO Eventually we will do something more efficient...
+		List<String> queryLines = Files.readAllLines(queryPath); // TODO Eventually we will do something more
+																	// efficient...
 		for (String queryLine : queryLines) {
 			List<String> stemmedWords = FileStemmer.listStems(queryLine);
 			List<String> processedQuery = new ArrayList<>(new HashSet<>(stemmedWords));
@@ -147,15 +148,14 @@ public class FileBuilder {
 				continue;
 			}
 			String queryWord = String.join(" ", query);
-			
+
 			/*
 			 * TODO Think about the pros and cons of using both a HashMap and an ArrayList
 			 * to store the same data (the same SearchResult).
 			 * 
-			 * Why do we need the map?
-			 * Why do we need the list?
+			 * Why do we need the map? Why do we need the list?
 			 */
-			
+
 			// TODO Move resultMap into "QueryFileProcsesor"
 			// TODO Move the query related logic out of FileBuidler
 			Map<String, SearchResult> resultMap = new HashMap<>();
@@ -197,8 +197,8 @@ public class FileBuilder {
 			String queryWord = String.join(" ", query);
 			Map<String, SearchResult> resultMap = new HashMap<>();
 			for (String word : query) {
-				// TODO invertedIndex.tailMap(...).entrySet(), see: https://github.com/usf-cs272-spring2024/cs272-lectures/blob/main/src/main/java/edu/usfca/cs272/lectures/basics/data/FindDemo.java#L124
-				for (Map.Entry<String, TreeMap<String, TreeSet<Integer>>> entry : invertedIndex.entrySet()) {
+				for (Map.Entry<String, TreeMap<String, TreeSet<Integer>>> entry : invertedIndex.tailMap(word)
+						.entrySet()) {
 					String checkWord = entry.getKey();
 					if (checkWord.startsWith(word)) {
 						TreeMap<String, TreeSet<Integer>> locations = entry.getValue();
@@ -213,8 +213,9 @@ public class FileBuilder {
 							result.setScore(calculateScore(result.getCount(), totalWords));
 							resultMap.put(location, result);
 						}
+					} else {
+						break;
 					}
-					// TODO else break
 				}
 			}
 			List<SearchResult> searchResults = new ArrayList<>(resultMap.values());
