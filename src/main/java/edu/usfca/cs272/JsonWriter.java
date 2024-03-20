@@ -480,13 +480,14 @@ public class JsonWriter {
 	 * @param outputPath the path to the output file
 	 * @throws IOException if an I/O error occurs
 	 */
-	public static void writeResults(Map<String, List<SearchResult>> results, String outputPath) throws IOException {
+	public static void writeResults(Map<String, List<InvertedIndex.SearchResult>> results, String outputPath)
+			throws IOException {
 		DecimalFormat formatter = new DecimalFormat("0.00000000");
 		try (BufferedWriter writer = new BufferedWriter(new FileWriter(outputPath))) {
 			writer.write("{\n");
 			int count = 0;
-			for (Map.Entry<String, List<SearchResult>> entry : results.entrySet()) {
-				List<SearchResult> resultList = entry.getValue();
+			for (Map.Entry<String, List<InvertedIndex.SearchResult>> entry : results.entrySet()) {
+				List<InvertedIndex.SearchResult> resultList = entry.getValue();
 				if (count > 0) {
 					writer.write(",\n");
 				}
@@ -500,7 +501,7 @@ public class JsonWriter {
 				} else {
 					writer.write("[\n");
 					int resultCount = 0;
-					for (SearchResult result : resultList) {
+					for (InvertedIndex.SearchResult result : resultList) {
 						if (resultCount > 0) {
 							writer.write(",\n");
 						}

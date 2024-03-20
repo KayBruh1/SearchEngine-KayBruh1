@@ -1,3 +1,4 @@
+
 package edu.usfca.cs272;
 
 import java.io.IOException;
@@ -10,19 +11,23 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
+import edu.usfca.cs272.InvertedIndex.SearchResult;
+
 public class QueryFileProcsesor {
-	private final Map<String, SearchResult> resultMap;
+	private final Map<String, InvertedIndex.SearchResult> resultMap;
+
+	InvertedIndex indexer = new InvertedIndex();
 
 	public QueryFileProcsesor() {
 		this.resultMap = new HashMap<>();
 	}
 
-	public Map<String, SearchResult> getResultMap() {
+	public Map<String, InvertedIndex.SearchResult> getResultMap() {
 		return resultMap;
 	}
 
 	public void addResult(String location, int totalWords, int count) {
-		SearchResult result = resultMap.getOrDefault(location, new SearchResult(location, totalWords, 0, 0.0));
+		SearchResult result = resultMap.getOrDefault(location, indexer.new SearchResult(location, totalWords, 0, 0.0));
 		result.updateCount(count);
 		result.setScore(calculateScore(result.getCount(), totalWords));
 		resultMap.put(location, result);

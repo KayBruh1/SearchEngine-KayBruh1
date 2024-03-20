@@ -297,7 +297,7 @@ public class InvertedIndex {
 	public String toString() {
 		return invertedIndex.toString();
 	}
-	
+
 	/*
 	 * TODO Nest this inside of inverted index as a non-static inner class.
 	 */
@@ -315,7 +315,8 @@ public class InvertedIndex {
 		/**
 		 * The total number of words in the search result
 		 */
-		private int totalWords; // TODO Remove, access the word count map directly once this class is inside of inverted index
+		private int totalWords; // TODO Remove, access the word count map directly once this class is inside of
+								// inverted index
 
 		/**
 		 * The count of matches for the search query
