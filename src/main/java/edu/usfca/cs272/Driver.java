@@ -72,9 +72,7 @@ public class Driver {
 			}
 		}
 
-		if (parser.hasFlag("-results"))
-
-		{
+		if (parser.hasFlag("-results")) {
 			String resultsPath = parser.getString("-results", "results.json");
 			try {
 				indexer.writeResults(searchResultsMap, resultsPath);

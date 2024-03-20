@@ -312,10 +312,6 @@ public class InvertedIndex {
 		return invertedIndex.toString();
 	}
 
-	/*
-	 * TODO Nest this inside of inverted index as a non-static inner class.
-	 */
-
 	/**
 	 * Represents a single search result containing information on location, total
 	 * words, count, and score
