@@ -4,7 +4,6 @@ package edu.usfca.cs272;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -61,16 +60,11 @@ public class Driver {
 			try {
 				if (Files.exists(queryPath)) {
 					List<List<String>> processedQueries = QueryFileProcsesor.processQueries(queryPath);
-					for (List<String> query : processedQueries) {
-						if (parser.hasFlag("-partial") && !query.isEmpty()) {
-							List<InvertedIndex.SearchResult> searchResults = indexer
-									.partialSearch(new HashSet<>(query));
-							searchResultsMap.put(String.join(" ", query), searchResults);
-						} else if (!query.isEmpty()) {
-							List<InvertedIndex.SearchResult> searchResults = indexer.exactSearch(new HashSet<>(query));
-							searchResultsMap.put(String.join(" ", query), searchResults);
-						}
+					boolean partial = false;
+					if (parser.hasFlag("-partial")) {
+						partial = true;
 					}
+					InvertedIndex.conductSearch(processedQueries, searchResultsMap, indexer, partial);
 					searchResultsMap = InvertedIndex.SearchResult.sortResults(searchResultsMap);
 				}
 			} catch (Exception e) {
@@ -78,7 +72,9 @@ public class Driver {
 			}
 		}
 
-		if (parser.hasFlag("-results")) {
+		if (parser.hasFlag("-results"))
+
+		{
 			String resultsPath = parser.getString("-results", "results.json");
 			try {
 				indexer.writeResults(searchResultsMap, resultsPath);
