@@ -323,11 +323,6 @@ public class InvertedIndex {
 		private String location;
 
 		/**
-		 * The total number of words in the search result
-		 */
-		private final Map<String, Integer> counts;
-
-		/**
 		 * The count of matches for the search query
 		 */
 		private int count;
@@ -346,9 +341,8 @@ public class InvertedIndex {
 		 * @param count      the number of matches at in the location
 		 * @param score      the score of the search result
 		 */
-		public SearchResult(String location, Map<String, Integer> counts, int count, double score) {
+		public SearchResult(String location, int count, double score) {
 			this.location = location;
-			this.counts = counts;
 			this.count = count;
 			this.score = score;
 		}
@@ -398,14 +392,6 @@ public class InvertedIndex {
 			return location;
 		}
 
-		/**
-		 * Gets the total number of words in the search result
-		 *
-		 * @return the total number of words
-		 */
-		public int getTotalWords() {
-			return counts.getOrDefault(location, 0);
-		}
 
 		/**
 		 * Compares one search result with another for sorting

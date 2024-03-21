@@ -28,7 +28,7 @@ public class QueryFileProcsesor {
 
 	public void addResult(String location, int totalWords, int count) {
 		SearchResult result = resultMap.getOrDefault(location,
-				indexer.new SearchResult(location, indexer.getCounts(), 0, 0.0));
+				indexer.new SearchResult(location, 0, 0.0));
 		result.updateCount(count);
 		result.setScore(calculateScore(result.getCount(), totalWords));
 		resultMap.put(location, result);
