@@ -35,77 +35,6 @@ public class InvertedIndex {
 	}
 
 	/**
-	 * Conducts a search based on the processed queries and updates the search
-	 * results
-	 *
-	 * @param processedQueries The processed queries to search for
-	 * @param searchResultsMap The map to store search results
-	 * @param indexer          The InvertedIndex instance to perform search
-	 * @param partial          A boolean indicating whether or not to partial search
-	 */
-	public static void conductSearch(List<List<String>> processedQueries,
-			Map<String, List<SearchResult>> searchResultsMap, InvertedIndex indexer, boolean partial) {
-		for (List<String> query : processedQueries) {
-			if (partial && !query.isEmpty()) {
-				List<InvertedIndex.SearchResult> searchResults = indexer.partialSearch(new HashSet<>(query));
-				searchResultsMap.put(String.join(" ", query), searchResults);
-			} else if (!query.isEmpty()) {
-				List<InvertedIndex.SearchResult> searchResults = indexer.exactSearch(new HashSet<>(query));
-				searchResultsMap.put(String.join(" ", query), searchResults);
-			}
-		}
-	}
-
-	/**
-	 * Performs an exact search based on the provided set of queries.
-	 *
-	 * @param queries The set of queries to search for
-	 * @return A list of search results for each query
-	 */
-	public List<SearchResult> exactSearch(Set<String> queries) {
-		QueryFileProcsesor processor = new QueryFileProcsesor();
-		for (String query : queries) {
-			TreeMap<String, TreeSet<Integer>> locations = invertedIndex.getOrDefault(query, new TreeMap<>());
-			for (Map.Entry<String, TreeSet<Integer>> entry : locations.entrySet()) {
-				String location = entry.getKey();
-				TreeSet<Integer> positions = entry.getValue();
-				int totalWords = counts.getOrDefault(location, 0);
-				int count = positions.size();
-				processor.addResult(location, totalWords, count);
-			}
-		}
-		return new ArrayList<>(processor.getResultMap().values());
-	}
-
-	/**
-	 * Performs a partial search based on the provided set of queries.
-	 *
-	 * @param queries The set of queries to search for
-	 * @return A list of search results for each query
-	 */
-	public List<SearchResult> partialSearch(Set<String> queries) {
-		QueryFileProcsesor processor = new QueryFileProcsesor();
-		for (String query : queries) {
-			for (Map.Entry<String, TreeMap<String, TreeSet<Integer>>> entry : invertedIndex.tailMap(query).entrySet()) {
-				String word = entry.getKey();
-				if (word.startsWith(query)) {
-					TreeMap<String, TreeSet<Integer>> locations = entry.getValue();
-					for (Map.Entry<String, TreeSet<Integer>> locationEntry : locations.entrySet()) {
-						String location = locationEntry.getKey();
-						TreeSet<Integer> positions = locationEntry.getValue();
-						int totalWords = counts.getOrDefault(location, 0);
-						int count = positions.size();
-						processor.addResult(location, totalWords, count);
-					}
-				} else {
-					break;
-				}
-			}
-		}
-		return new ArrayList<>(processor.getResultMap().values());
-	}
-
-	/**
 	 * Returns the word counts
 	 *
 	 * @return the TreeMap containing word counts
@@ -319,6 +248,77 @@ public class InvertedIndex {
 	@Override
 	public String toString() {
 		return invertedIndex.toString();
+	}
+
+	/**
+	 * Conducts a search based on the processed queries and updates the search
+	 * results
+	 *
+	 * @param processedQueries The processed queries to search for
+	 * @param searchResultsMap The map to store search results
+	 * @param indexer          The InvertedIndex instance to perform search
+	 * @param partial          A boolean indicating whether or not to partial search
+	 */
+	public static void conductSearch(List<List<String>> processedQueries,
+			Map<String, List<SearchResult>> searchResultsMap, InvertedIndex indexer, boolean partial) {
+		for (List<String> query : processedQueries) {
+			if (partial && !query.isEmpty()) {
+				List<InvertedIndex.SearchResult> searchResults = indexer.partialSearch(new HashSet<>(query));
+				searchResultsMap.put(String.join(" ", query), searchResults);
+			} else if (!query.isEmpty()) {
+				List<InvertedIndex.SearchResult> searchResults = indexer.exactSearch(new HashSet<>(query));
+				searchResultsMap.put(String.join(" ", query), searchResults);
+			}
+		}
+	}
+
+	/**
+	 * Performs an exact search based on the provided set of queries.
+	 *
+	 * @param queries The set of queries to search for
+	 * @return A list of search results for each query
+	 */
+	public List<SearchResult> exactSearch(Set<String> queries) {
+		QueryFileProcsesor processor = new QueryFileProcsesor();
+		for (String query : queries) {
+			TreeMap<String, TreeSet<Integer>> locations = invertedIndex.getOrDefault(query, new TreeMap<>());
+			for (Map.Entry<String, TreeSet<Integer>> entry : locations.entrySet()) {
+				String location = entry.getKey();
+				TreeSet<Integer> positions = entry.getValue();
+				int totalWords = counts.getOrDefault(location, 0);
+				int count = positions.size();
+				processor.addResult(location, totalWords, count);
+			}
+		}
+		return new ArrayList<>(processor.getResultMap().values());
+	}
+
+	/**
+	 * Performs a partial search based on the provided set of queries.
+	 *
+	 * @param queries The set of queries to search for
+	 * @return A list of search results for each query
+	 */
+	public List<SearchResult> partialSearch(Set<String> queries) {
+		QueryFileProcsesor processor = new QueryFileProcsesor();
+		for (String query : queries) {
+			for (Map.Entry<String, TreeMap<String, TreeSet<Integer>>> entry : invertedIndex.tailMap(query).entrySet()) {
+				String word = entry.getKey();
+				if (word.startsWith(query)) {
+					TreeMap<String, TreeSet<Integer>> locations = entry.getValue();
+					for (Map.Entry<String, TreeSet<Integer>> locationEntry : locations.entrySet()) {
+						String location = locationEntry.getKey();
+						TreeSet<Integer> positions = locationEntry.getValue();
+						int totalWords = counts.getOrDefault(location, 0);
+						int count = positions.size();
+						processor.addResult(location, totalWords, count);
+					}
+				} else {
+					break;
+				}
+			}
+		}
+		return new ArrayList<>(processor.getResultMap().values());
 	}
 
 	/**
