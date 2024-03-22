@@ -1,4 +1,3 @@
-
 package edu.usfca.cs272;
 
 import java.io.IOException;
@@ -13,6 +12,9 @@ import java.util.Map;
 
 import edu.usfca.cs272.InvertedIndex.SearchResult;
 
+/**
+ * Class responsible for query handling and adding search results
+ */
 public class QueryFileProcsesor {
 	private final Map<String, InvertedIndex.SearchResult> resultMap;
 
