@@ -19,6 +19,7 @@ public class QueryFileProcsesor {
 	/** The map to store search results */
 	private final Map<String, InvertedIndex.SearchResult> resultMap;
 
+	/** The InvertedIndex instance to help with search operations */
 	InvertedIndex indexer = new InvertedIndex();
 
 	public QueryFileProcsesor() {
