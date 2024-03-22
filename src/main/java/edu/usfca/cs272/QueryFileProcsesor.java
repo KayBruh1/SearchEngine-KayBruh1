@@ -38,6 +38,13 @@ public class QueryFileProcsesor {
 		return resultMap;
 	}
 
+	/**
+	 * Adds a search result to the result map
+	 *
+	 * @param location   The location of the search result
+	 * @param totalWords The total number of words at the location
+	 * @param count      The count of matches for the search query
+	 */
 	public void addResult(String location, int totalWords, int count) {
 		SearchResult result = resultMap.getOrDefault(location, indexer.new SearchResult(location, 0, 0.0));
 		result.updateCount(count);
