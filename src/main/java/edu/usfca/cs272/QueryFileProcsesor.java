@@ -35,7 +35,7 @@ public class QueryFileProcsesor {
 	 * @return The map containing search results
 	 */
 	public Map<String, InvertedIndex.SearchResult> getResultMap() {
-		return resultMap;
+		return Collections.unmodifiableMap(resultMap);
 	}
 
 	/**
