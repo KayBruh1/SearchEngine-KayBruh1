@@ -16,6 +16,7 @@ import edu.usfca.cs272.InvertedIndex.SearchResult;
  * Class responsible for query handling and adding search results
  */
 public class QueryFileProcsesor {
+	/** The map to store search results */
 	private final Map<String, InvertedIndex.SearchResult> resultMap;
 
 	InvertedIndex indexer = new InvertedIndex();
@@ -29,8 +30,7 @@ public class QueryFileProcsesor {
 	}
 
 	public void addResult(String location, int totalWords, int count) {
-		SearchResult result = resultMap.getOrDefault(location,
-				indexer.new SearchResult(location, 0, 0.0));
+		SearchResult result = resultMap.getOrDefault(location, indexer.new SearchResult(location, 0, 0.0));
 		result.updateCount(count);
 		result.setScore(calculateScore(result.getCount(), totalWords));
 		resultMap.put(location, result);
