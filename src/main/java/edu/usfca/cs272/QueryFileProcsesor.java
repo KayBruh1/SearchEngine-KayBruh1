@@ -22,6 +22,9 @@ public class QueryFileProcsesor {
 	/** The InvertedIndex instance to help with search operations */
 	InvertedIndex indexer = new InvertedIndex();
 
+	/**
+	 * Constructs a new QueryFileProcsesor with an empty result map
+	 */
 	public QueryFileProcsesor() {
 		this.resultMap = new HashMap<>();
 	}
