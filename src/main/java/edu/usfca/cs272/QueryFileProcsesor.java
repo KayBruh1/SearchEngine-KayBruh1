@@ -29,6 +29,11 @@ public class QueryFileProcsesor {
 		this.resultMap = new HashMap<>();
 	}
 
+	/**
+	 * Gets the map containing search results
+	 *
+	 * @return The map containing search results
+	 */
 	public Map<String, InvertedIndex.SearchResult> getResultMap() {
 		return resultMap;
 	}
