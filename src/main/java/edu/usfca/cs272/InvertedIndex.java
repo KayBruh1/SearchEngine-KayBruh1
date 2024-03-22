@@ -34,6 +34,15 @@ public class InvertedIndex {
 		this.invertedIndex = new TreeMap<>();
 	}
 
+	/**
+	 * Conducts a search based on the processed queries and updates the search
+	 * results
+	 *
+	 * @param processedQueries The processed queries to search for
+	 * @param searchResultsMap The map to store search results
+	 * @param indexer          The InvertedIndex instance to perform search
+	 * @param partial          A boolean indicating whether or not to partial search
+	 */
 	public static void conductSearch(List<List<String>> processedQueries,
 			Map<String, List<SearchResult>> searchResultsMap, InvertedIndex indexer, boolean partial) {
 		for (List<String> query : processedQueries) {
@@ -336,10 +345,9 @@ public class InvertedIndex {
 		 * Constructs a search result with the location, word count, match count, and
 		 * score
 		 *
-		 * @param location   the location of the search result
-		 * @param totalWords the total number of words at the location
-		 * @param count      the number of matches at in the location
-		 * @param score      the score of the search result
+		 * @param location the location of the search result
+		 * @param count    the number of matches at in the location
+		 * @param score    the score of the search result
 		 */
 		public SearchResult(String location, int count, double score) {
 			this.location = location;
@@ -391,7 +399,6 @@ public class InvertedIndex {
 		public String getLocation() {
 			return location;
 		}
-
 
 		/**
 		 * Compares one search result with another for sorting
