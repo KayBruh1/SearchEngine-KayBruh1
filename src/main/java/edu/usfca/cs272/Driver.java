@@ -25,6 +25,7 @@ public class Driver {
 		ArgumentParser parser = new ArgumentParser(args);
 		InvertedIndex indexer = new InvertedIndex();
 		FileBuilder fileBuilder = new FileBuilder(indexer);
+		// TODO QueryFileProcessor ... = new QueryFileProcessor(indexer);
 
 		if (parser.hasFlag("-text")) {
 			Path inputPath = parser.getPath("-text");
@@ -74,6 +75,7 @@ public class Driver {
 		if (parser.hasFlag("-results")) {
 			String resultsPath = parser.getString("-results", "results.json");
 			try {
+				// TODO processor.writeResults(...)
 				indexer.writeResults(searchResultsMap, resultsPath);
 			} catch (Exception e) {
 				System.out.println("Error writing results to file " + resultsPath);

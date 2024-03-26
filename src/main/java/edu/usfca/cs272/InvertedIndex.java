@@ -228,6 +228,7 @@ public class InvertedIndex {
 		JsonWriter.writeIndex(invertedIndex, indexPath);
 	}
 
+	// TODO Remove or move into QueryFileProcessor
 	/**
 	 * Writes the search results to a JSON file
 	 * 
@@ -259,7 +260,7 @@ public class InvertedIndex {
 	 * @param partial          A boolean indicating whether or not to partial search
 	 */
 	public static void conductSearch(List<List<String>> processedQueries,
-			Map<String, List<SearchResult>> searchResultsMap, InvertedIndex indexer, boolean partial) {
+			Map<String, List<SearchResult>> searchResultsMap, InvertedIndex indexer, boolean partial) { // TODO Remove
 		for (List<String> query : processedQueries) {
 			if (partial && !query.isEmpty()) {
 				List<InvertedIndex.SearchResult> searchResults = indexer.partialSearch(new HashSet<>(query));
@@ -278,17 +279,42 @@ public class InvertedIndex {
 	 * @return A list of search results for each query
 	 */
 	public List<SearchResult> exactSearch(Set<String> queries) {
-		QueryFileProcsesor processor = new QueryFileProcsesor();
+		QueryFileProcsesor processor = new QueryFileProcsesor(); // TODO Remove
+		
+		/* TODO 
+		Map<String, InvertedIndex.SearchResult> resultMap = new HashMap<>();
+		ArrayList<SearchResult> results = new ArrayList<>();
+		*/
+		
 		for (String query : queries) {
-			TreeMap<String, TreeSet<Integer>> locations = invertedIndex.getOrDefault(query, new TreeMap<>());
+			TreeMap<String, TreeSet<Integer>> locations = invertedIndex.getOrDefault(query, new TreeMap<>()); // TODO get(...)
+			// TODO Check for the null values...
 			for (Map.Entry<String, TreeSet<Integer>> entry : locations.entrySet()) {
 				String location = entry.getKey();
 				TreeSet<Integer> positions = entry.getValue();
 				int totalWords = counts.getOrDefault(location, 0);
 				int count = positions.size();
 				processor.addResult(location, totalWords, count);
+				
+				/* TODO 
+				SearchResult result = resultMap.get(location);
+				
+				if (result == null) {
+					result = new SearchResult(...);
+					resultMap.put(location, result);
+					results.add(result);
+				}
+				
+				result.updateCount(count);
+				*/
 			}
 		}
+		
+		/* TODO 
+		Collections.sort(results);
+		return results;
+		*/
+		
 		return new ArrayList<>(processor.getResultMap().values());
 	}
 
@@ -304,6 +330,9 @@ public class InvertedIndex {
 			for (Map.Entry<String, TreeMap<String, TreeSet<Integer>>> entry : invertedIndex.tailMap(query).entrySet()) {
 				String word = entry.getKey();
 				if (word.startsWith(query)) {
+					/*
+					 * TODO Move the duplicate logic into a private helper method
+					 */
 					TreeMap<String, TreeSet<Integer>> locations = entry.getValue();
 					for (Map.Entry<String, TreeSet<Integer>> locationEntry : locations.entrySet()) {
 						String location = locationEntry.getKey();
@@ -328,7 +357,7 @@ public class InvertedIndex {
 		/**
 		 * The location of the search result
 		 */
-		private String location;
+		private String location; // TODO final
 
 		/**
 		 * The count of matches for the search query
@@ -359,8 +388,9 @@ public class InvertedIndex {
 		 *
 		 * @param matches the number of matches to add
 		 */
-		public void updateCount(int matches) {
+		public void updateCount(int matches) { // TODO private
 			this.count += matches;
+			// TODO this.score = (double) count / counts.get(this.location);
 		}
 
 		/**
@@ -368,7 +398,7 @@ public class InvertedIndex {
 		 *
 		 * @param score the score to set
 		 */
-		public void setScore(double score) {
+		public void setScore(double score) { // TODO Remove
 			this.score = score;
 		}
 
@@ -424,7 +454,7 @@ public class InvertedIndex {
 		 * @param unsortedMap the unsorted map of search results
 		 * @return a sorted map of search results
 		 */
-		public static Map<String, List<SearchResult>> sortResults(Map<String, List<SearchResult>> unsortedMap) {
+		public static Map<String, List<SearchResult>> sortResults(Map<String, List<SearchResult>> unsortedMap) { // TODO Remove
 			Map<String, List<SearchResult>> sortedMap = new LinkedHashMap<>();
 			List<Map.Entry<String, List<SearchResult>>> entryList = new ArrayList<>(unsortedMap.entrySet());
 			Collections.sort(entryList, new Comparator<Map.Entry<String, List<SearchResult>>>() {
