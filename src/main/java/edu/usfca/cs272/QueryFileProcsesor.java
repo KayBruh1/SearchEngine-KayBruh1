@@ -21,6 +21,16 @@ public class QueryFileProcsesor {
 
 	/** The InvertedIndex instance to help with search operations */
 	InvertedIndex indexer = new InvertedIndex();
+	
+	/* TODO 
+	Map<String, List<InvertedIndex.SearchResult>> searchResultsMap;
+	InvertedIndex indexer;
+	
+	public QueryFileProcsesor(InvertedIndex indexer) {
+		this.indexer = indexer;
+		this.searchResultMap = new TreeMap<>();
+	}
+	*/
 
 	/**
 	 * Constructs a new QueryFileProcsesor with an empty result map
@@ -45,7 +55,7 @@ public class QueryFileProcsesor {
 	 * @param totalWords The total number of words at the location
 	 * @param count      The count of matches for the search query
 	 */
-	public void addResult(String location, int totalWords, int count) {
+	public void addResult(String location, int totalWords, int count) { // TODO Remove
 		SearchResult result = resultMap.getOrDefault(location, indexer.new SearchResult(location, 0, 0.0));
 		result.updateCount(count);
 		result.setScore(calculateScore(result.getCount(), totalWords));
@@ -70,6 +80,23 @@ public class QueryFileProcsesor {
 		}
 		return processedQueries;
 	}
+	
+	/* TODO 
+	public void processQueries(Path queryPath) throws IOException {
+		buffered reader
+		read line by line
+		call the other processQueries on the line
+	}
+	
+	public void processQueries(String queryLine) {
+		stem the line... List<String> stemmedWords = FileStemmer.listStems(queryLine);
+		ask the index for the search results
+		
+		if (partial) call index.partialSearch etc.
+		
+		store the search results
+	}
+	*/
 
 	/**
 	 * Calculates the score for a search result
@@ -78,7 +105,7 @@ public class QueryFileProcsesor {
 	 * @param totalWords The total number of words
 	 * @return The calculated score
 	 */
-	private static double calculateScore(int matches, int totalWords) {
+	private static double calculateScore(int matches, int totalWords) { // TODO Remove
 		return (double) matches / totalWords;
 	}
 }
