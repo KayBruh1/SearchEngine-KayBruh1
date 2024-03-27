@@ -10,8 +10,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
-import edu.usfca.cs272.InvertedIndex.SearchResult;
-
 /**
  * Class responsible for query handling and adding search results
  */
@@ -37,29 +35,6 @@ public class QueryFileProcsesor {
 	 */
 	public QueryFileProcsesor() {
 		this.resultMap = new HashMap<>();
-	}
-
-	/**
-	 * Gets the map containing search results
-	 *
-	 * @return The map containing search results
-	 */
-	public Map<String, InvertedIndex.SearchResult> getResultMap() {
-		return Collections.unmodifiableMap(resultMap);
-	}
-
-	/**
-	 * Adds a search result to the result map
-	 *
-	 * @param location   The location of the search result
-	 * @param totalWords The total number of words at the location
-	 * @param count      The count of matches for the search query
-	 */
-	public void addResult(String location, int totalWords, int count) { // TODO Remove
-		SearchResult result = resultMap.getOrDefault(location, indexer.new SearchResult(location, 0, 0.0));
-		result.updateCount(count);
-		result.setScore(calculateScore(result.getCount(), totalWords));
-		resultMap.put(location, result);
 	}
 
 	/**
@@ -98,14 +73,4 @@ public class QueryFileProcsesor {
 	}
 	*/
 
-	/**
-	 * Calculates the score for a search result
-	 *
-	 * @param matches    The number of matches
-	 * @param totalWords The total number of words
-	 * @return The calculated score
-	 */
-	private static double calculateScore(int matches, int totalWords) { // TODO Remove
-		return (double) matches / totalWords;
-	}
 }
