@@ -256,18 +256,7 @@ public class InvertedIndex {
 				TreeSet<Integer> positions = entry.getValue();
 				int totalWords = counts.getOrDefault(location, 0);
 				int count = positions.size();
-
-				SearchResult result = resultMap.get(location);
-
-				if (result == null) {
-					InvertedIndex indexer = new InvertedIndex();
-					result = indexer.new SearchResult(location, 0, 0.0);
-					results.add(result);
-				}
-
-				result.updateCount(count, totalWords);
-				resultMap.put(location, result);
-
+				updateResult(resultMap, results, location, count, totalWords);
 			}
 		}
 
@@ -297,16 +286,7 @@ public class InvertedIndex {
 						TreeSet<Integer> positions = locationEntry.getValue();
 						int totalWords = counts.getOrDefault(location, 0);
 						int count = positions.size();
-						SearchResult result = resultMap.get(location);
-
-						if (result == null) {
-							InvertedIndex indexer = new InvertedIndex();
-							result = indexer.new SearchResult(location, 0, 0.0);
-							results.add(result);
-						}
-
-						result.updateCount(count, totalWords);
-						resultMap.put(location, result);
+						updateResult(resultMap, results, location, count, totalWords);
 					}
 				} else {
 					break;
@@ -315,6 +295,26 @@ public class InvertedIndex {
 		}
 		Collections.sort(results);
 		return results;
+	}
+
+	/**
+	 * Helper to update search results
+	 *
+	 * @param resultMap  map to store search results
+	 * @param results    list to store search results
+	 * @param location   location of the search result
+	 * @param count      count of matches
+	 * @param totalWords total location words
+	 */
+	private void updateResult(Map<String, SearchResult> resultMap, List<SearchResult> results, String location,
+			int count, int totalWords) {
+		SearchResult result = resultMap.get(location);
+		if (result == null) {
+			result = new SearchResult(location, 0, 0.0);
+			results.add(result);
+		}
+		result.updateCount(count, totalWords);
+		resultMap.put(location, result);
 	}
 
 	/**
