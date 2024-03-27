@@ -9,6 +9,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
+
+import edu.usfca.cs272.InvertedIndex.SearchResult;
 
 /**
  * Class responsible for query handling and adding search results
@@ -17,23 +20,12 @@ public class QueryFileProcsesor {
 	/** The map to store search results */
 	private final Map<String, InvertedIndex.SearchResult> resultMap;
 
-	/** The InvertedIndex instance to help with search operations */
-	InvertedIndex indexer = new InvertedIndex();
-	
-	/* TODO 
 	Map<String, List<InvertedIndex.SearchResult>> searchResultsMap;
 	InvertedIndex indexer;
 	
 	public QueryFileProcsesor(InvertedIndex indexer) {
 		this.indexer = indexer;
-		this.searchResultMap = new TreeMap<>();
-	}
-	*/
-
-	/**
-	 * Constructs a new QueryFileProcsesor with an empty result map
-	 */
-	public QueryFileProcsesor() {
+		this.searchResultsMap = new TreeMap<>();
 		this.resultMap = new HashMap<>();
 	}
 
@@ -72,5 +64,15 @@ public class QueryFileProcsesor {
 		store the search results
 	}
 	*/
-
+	// TODO Remove or move into QueryFileProcessor
+	/**
+	 * Writes the search results to a JSON file
+	 * 
+	 * @param searchResults The processed search results
+	 * @param resultsPath   the output path of the JSON file
+	 * @throws IOException if an I/O error occurs
+	 */
+	public void writeResults(Map<String, List<SearchResult>> searchResults, String resultsPath) throws IOException {
+		JsonWriter.writeResults(searchResults, resultsPath);
+	}
 }

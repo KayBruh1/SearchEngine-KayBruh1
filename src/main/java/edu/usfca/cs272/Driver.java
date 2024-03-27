@@ -25,7 +25,7 @@ public class Driver {
 		ArgumentParser parser = new ArgumentParser(args);
 		InvertedIndex indexer = new InvertedIndex();
 		FileBuilder fileBuilder = new FileBuilder(indexer);
-		// TODO QueryFileProcessor ... = new QueryFileProcessor(indexer);
+		QueryFileProcsesor processor = new QueryFileProcsesor(indexer);
 
 		if (parser.hasFlag("-text")) {
 			Path inputPath = parser.getPath("-text");
@@ -68,15 +68,14 @@ public class Driver {
 					searchResultsMap = InvertedIndex.SearchResult.sortResults(searchResultsMap);
 				}
 			} catch (Exception e) {
-				System.out.println("Error reading the query file " + queryPath);
+				e.printStackTrace();
 			}
 		}
 
 		if (parser.hasFlag("-results")) {
 			String resultsPath = parser.getString("-results", "results.json");
 			try {
-				// TODO processor.writeResults(...)
-				indexer.writeResults(searchResultsMap, resultsPath);
+				processor.writeResults(searchResultsMap, resultsPath);
 			} catch (Exception e) {
 				System.out.println("Error writing results to file " + resultsPath);
 			}

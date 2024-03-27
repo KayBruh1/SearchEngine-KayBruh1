@@ -229,18 +229,6 @@ public class InvertedIndex {
 		JsonWriter.writeIndex(invertedIndex, indexPath);
 	}
 
-	// TODO Remove or move into QueryFileProcessor
-	/**
-	 * Writes the search results to a JSON file
-	 * 
-	 * @param searchResults The processed search results
-	 * @param resultsPath   the output path of the JSON file
-	 * @throws IOException if an I/O error occurs
-	 */
-	public void writeResults(Map<String, List<SearchResult>> searchResults, String resultsPath) throws IOException {
-		JsonWriter.writeResults(searchResults, resultsPath);
-	}
-
 	/**
 	 * Returns a string representation of the inverted index
 	 * 
