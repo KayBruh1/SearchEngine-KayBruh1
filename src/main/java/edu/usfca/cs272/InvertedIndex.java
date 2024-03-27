@@ -5,6 +5,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -279,43 +280,36 @@ public class InvertedIndex {
 	 * @return A list of search results for each query
 	 */
 	public List<SearchResult> exactSearch(Set<String> queries) {
-		QueryFileProcsesor processor = new QueryFileProcsesor(); // TODO Remove
-		
-		/* TODO 
 		Map<String, InvertedIndex.SearchResult> resultMap = new HashMap<>();
 		ArrayList<SearchResult> results = new ArrayList<>();
-		*/
-		
+
 		for (String query : queries) {
-			TreeMap<String, TreeSet<Integer>> locations = invertedIndex.getOrDefault(query, new TreeMap<>()); // TODO get(...)
-			// TODO Check for the null values...
+			TreeMap<String, TreeSet<Integer>> locations = invertedIndex.get(query);
+			if (locations == null) {
+				locations = new TreeMap<>();
+			}
 			for (Map.Entry<String, TreeSet<Integer>> entry : locations.entrySet()) {
 				String location = entry.getKey();
 				TreeSet<Integer> positions = entry.getValue();
 				int totalWords = counts.getOrDefault(location, 0);
 				int count = positions.size();
-				processor.addResult(location, totalWords, count);
-				
-				/* TODO 
+
 				SearchResult result = resultMap.get(location);
-				
+
 				if (result == null) {
-					result = new SearchResult(...);
-					resultMap.put(location, result);
+					InvertedIndex indexer = new InvertedIndex();
+					result = indexer.new SearchResult(location, 0, 0.0);
 					results.add(result);
 				}
-				
-				result.updateCount(count);
-				*/
+
+				result.updateCount(count, totalWords);
+				resultMap.put(location, result);
+
 			}
 		}
-		
-		/* TODO 
+
 		Collections.sort(results);
 		return results;
-		*/
-		
-		return new ArrayList<>(processor.getResultMap().values());
 	}
 
 	/**
@@ -386,11 +380,13 @@ public class InvertedIndex {
 		/**
 		 * Updates the match count
 		 *
-		 * @param matches the number of matches to add
+		 * @param matches    the number of matches to add
+		 * @param totalWords
+		 * @param counts
 		 */
-		public void updateCount(int matches) { // TODO private
+		public void updateCount(int matches, int totalWords) { // TODO private
 			this.count += matches;
-			// TODO this.score = (double) count / counts.get(this.location);
+			this.score = (double) count / totalWords;
 		}
 
 		/**
@@ -454,7 +450,8 @@ public class InvertedIndex {
 		 * @param unsortedMap the unsorted map of search results
 		 * @return a sorted map of search results
 		 */
-		public static Map<String, List<SearchResult>> sortResults(Map<String, List<SearchResult>> unsortedMap) { // TODO Remove
+		public static Map<String, List<SearchResult>> sortResults(Map<String, List<SearchResult>> unsortedMap) { // TODO
+																													// Remove
 			Map<String, List<SearchResult>> sortedMap = new LinkedHashMap<>();
 			List<Map.Entry<String, List<SearchResult>>> entryList = new ArrayList<>(unsortedMap.entrySet());
 			Collections.sort(entryList, new Comparator<Map.Entry<String, List<SearchResult>>>() {
