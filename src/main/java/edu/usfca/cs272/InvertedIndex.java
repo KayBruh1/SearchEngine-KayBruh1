@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -237,28 +236,6 @@ public class InvertedIndex {
 	@Override
 	public String toString() {
 		return invertedIndex.toString();
-	}
-
-	/**
-	 * Conducts a search based on the processed queries and updates the search
-	 * results
-	 *
-	 * @param processedQueries The processed queries to search for
-	 * @param searchResultsMap The map to store search results
-	 * @param indexer          The InvertedIndex instance to perform search
-	 * @param partial          A boolean indicating whether or not to partial search
-	 */
-	public static void conductSearch(List<List<String>> processedQueries,
-			Map<String, List<SearchResult>> searchResultsMap, InvertedIndex indexer, boolean partial) { // TODO Remove
-		for (List<String> query : processedQueries) {
-			if (partial && !query.isEmpty()) {
-				List<InvertedIndex.SearchResult> searchResults = indexer.partialSearch(new HashSet<>(query));
-				searchResultsMap.put(String.join(" ", query), searchResults);
-			} else if (!query.isEmpty()) {
-				List<InvertedIndex.SearchResult> searchResults = indexer.exactSearch(new HashSet<>(query));
-				searchResultsMap.put(String.join(" ", query), searchResults);
-			}
-		}
 	}
 
 	/**

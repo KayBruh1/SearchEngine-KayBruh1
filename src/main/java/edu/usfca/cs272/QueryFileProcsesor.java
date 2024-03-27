@@ -1,3 +1,4 @@
+
 package edu.usfca.cs272;
 
 import java.io.BufferedReader;
@@ -53,6 +54,9 @@ public class QueryFileProcsesor {
 	public void processQueries(String queryLine, boolean partial) {
 		List<String> stemmedWords = FileStemmer.listStems(queryLine);
 		List<String> query = new ArrayList<>(new HashSet<>(stemmedWords));
+		if (query.isEmpty()) {
+			return;
+		}
 		Collections.sort(query);
 
 		List<InvertedIndex.SearchResult> searchResults = null;
