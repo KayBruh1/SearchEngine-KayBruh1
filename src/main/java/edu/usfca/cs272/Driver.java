@@ -1,6 +1,5 @@
 package edu.usfca.cs272;
 
-import java.nio.file.Files;
 import java.nio.file.Path;
 
 /**
@@ -54,15 +53,13 @@ public class Driver {
 		if (parser.hasFlag("-query")) {
 			Path queryPath = parser.getPath("-query");
 			try {
-				if (Files.exists(queryPath)) {
-					boolean partial = false;
-					if (parser.hasFlag("-partial")) {
-						partial = true;
-					}
-					processor.processQueries(queryPath, partial);
+				boolean partial = false;
+				if (parser.hasFlag("-partial")) {
+					partial = true;
 				}
+				processor.processQueries(queryPath, partial);
 			} catch (Exception e) {
-				e.printStackTrace();
+				System.out.println("Error reading the query file " + queryPath);
 			}
 		}
 
