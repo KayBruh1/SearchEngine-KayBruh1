@@ -1,5 +1,6 @@
 package edu.usfca.cs272;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -22,7 +23,7 @@ public class QueryFileProcsesor {
 
 	Map<String, List<InvertedIndex.SearchResult>> searchResultsMap;
 	InvertedIndex indexer;
-	
+
 	public QueryFileProcsesor(InvertedIndex indexer) {
 		this.indexer = indexer;
 		this.searchResultsMap = new TreeMap<>();
@@ -30,47 +31,51 @@ public class QueryFileProcsesor {
 	}
 
 	/**
-	 * Processes search queries from a location
+	 * Processes search queries from a file path.
 	 *
 	 * @param queryPath The path containing search queries
-	 * @return A list of processed search queries
 	 * @throws IOException If an I/O error occurs
 	 */
-	public static List<List<String>> processQueries(Path queryPath) throws IOException {
-		List<List<String>> processedQueries = new ArrayList<>();
-		List<String> queryLines = Files.readAllLines(queryPath);
-		for (String queryLine : queryLines) {
-			List<String> stemmedWords = FileStemmer.listStems(queryLine);
-			List<String> processedQuery = new ArrayList<>(new HashSet<>(stemmedWords));
-			Collections.sort(processedQuery);
-			processedQueries.add(processedQuery);
+	public void processQueries(Path queryPath, boolean partial) throws IOException {
+		try (BufferedReader reader = Files.newBufferedReader(queryPath)) {
+			String line;
+			while ((line = reader.readLine()) != null) {
+				processQueries(line, partial);
+			}
 		}
-		return processedQueries;
 	}
-	
-	/* TODO 
-	public void processQueries(Path queryPath) throws IOException {
-		buffered reader
-		read line by line
-		call the other processQueries on the line
+
+	/**
+	 * Processes a single search query line.
+	 *
+	 * @param queryLine The search query line to process
+	 */
+	public void processQueries(String queryLine, boolean partial) {
+		List<String> stemmedWords = FileStemmer.listStems(queryLine);
+		List<String> query = new ArrayList<>(new HashSet<>(stemmedWords));
+		Collections.sort(query);
+
+		List<InvertedIndex.SearchResult> searchResults = null;
+		if (partial) {
+			searchResults = indexer.partialSearch(new HashSet<>(query));
+		} else {
+			searchResults = indexer.exactSearch(new HashSet<>(query));
+			System.out.println(query);
+		}
+		searchResultsMap.put(String.join(" ", query), searchResults);
 	}
-	
-	public void processQueries(String queryLine) {
-		stem the line... List<String> stemmedWords = FileStemmer.listStems(queryLine);
-		ask the index for the search results
-		
-		if (partial) call index.partialSearch etc.
-		
-		store the search results
-	}
-	*/
-	// TODO Remove or move into QueryFileProcessor
+
 	/**
 	 * Writes the search results to a JSON file
 	 * 
 	 * @param searchResults The processed search results
 	 * @param resultsPath   the output path of the JSON file
 	 * @throws IOException if an I/O error occurs
+	 */
+	/**
+	 * @param searchResults
+	 * @param resultsPath
+	 * @throws IOException
 	 */
 	public void writeResults(Map<String, List<SearchResult>> searchResults, String resultsPath) throws IOException {
 		JsonWriter.writeResults(searchResults, resultsPath);

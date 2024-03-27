@@ -2,9 +2,6 @@ package edu.usfca.cs272;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Class responsible for running this project based on the provided command-line
@@ -54,18 +51,16 @@ public class Driver {
 			}
 		}
 
-		Map<String, List<InvertedIndex.SearchResult>> searchResultsMap = new HashMap<>();
 		if (parser.hasFlag("-query")) {
 			Path queryPath = parser.getPath("-query");
 			try {
 				if (Files.exists(queryPath)) {
-					List<List<String>> processedQueries = QueryFileProcsesor.processQueries(queryPath);
 					boolean partial = false;
 					if (parser.hasFlag("-partial")) {
 						partial = true;
 					}
-					InvertedIndex.conductSearch(processedQueries, searchResultsMap, indexer, partial);
-					searchResultsMap = InvertedIndex.SearchResult.sortResults(searchResultsMap);
+					processor.processQueries(queryPath, partial);
+					processor.searchResultsMap = InvertedIndex.SearchResult.sortResults(processor.searchResultsMap);
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -75,7 +70,7 @@ public class Driver {
 		if (parser.hasFlag("-results")) {
 			String resultsPath = parser.getString("-results", "results.json");
 			try {
-				processor.writeResults(searchResultsMap, resultsPath);
+				processor.writeResults(processor.searchResultsMap, resultsPath);
 			} catch (Exception e) {
 				System.out.println("Error writing results to file " + resultsPath);
 			}
