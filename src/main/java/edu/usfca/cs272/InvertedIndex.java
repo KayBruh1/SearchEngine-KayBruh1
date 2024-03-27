@@ -319,7 +319,8 @@ public class InvertedIndex {
 	 * @return A list of search results for each query
 	 */
 	public List<SearchResult> partialSearch(Set<String> queries) {
-		QueryFileProcsesor processor = new QueryFileProcsesor();
+		Map<String, InvertedIndex.SearchResult> resultMap = new HashMap<>();
+		ArrayList<SearchResult> results = new ArrayList<>();
 		for (String query : queries) {
 			for (Map.Entry<String, TreeMap<String, TreeSet<Integer>>> entry : invertedIndex.tailMap(query).entrySet()) {
 				String word = entry.getKey();
@@ -333,14 +334,24 @@ public class InvertedIndex {
 						TreeSet<Integer> positions = locationEntry.getValue();
 						int totalWords = counts.getOrDefault(location, 0);
 						int count = positions.size();
-						processor.addResult(location, totalWords, count);
+						SearchResult result = resultMap.get(location);
+
+						if (result == null) {
+							InvertedIndex indexer = new InvertedIndex();
+							result = indexer.new SearchResult(location, 0, 0.0);
+							results.add(result);
+						}
+
+						result.updateCount(count, totalWords);
+						resultMap.put(location, result);
 					}
 				} else {
 					break;
 				}
 			}
 		}
-		return new ArrayList<>(processor.getResultMap().values());
+		Collections.sort(results);
+		return results;
 	}
 
 	/**
@@ -351,7 +362,7 @@ public class InvertedIndex {
 		/**
 		 * The location of the search result
 		 */
-		private String location; // TODO final
+		private final String location;
 
 		/**
 		 * The count of matches for the search query
@@ -384,18 +395,9 @@ public class InvertedIndex {
 		 * @param totalWords
 		 * @param counts
 		 */
-		public void updateCount(int matches, int totalWords) { // TODO private
+		private void updateCount(int matches, int totalWords) {
 			this.count += matches;
 			this.score = (double) count / totalWords;
-		}
-
-		/**
-		 * Sets the score of the search result
-		 *
-		 * @param score the score to set
-		 */
-		public void setScore(double score) { // TODO Remove
-			this.score = score;
 		}
 
 		/**
