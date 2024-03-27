@@ -70,7 +70,7 @@ public class Driver {
 		if (parser.hasFlag("-results")) {
 			String resultsPath = parser.getString("-results", "results.json");
 			try {
-				processor.writeResults(processor.searchResultsMap, resultsPath);
+				processor.writeResults(resultsPath);
 			} catch (Exception e) {
 				System.out.println("Error writing results to file " + resultsPath);
 			}

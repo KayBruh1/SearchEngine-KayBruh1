@@ -1,4 +1,3 @@
-
 package edu.usfca.cs272;
 
 import java.io.BufferedReader;
@@ -12,8 +11,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-
-import edu.usfca.cs272.InvertedIndex.SearchResult;
 
 /**
  * Class responsible for query handling and adding search results
@@ -32,7 +29,7 @@ public class QueryFileProcsesor {
 	}
 
 	/**
-	 * Processes search queries from a file path.
+	 * Processes search queries from a path
 	 *
 	 * @param queryPath The path containing search queries
 	 * @throws IOException If an I/O error occurs
@@ -47,9 +44,9 @@ public class QueryFileProcsesor {
 	}
 
 	/**
-	 * Processes a single search query line.
+	 * Processes a single search query line
 	 *
-	 * @param queryLine The search query line to process
+	 * @param queryLine The query line to process
 	 */
 	public void processQueries(String queryLine, boolean partial) {
 		List<String> stemmedWords = FileStemmer.listStems(queryLine);
@@ -58,13 +55,11 @@ public class QueryFileProcsesor {
 			return;
 		}
 		Collections.sort(query);
-
 		List<InvertedIndex.SearchResult> searchResults = null;
 		if (partial) {
 			searchResults = indexer.partialSearch(new HashSet<>(query));
 		} else {
 			searchResults = indexer.exactSearch(new HashSet<>(query));
-			System.out.println(query);
 		}
 		searchResultsMap.put(String.join(" ", query), searchResults);
 	}
@@ -72,16 +67,10 @@ public class QueryFileProcsesor {
 	/**
 	 * Writes the search results to a JSON file
 	 * 
-	 * @param searchResults The processed search results
 	 * @param resultsPath   the output path of the JSON file
 	 * @throws IOException if an I/O error occurs
 	 */
-	/**
-	 * @param searchResults
-	 * @param resultsPath
-	 * @throws IOException
-	 */
-	public void writeResults(Map<String, List<SearchResult>> searchResults, String resultsPath) throws IOException {
-		JsonWriter.writeResults(searchResults, resultsPath);
+	public void writeResults(String resultsPath) throws IOException {
+		JsonWriter.writeResults(searchResultsMap, resultsPath);
 	}
 }
