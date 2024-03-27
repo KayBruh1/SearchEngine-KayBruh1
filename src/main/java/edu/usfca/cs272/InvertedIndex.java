@@ -4,9 +4,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -410,30 +408,5 @@ public class InvertedIndex {
 			}
 			return this.location.compareToIgnoreCase(other.location);
 		}
-
-		/**
-		 * Sorts a map of search results
-		 *
-		 * @param unsortedMap the unsorted map of search results
-		 * @return a sorted map of search results
-		 */
-		public static Map<String, List<SearchResult>> sortResults(Map<String, List<SearchResult>> unsortedMap) { // TODO
-																													// Remove
-			Map<String, List<SearchResult>> sortedMap = new LinkedHashMap<>();
-			List<Map.Entry<String, List<SearchResult>>> entryList = new ArrayList<>(unsortedMap.entrySet());
-			Collections.sort(entryList, new Comparator<Map.Entry<String, List<SearchResult>>>() {
-				@Override
-				public int compare(Map.Entry<String, List<SearchResult>> entry1,
-						Map.Entry<String, List<SearchResult>> entry2) {
-					return entry1.getKey().compareTo(entry2.getKey());
-				}
-			});
-			for (Map.Entry<String, List<SearchResult>> entry : entryList) {
-				Collections.sort(entry.getValue());
-				sortedMap.put(entry.getKey(), entry.getValue());
-			}
-			return sortedMap;
-		}
 	}
-
 }

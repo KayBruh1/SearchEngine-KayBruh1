@@ -67,7 +67,7 @@ public class QueryFileProcsesor {
 	/**
 	 * Writes the search results to a JSON file
 	 * 
-	 * @param resultsPath   the output path of the JSON file
+	 * @param resultsPath the output path of the JSON file
 	 * @throws IOException if an I/O error occurs
 	 */
 	public void writeResults(String resultsPath) throws IOException {

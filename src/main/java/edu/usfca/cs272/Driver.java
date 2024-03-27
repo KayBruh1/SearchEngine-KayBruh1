@@ -60,7 +60,6 @@ public class Driver {
 						partial = true;
 					}
 					processor.processQueries(queryPath, partial);
-					processor.searchResultsMap = InvertedIndex.SearchResult.sortResults(processor.searchResultsMap);
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
