@@ -245,21 +245,9 @@ public class InvertedIndex {
 	public List<SearchResult> exactSearch(Set<String> queries) {
 		Map<String, InvertedIndex.SearchResult> resultMap = new HashMap<>();
 		ArrayList<SearchResult> results = new ArrayList<>();
-
 		for (String query : queries) {
-			TreeMap<String, TreeSet<Integer>> locations = invertedIndex.get(query);
-			if (locations == null) {
-				locations = new TreeMap<>();
-			}
-			for (Map.Entry<String, TreeSet<Integer>> entry : locations.entrySet()) {
-				String location = entry.getKey();
-				TreeSet<Integer> positions = entry.getValue();
-				int totalWords = counts.getOrDefault(location, 0);
-				int count = positions.size();
-				updateResult(resultMap, results, location, count, totalWords);
-			}
+			processLocations(query, resultMap, results, invertedIndex.get(query));
 		}
-
 		Collections.sort(results);
 		return results;
 	}
@@ -277,17 +265,7 @@ public class InvertedIndex {
 			for (Map.Entry<String, TreeMap<String, TreeSet<Integer>>> entry : invertedIndex.tailMap(query).entrySet()) {
 				String word = entry.getKey();
 				if (word.startsWith(query)) {
-					/*
-					 * TODO Move the duplicate logic into a private helper method
-					 */
-					TreeMap<String, TreeSet<Integer>> locations = entry.getValue();
-					for (Map.Entry<String, TreeSet<Integer>> locationEntry : locations.entrySet()) {
-						String location = locationEntry.getKey();
-						TreeSet<Integer> positions = locationEntry.getValue();
-						int totalWords = counts.getOrDefault(location, 0);
-						int count = positions.size();
-						updateResult(resultMap, results, location, count, totalWords);
-					}
+					processLocations(query, resultMap, results, entry.getValue());
 				} else {
 					break;
 				}
@@ -298,23 +276,30 @@ public class InvertedIndex {
 	}
 
 	/**
-	 * Helper to update search results
+	 * Processes locations for a query
 	 *
-	 * @param resultMap  map to store search results
-	 * @param results    list to store search results
-	 * @param location   location of the search result
-	 * @param count      count of matches
-	 * @param totalWords total location words
+	 * @param query     the query being processed
+	 * @param resultMap the map containing search results
+	 * @param results   the list to store search results
+	 * @param locations the locations with the query
 	 */
-	private void updateResult(Map<String, SearchResult> resultMap, List<SearchResult> results, String location,
-			int count, int totalWords) {
-		SearchResult result = resultMap.get(location);
-		if (result == null) {
-			result = new SearchResult(location, 0, 0.0);
-			results.add(result);
+	private void processLocations(String query, Map<String, SearchResult> resultMap, List<SearchResult> results,
+			TreeMap<String, TreeSet<Integer>> locations) {
+		if (locations != null) {
+			for (Map.Entry<String, TreeSet<Integer>> entry : locations.entrySet()) {
+				String location = entry.getKey();
+				TreeSet<Integer> positions = entry.getValue();
+				int count = positions.size();
+
+				SearchResult result = resultMap.get(location);
+				if (result == null) {
+					result = new SearchResult(location, 0, 0.0);
+					results.add(result);
+				}
+				result.updateCount(count);
+				resultMap.put(location, result);
+			}
 		}
-		result.updateCount(count, totalWords);
-		resultMap.put(location, result);
 	}
 
 	/**
@@ -354,13 +339,11 @@ public class InvertedIndex {
 		/**
 		 * Updates the match count
 		 *
-		 * @param matches    the number of matches to add
-		 * @param totalWords
-		 * @param counts
+		 * @param matches the number of matches to add
 		 */
-		private void updateCount(int matches, int totalWords) {
+		private void updateCount(int matches) {
 			this.count += matches;
-			this.score = (double) count / totalWords;
+			this.score = (double) count / counts.get(location);
 		}
 
 		/**
