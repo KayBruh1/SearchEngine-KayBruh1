@@ -290,14 +290,13 @@ public class InvertedIndex {
 				String location = entry.getKey();
 				TreeSet<Integer> positions = entry.getValue();
 				int count = positions.size();
-
 				SearchResult result = resultMap.get(location);
 				if (result == null) {
 					result = new SearchResult(location, 0, 0.0);
+					resultMap.put(location, result);
 					results.add(result);
 				}
 				result.updateCount(count);
-				resultMap.put(location, result);
 			}
 		}
 	}
@@ -343,7 +342,7 @@ public class InvertedIndex {
 		 */
 		private void updateCount(int matches) {
 			this.count += matches;
-			this.score = (double) count / counts.get(location);
+			this.score = (double) count / counts.get(this.location);
 		}
 
 		/**
