@@ -6,7 +6,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -26,10 +25,14 @@ public class QueryFileProcsesor {
 	 */
 	InvertedIndex indexer;
 
+	/**
+	 * Constructs a new QueryFileProcsesor with the InvertedIndex
+	 *
+	 * @param indexer The InvertedIndex instance for searching
+	 */
 	public QueryFileProcsesor(InvertedIndex indexer) {
 		this.indexer = indexer;
 		this.searchResultsMap = new TreeMap<>();
-		new HashMap<>();
 	}
 
 	/**
