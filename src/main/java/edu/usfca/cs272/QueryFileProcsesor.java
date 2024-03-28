@@ -16,16 +16,20 @@ import java.util.TreeMap;
  * Class responsible for query handling and adding search results
  */
 public class QueryFileProcsesor {
-	/** The map to store search results */
-	private final Map<String, InvertedIndex.SearchResult> resultMap;
-
+	/**
+	 * Map to store search results
+	 */
 	Map<String, List<InvertedIndex.SearchResult>> searchResultsMap;
+
+	/**
+	 * Inverted index instance for searching
+	 */
 	InvertedIndex indexer;
 
 	public QueryFileProcsesor(InvertedIndex indexer) {
 		this.indexer = indexer;
 		this.searchResultsMap = new TreeMap<>();
-		this.resultMap = new HashMap<>();
+		new HashMap<>();
 	}
 
 	/**
