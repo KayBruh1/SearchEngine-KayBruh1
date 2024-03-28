@@ -39,6 +39,7 @@ public class QueryFileProcsesor {
 	 * Processes search queries from a path
 	 *
 	 * @param queryPath The path containing search queries
+	 * @param partial   A boolean indicating whether or not to partial search
 	 * @throws IOException If an I/O error occurs
 	 */
 	public void processQueries(Path queryPath, boolean partial) throws IOException {
@@ -54,6 +55,7 @@ public class QueryFileProcsesor {
 	 * Processes a single search query line
 	 *
 	 * @param queryLine The query line to process
+	 * @param partial   A boolean indicating whether or not to partial search
 	 */
 	public void processQueries(String queryLine, boolean partial) {
 		List<String> stemmedWords = FileStemmer.listStems(queryLine);
