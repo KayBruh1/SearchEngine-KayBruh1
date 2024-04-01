@@ -92,6 +92,25 @@ public class FileBuilder {
 				}
 			}
 		}
+		
+		/*
+		 * TODO At this point, we need to remove this operation from here.
+		 * 
+		 * It is efficient (happening only once per file), but not encapsulated (the
+		 * word count for a file can be set to an arbitrary value). Since we use that
+		 * word count for the search score and ranking, it needs to match exactly what
+		 * is stored in the index at all times.
+		 * 
+		 * That means instead of once per file, you need to update the count once per
+		 * word. It also makes your code friendlier for multithreading when build and
+		 * search operations are happening concurrently. See the index for details.
+		 * 
+		 * Note: We might make a different design decision in a different setting. For
+		 * example, ElasticSearch (used by GitHub to enable search of your repositories)
+		 * uses inverted indices and may prioritize efficiency over encapsulation in
+		 * that more controlled setting. See: https://www.elastic.co/customers/github
+		 */
+
 		indexer.addWordCount(locationString, position);
 	}
 
