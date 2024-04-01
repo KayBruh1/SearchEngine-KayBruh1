@@ -90,7 +90,9 @@ public class InvertedIndex {
 		 * TODO There was an old comment from v1.4 that discussed the inefficiency of
 		 * using getOrDefault:
 		 * 
-		 * https://github.com/usf-cs272-spring2024/project-KayBruh1/blob/9094d098e1f1d281ec9513742a6ddb699e518073/src/main/java/edu/usfca/cs272/InvertedIndex.java#L64-L98
+		 * https://github.com/usf-cs272-spring2024/project-KayBruh1/blob/
+		 * 9094d098e1f1d281ec9513742a6ddb699e518073/src/main/java/edu/usfca/cs272/
+		 * InvertedIndex.java#L64-L98
 		 * 
 		 * ...and you are still using it in your code. When I make a comment, it is
 		 * important to apply that concept to your code everywhere---not just in the one
@@ -214,7 +216,7 @@ public class InvertedIndex {
 		invertedIndex.putIfAbsent(word, new TreeMap<>());
 		invertedIndex.get(word).putIfAbsent(location, new TreeSet<>());
 		invertedIndex.get(word).get(location).add(position);
-		
+
 		/*
 		 * TODO To ensure our search result scores and rankings are always correct, we
 		 * need to update the word count here instead (see comments in your builder
@@ -331,7 +333,7 @@ public class InvertedIndex {
 				int count = positions.size();
 				SearchResult result = resultMap.get(location);
 				if (result == null) {
-					result = new SearchResult(location, 0, 0.0);
+					result = new SearchResult(location);
 					resultMap.put(location, result);
 					results.add(result);
 				}
@@ -365,24 +367,12 @@ public class InvertedIndex {
 		 * score
 		 *
 		 * @param location the location of the search result
-		 * @param count    the number of matches at in the location
-		 * @param score    the score of the search result
 		 */
-		public SearchResult(String location, int count, double score) { // TODO Remove this constructor
-			this.location = location;
-			this.count = count;
-			this.score = score;
-		}
-		
-		/* 
-		 * TODO This will better encapsulate the count and score, making those values
-		 * ones that cannot be publicly modified. 
 		public SearchResult(String location) {
 			this.location = location;
 			this.count = 0;
 			this.score = 0.0;
 		}
-		 */
 
 		/**
 		 * Updates the match count
