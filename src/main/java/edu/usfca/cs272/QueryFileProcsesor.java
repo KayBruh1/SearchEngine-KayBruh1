@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import opennlp.tools.stemmer.snowball.SnowballStemmer;
+
 /**
  * Class responsible for query handling and adding search results
  */
@@ -25,6 +27,8 @@ public class QueryFileProcsesor {
 	 */
 	private final InvertedIndex indexer;
 
+	private final SnowballStemmer stemmer;
+
 	/**
 	 * Constructs a new QueryFileProcsesor with the InvertedIndex
 	 *
@@ -33,6 +37,7 @@ public class QueryFileProcsesor {
 	public QueryFileProcsesor(InvertedIndex indexer) {
 		this.indexer = indexer;
 		this.searchResultsMap = new TreeMap<>();
+		this.stemmer = new SnowballStemmer(SnowballStemmer.ALGORITHM.ENGLISH);
 	}
 
 	/**
@@ -71,8 +76,7 @@ public class QueryFileProcsesor {
 		 * and stored as final members.
 		 */
 
-		List<String> stemmedWords = FileStemmer.listStems(queryLine); // TODO This creates a lot of stemmer objects. Use
-																		// just one for the entire class!
+		List<String> stemmedWords = FileStemmer.listStems(queryLine);
 		List<String> query = new ArrayList<>(new HashSet<>(stemmedWords)); // TODO Can you think of better methods to
 																			// reuse here in FileStemmer rather than
 																			// converting your data from one type (a
