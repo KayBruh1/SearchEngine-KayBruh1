@@ -86,20 +86,14 @@ public class InvertedIndex {
 	 * @return The number of positions the word appears in the location
 	 */
 	public int numWordPositions(String word, String location) {
-		/*
-		 * TODO There was an old comment from v1.4 that discussed the inefficiency of
-		 * using getOrDefault:
-		 * 
-		 * https://github.com/usf-cs272-spring2024/project-KayBruh1/blob/
-		 * 9094d098e1f1d281ec9513742a6ddb699e518073/src/main/java/edu/usfca/cs272/
-		 * InvertedIndex.java#L64-L98
-		 * 
-		 * ...and you are still using it in your code. When I make a comment, it is
-		 * important to apply that concept to your code everywhere---not just in the one
-		 * place it is discussed.
-		 */
-		TreeMap<String, TreeSet<Integer>> fileMap = invertedIndex.getOrDefault(word, new TreeMap<>());
-		TreeSet<Integer> positions = fileMap.getOrDefault(location, new TreeSet<>());
+		TreeMap<String, TreeSet<Integer>> fileMap = invertedIndex.get(word);
+		if (fileMap == null) {
+			fileMap = new TreeMap<>();
+		}
+		TreeSet<Integer> positions = fileMap.get(location);
+		if (positions == null) {
+			positions = new TreeSet<>();
+		}
 		return positions.size();
 	}
 
