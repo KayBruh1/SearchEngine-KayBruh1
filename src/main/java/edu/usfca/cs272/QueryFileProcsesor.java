@@ -15,6 +15,11 @@ import java.util.TreeMap;
  * Class responsible for query handling and adding search results
  */
 public class QueryFileProcsesor {
+	/*
+	 * TODO You need more keywords for your members below. Consider whether
+	 * to use public, private, static, and/or final.
+	 */
+	
 	/**
 	 * Map to store search results
 	 */
@@ -58,14 +63,40 @@ public class QueryFileProcsesor {
 	 * @param partial   A boolean indicating whether or not to partial search
 	 */
 	public void processQueries(String queryLine, boolean partial) {
-		List<String> stemmedWords = FileStemmer.listStems(queryLine);
-		List<String> query = new ArrayList<>(new HashSet<>(stemmedWords));
+		/*
+		 * TODO Consider the query line "hello world". When does that query line
+		 * generate the same results (and thus should be stored in the same map of
+		 * results)? If we have two different inverted index instances (one built from
+		 * text files, another built from web pages), do they return the same list of
+		 * results? How about doing an exact versus partial search for that query line?
+		 * 
+		 * If it does not result in the same results, it should not be stored in the
+		 * same query map. In that case, instead of making those values parameters of
+		 * this method, it should be parameters sent to the constructor of this class
+		 * and stored as final members.
+		 */
+		
+		List<String> stemmedWords = FileStemmer.listStems(queryLine); // TODO This creates a lot of stemmer objects. Use just one for the entire class!
+		List<String> query = new ArrayList<>(new HashSet<>(stemmedWords)); // TODO Can you think of better methods to reuse here in FileStemmer rather than converting your data from one type (a list) to another (a set) inefficiently multiple times?
 		if (query.isEmpty()) {
 			return;
 		}
-		Collections.sort(query);
+		Collections.sort(query); // TODO If you needed a sorted set, what is another way to do that?
 		List<InvertedIndex.SearchResult> searchResults = null;
 		if (partial) {
+			/*
+			 * TODO This is a common if statement, make a convenience method so it is
+			 * reusable. This is similar to putIfAbsent or getOrDefault methods in maps.
+			 * This means adding something like the method below to the inverted index
+			 * class, and then calling that method here.
+			 */
+
+			/*-
+			public (list of search results) search(Set<String> queries, boolean partial) {
+				return partial ? (results from partial search) : (or results from exact search);
+			}
+			*/
+
 			searchResults = indexer.partialSearch(new HashSet<>(query));
 		} else {
 			searchResults = indexer.exactSearch(new HashSet<>(query));
@@ -82,4 +113,11 @@ public class QueryFileProcsesor {
 	public void writeResults(String resultsPath) throws IOException {
 		JsonWriter.writeResults(searchResultsMap, resultsPath);
 	}
+
+	/*
+	 * TODO You have some useful data stored in this class that we might want access
+	 * to, but can only get if we write to a file. What are some other useful
+	 * methods you might add to this class?
+	 */
+
 }

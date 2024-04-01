@@ -86,6 +86,16 @@ public class InvertedIndex {
 	 * @return The number of positions the word appears in the location
 	 */
 	public int numWordPositions(String word, String location) {
+		/*
+		 * TODO There was an old comment from v1.4 that discussed the inefficiency of
+		 * using getOrDefault:
+		 * 
+		 * https://github.com/usf-cs272-spring2024/project-KayBruh1/blob/9094d098e1f1d281ec9513742a6ddb699e518073/src/main/java/edu/usfca/cs272/InvertedIndex.java#L64-L98
+		 * 
+		 * ...and you are still using it in your code. When I make a comment, it is
+		 * important to apply that concept to your code everywhere---not just in the one
+		 * place it is discussed.
+		 */
 		TreeMap<String, TreeSet<Integer>> fileMap = invertedIndex.getOrDefault(word, new TreeMap<>());
 		TreeSet<Integer> positions = fileMap.getOrDefault(location, new TreeSet<>());
 		return positions.size();
@@ -187,7 +197,7 @@ public class InvertedIndex {
 	 * @param location The path of the file
 	 * @param count    The count of words in the file
 	 */
-	public void addWordCount(String location, Integer count) {
+	public void addWordCount(String location, Integer count) { // TODO Remove or make private
 		if (count > 0) {
 			counts.put(location, count);
 		}
@@ -204,6 +214,35 @@ public class InvertedIndex {
 		invertedIndex.putIfAbsent(word, new TreeMap<>());
 		invertedIndex.get(word).putIfAbsent(location, new TreeSet<>());
 		invertedIndex.get(word).get(location).add(position);
+		
+		/*
+		 * TODO To ensure our search result scores and rankings are always correct, we
+		 * need to update the word count here instead (see comments in your builder
+		 * class). This will keep the index and the counts always in sync with each
+		 * other and better encapsulated. There are two ways to go about this (choose
+		 * one):
+		 * 
+		 * 1) Every time a NEW word, location, position is added, increase the count for
+		 * that location by 1. If we accidentally add the same word, location, and
+		 * position again later, it should NOT increment the word count because it did
+		 * not add anything new to the index. This is more direct and easier to
+		 * implement now, but slightly complicates multithreading later. For example:
+		 * 
+		 * add(hello, hello.txt, 12) --> new entry, increment count by one
+		 * 
+		 * add(hello, hello.txt, 12) --> old entry, do not increment count
+		 * 
+		 * 2) Keep the maximum position found for a location as the word count. Ignore
+		 * positions less than what is already stored. This is harder to reason about
+		 * now and not a direct measurement, but slightly easier to multithread.
+		 * 
+		 * add(hello, hello.txt, 12) --> set word count to 12
+		 * 
+		 * add(world, hello.txt, 73) --> since 73 > 12, set word count to 73
+		 * 
+		 * add(earth, hello.txt, 10) --> since 10 < 73, ignore
+		 */
+
 	}
 
 	/**
@@ -329,11 +368,21 @@ public class InvertedIndex {
 		 * @param count    the number of matches at in the location
 		 * @param score    the score of the search result
 		 */
-		public SearchResult(String location, int count, double score) {
+		public SearchResult(String location, int count, double score) { // TODO Remove this constructor
 			this.location = location;
 			this.count = count;
 			this.score = score;
 		}
+		
+		/* 
+		 * TODO This will better encapsulate the count and score, making those values
+		 * ones that cannot be publicly modified. 
+		public SearchResult(String location) {
+			this.location = location;
+			this.count = 0;
+			this.score = 0.0;
+		}
+		 */
 
 		/**
 		 * Updates the match count
