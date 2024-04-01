@@ -53,14 +53,7 @@ public class Driver {
 		if (parser.hasFlag("-query")) {
 			Path queryPath = parser.getPath("-query");
 			try {
-				boolean partial = false;
-				if (parser.hasFlag("-partial")) {
-					partial = true;
-				}
-				
-				// TODO processor.processQueries(queryPath, parser.hasFlag("-partial"));
-				
-				processor.processQueries(queryPath, partial);
+				processor.processQueries(queryPath, parser.hasFlag("-partial"));
 			} catch (Exception e) {
 				System.out.println("Error reading the query file " + queryPath);
 			}
