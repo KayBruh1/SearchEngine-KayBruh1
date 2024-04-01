@@ -188,18 +188,6 @@ public class InvertedIndex {
 	}
 
 	/**
-	 * Adds the word count for a file to the inverted index
-	 *
-	 * @param location The path of the file
-	 * @param count    The count of words in the file
-	 */
-	public void addWordCount(String location, Integer count) { // TODO Remove or make private
-		if (count > 0) {
-			counts.put(location, count);
-		}
-	}
-
-	/**
 	 * Adds a word with its position in a file to the inverted index
 	 *
 	 * @param word     The word to add
@@ -210,35 +198,10 @@ public class InvertedIndex {
 		invertedIndex.putIfAbsent(word, new TreeMap<>());
 		invertedIndex.get(word).putIfAbsent(location, new TreeSet<>());
 		invertedIndex.get(word).get(location).add(position);
-
-		/*
-		 * TODO To ensure our search result scores and rankings are always correct, we
-		 * need to update the word count here instead (see comments in your builder
-		 * class). This will keep the index and the counts always in sync with each
-		 * other and better encapsulated. There are two ways to go about this (choose
-		 * one):
-		 * 
-		 * 1) Every time a NEW word, location, position is added, increase the count for
-		 * that location by 1. If we accidentally add the same word, location, and
-		 * position again later, it should NOT increment the word count because it did
-		 * not add anything new to the index. This is more direct and easier to
-		 * implement now, but slightly complicates multithreading later. For example:
-		 * 
-		 * add(hello, hello.txt, 12) --> new entry, increment count by one
-		 * 
-		 * add(hello, hello.txt, 12) --> old entry, do not increment count
-		 * 
-		 * 2) Keep the maximum position found for a location as the word count. Ignore
-		 * positions less than what is already stored. This is harder to reason about
-		 * now and not a direct measurement, but slightly easier to multithread.
-		 * 
-		 * add(hello, hello.txt, 12) --> set word count to 12
-		 * 
-		 * add(world, hello.txt, 73) --> since 73 > 12, set word count to 73
-		 * 
-		 * add(earth, hello.txt, 10) --> since 10 < 73, ignore
-		 */
-
+		int checkCount = counts.getOrDefault(location, 0);
+		if (position > checkCount) {
+			counts.put(location, position);
+		}
 	}
 
 	/**
