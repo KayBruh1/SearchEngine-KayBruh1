@@ -15,6 +15,11 @@ import java.util.TreeMap;
  * Class responsible for query handling and adding search results
  */
 public class QueryFileProcsesor {
+	/*
+	 * TODO You need more keywords for your members below. Consider whether
+	 * to use public, private, static, and/or final.
+	 */
+	
 	/**
 	 * Map to store search results
 	 */
