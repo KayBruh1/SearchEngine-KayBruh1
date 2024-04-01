@@ -15,20 +15,15 @@ import java.util.TreeMap;
  * Class responsible for query handling and adding search results
  */
 public class QueryFileProcsesor {
-	/*
-	 * TODO You need more keywords for your members below. Consider whether
-	 * to use public, private, static, and/or final.
-	 */
-	
 	/**
 	 * Map to store search results
 	 */
-	Map<String, List<InvertedIndex.SearchResult>> searchResultsMap;
+	private final Map<String, List<InvertedIndex.SearchResult>> searchResultsMap;
 
 	/**
 	 * Inverted index instance for searching
 	 */
-	InvertedIndex indexer;
+	private final InvertedIndex indexer;
 
 	/**
 	 * Constructs a new QueryFileProcsesor with the InvertedIndex
@@ -75,9 +70,14 @@ public class QueryFileProcsesor {
 		 * this method, it should be parameters sent to the constructor of this class
 		 * and stored as final members.
 		 */
-		
-		List<String> stemmedWords = FileStemmer.listStems(queryLine); // TODO This creates a lot of stemmer objects. Use just one for the entire class!
-		List<String> query = new ArrayList<>(new HashSet<>(stemmedWords)); // TODO Can you think of better methods to reuse here in FileStemmer rather than converting your data from one type (a list) to another (a set) inefficiently multiple times?
+
+		List<String> stemmedWords = FileStemmer.listStems(queryLine); // TODO This creates a lot of stemmer objects. Use
+																		// just one for the entire class!
+		List<String> query = new ArrayList<>(new HashSet<>(stemmedWords)); // TODO Can you think of better methods to
+																			// reuse here in FileStemmer rather than
+																			// converting your data from one type (a
+																			// list) to another (a set) inefficiently
+																			// multiple times?
 		if (query.isEmpty()) {
 			return;
 		}
