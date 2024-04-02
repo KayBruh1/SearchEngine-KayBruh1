@@ -21,7 +21,7 @@ public class Driver {
 		ArgumentParser parser = new ArgumentParser(args);
 		InvertedIndex indexer = new InvertedIndex();
 		FileBuilder fileBuilder = new FileBuilder(indexer);
-		QueryFileProcsesor processor = new QueryFileProcsesor(indexer);
+		QueryFileProcsesor processor = new QueryFileProcsesor(indexer, parser.hasFlag("-partial"));
 
 		if (parser.hasFlag("-text")) {
 			Path inputPath = parser.getPath("-text");
@@ -53,7 +53,7 @@ public class Driver {
 		if (parser.hasFlag("-query")) {
 			Path queryPath = parser.getPath("-query");
 			try {
-				processor.processQueries(queryPath, parser.hasFlag("-partial"));
+				processor.processQueries(queryPath);
 			} catch (Exception e) {
 				System.out.println("Error reading the query file " + queryPath);
 			}
