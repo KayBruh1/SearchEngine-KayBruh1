@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -85,6 +86,10 @@ public class QueryFileProcsesor {
 	
     public int getTotalQueries() {
         return searchResultsMap.size();
+    }
+    
+    public Set<String> viewQuerieResults() {
+        return Collections.unmodifiableSet(searchResultsMap.keySet());
     }
 
 	@Override
