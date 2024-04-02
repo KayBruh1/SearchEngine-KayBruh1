@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import opennlp.tools.stemmer.snowball.SnowballStemmer;
@@ -38,6 +39,10 @@ public class QueryFileProcsesor {
 		this.indexer = indexer;
 		this.searchResultsMap = new TreeMap<>();
 		this.stemmer = new SnowballStemmer(SnowballStemmer.ALGORITHM.ENGLISH);
+	}
+
+	public List<InvertedIndex.SearchResult> search(Set<String> queries, boolean partial) {
+		return partial ? indexer.partialSearch(queries) : indexer.exactSearch(queries);
 	}
 
 	/**
@@ -87,24 +92,7 @@ public class QueryFileProcsesor {
 		}
 		Collections.sort(query); // TODO If you needed a sorted set, what is another way to do that?
 		List<InvertedIndex.SearchResult> searchResults = null;
-		if (partial) {
-			/*
-			 * TODO This is a common if statement, make a convenience method so it is
-			 * reusable. This is similar to putIfAbsent or getOrDefault methods in maps.
-			 * This means adding something like the method below to the inverted index
-			 * class, and then calling that method here.
-			 */
-
-			/*-
-			public (list of search results) search(Set<String> queries, boolean partial) {
-				return partial ? (results from partial search) : (or results from exact search);
-			}
-			*/
-
-			searchResults = indexer.partialSearch(new HashSet<>(query));
-		} else {
-			searchResults = indexer.exactSearch(new HashSet<>(query));
-		}
+		searchResults = search(new HashSet<>(query), partial);
 		searchResultsMap.put(String.join(" ", query), searchResults);
 	}
 
