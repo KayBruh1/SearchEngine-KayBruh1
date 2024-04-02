@@ -82,6 +82,10 @@ public class QueryFileProcsesor {
 	public boolean hasSearchResults(String query) {
 		return searchResultsMap.containsKey(query);
 	}
+	
+    public int getTotalQueries() {
+        return searchResultsMap.size();
+    }
 
 	@Override
 	public String toString() {
