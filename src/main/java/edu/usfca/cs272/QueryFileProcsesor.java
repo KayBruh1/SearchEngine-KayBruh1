@@ -78,7 +78,11 @@ public class QueryFileProcsesor {
 		searchResults = search(new HashSet<>(query));
 		searchResultsMap.put(String.join(" ", query), searchResults);
 	}
-	
+
+	public boolean hasSearchResults(String query) {
+		return searchResultsMap.containsKey(query);
+	}
+
 	@Override
 	public String toString() {
 		return searchResultsMap.toString();
