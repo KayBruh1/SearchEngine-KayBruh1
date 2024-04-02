@@ -4,13 +4,12 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 import opennlp.tools.stemmer.snowball.SnowballStemmer;
 
@@ -71,16 +70,10 @@ public class QueryFileProcsesor {
 	 * @param partial   A boolean indicating whether or not to partial search
 	 */
 	public void processQueries(String queryLine) {
-		List<String> stemmedWords = FileStemmer.listStems(queryLine);
-		List<String> query = new ArrayList<>(new HashSet<>(stemmedWords)); // TODO Can you think of better methods to
-																			// reuse here in FileStemmer rather than
-																			// converting your data from one type (a
-																			// list) to another (a set) inefficiently
-																			// multiple times?
+		TreeSet<String> query = FileStemmer.uniqueStems(queryLine);
 		if (query.isEmpty()) {
 			return;
 		}
-		Collections.sort(query); // TODO If you needed a sorted set, what is another way to do that?
 		List<InvertedIndex.SearchResult> searchResults = null;
 		searchResults = search(new HashSet<>(query));
 		searchResultsMap.put(String.join(" ", query), searchResults);
