@@ -78,6 +78,11 @@ public class QueryFileProcsesor {
 		searchResults = search(new HashSet<>(query));
 		searchResultsMap.put(String.join(" ", query), searchResults);
 	}
+	
+	@Override
+	public String toString() {
+		return searchResultsMap.toString();
+	}
 
 	/**
 	 * Writes the search results to a JSON file
