@@ -51,16 +51,6 @@ public class QueryFileProcsesor {
 	}
 
 	/**
-	 * Searches the inverted index for the specified queries
-	 * 
-	 * @param queries The set of queries to search for
-	 * @return A list of search results
-	 */
-	public List<InvertedIndex.SearchResult> search(Set<String> queries) {
-		return partial ? indexer.partialSearch(queries) : indexer.exactSearch(queries);
-	}
-
-	/**
 	 * Processes search queries from a path
 	 *
 	 * @param queryPath The path containing search queries
@@ -90,6 +80,22 @@ public class QueryFileProcsesor {
 		searchResultsMap.put(String.join(" ", query), searchResults);
 	}
 
+	/**
+	 * Searches the inverted index for the specified queries
+	 * 
+	 * @param queries The set of queries to search for
+	 * @return A list of search results
+	 */
+	public List<InvertedIndex.SearchResult> search(Set<String> queries) {
+		return partial ? indexer.partialSearch(queries) : indexer.exactSearch(queries);
+	}
+
+	/**
+	 * Adds search results for a specific query
+	 * 
+	 * @param query         The query to add results for
+	 * @param searchResults The list of search results to add
+	 */
 	public void addSearchResults(String query, List<InvertedIndex.SearchResult> searchResults) {
 		searchResultsMap.put(query, searchResults);
 	}
