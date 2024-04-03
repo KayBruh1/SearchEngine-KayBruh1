@@ -41,7 +41,7 @@ public class QueryFileProcsesor {
 	 * Constructs a new QueryFileProcsesor with the InvertedIndex
 	 *
 	 * @param indexer The InvertedIndex instance for searching
-	 * @param partial  boolean for partial search or not
+	 * @param partial boolean for partial search or not
 	 */
 	public QueryFileProcsesor(InvertedIndex indexer, boolean partial) {
 		this.indexer = indexer;
@@ -50,6 +50,12 @@ public class QueryFileProcsesor {
 		this.partial = partial;
 	}
 
+	/**
+	 * Searches the inverted index for the specified queries
+	 * 
+	 * @param queries The set of queries to search for
+	 * @return A list of search results
+	 */
 	public List<InvertedIndex.SearchResult> search(Set<String> queries) {
 		return partial ? indexer.partialSearch(queries) : indexer.exactSearch(queries);
 	}
