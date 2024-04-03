@@ -119,6 +119,11 @@ public class QueryFileProcsesor {
 		return searchResultsMap.size();
 	}
 
+	/**
+	 * Returns an unmodifiable set containing the queries for search results
+	 *
+	 * @return An unmodifiable set containing the queries for search results
+	 */
 	public Set<String> viewQueryResults() {
 		return Collections.unmodifiableSet(searchResultsMap.keySet());
 	}
