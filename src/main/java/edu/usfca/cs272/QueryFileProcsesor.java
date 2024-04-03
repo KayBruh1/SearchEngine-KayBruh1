@@ -100,6 +100,12 @@ public class QueryFileProcsesor {
 		searchResultsMap.put(query, searchResults);
 	}
 
+	/**
+	 * Checks if search results exist for a query
+	 *
+	 * @param query The query to check results for
+	 * @return True if search results exist, false otherwise
+	 */
 	public boolean hasSearchResults(String query) {
 		return searchResultsMap.containsKey(query);
 	}
