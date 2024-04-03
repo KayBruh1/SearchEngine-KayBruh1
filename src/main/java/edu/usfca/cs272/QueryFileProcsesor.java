@@ -128,11 +128,6 @@ public class QueryFileProcsesor {
 		return Collections.unmodifiableSet(searchResultsMap.keySet());
 	}
 
-	@Override
-	public String toString() {
-		return searchResultsMap.toString();
-	}
-
 	/**
 	 * Writes the search results to a JSON file
 	 * 
@@ -141,5 +136,15 @@ public class QueryFileProcsesor {
 	 */
 	public void writeResults(String resultsPath) throws IOException {
 		JsonWriter.writeResults(searchResultsMap, resultsPath);
+	}
+
+	/**
+	 * Returns a string representation of the search results map
+	 * 
+	 * @return a string representation of the search results map
+	 */
+	@Override
+	public String toString() {
+		return searchResultsMap.toString();
 	}
 }
