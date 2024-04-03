@@ -32,6 +32,9 @@ public class QueryFileProcsesor {
 	 */
 	private final SnowballStemmer stemmer;
 
+	/**
+	 * A boolean indicating whether or not to partial search
+	 */
 	private final boolean partial;
 
 	/**
@@ -54,7 +57,6 @@ public class QueryFileProcsesor {
 	 * Processes search queries from a path
 	 *
 	 * @param queryPath The path containing search queries
-	 * @param partial   A boolean indicating whether or not to partial search
 	 * @throws IOException If an I/O error occurs
 	 */
 	public void processQueries(Path queryPath) throws IOException {
