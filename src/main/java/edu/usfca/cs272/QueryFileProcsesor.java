@@ -110,6 +110,11 @@ public class QueryFileProcsesor {
 		return searchResultsMap.containsKey(query);
 	}
 
+	/**
+	 * Returns the total number processed queries
+	 *
+	 * @return The total number of processed queries
+	 */
 	public int getTotalQueries() {
 		return searchResultsMap.size();
 	}
