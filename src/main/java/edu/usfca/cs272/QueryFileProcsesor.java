@@ -80,17 +80,21 @@ public class QueryFileProcsesor {
 		searchResultsMap.put(String.join(" ", query), searchResults);
 	}
 
+	public void addSearchResults(String query, List<InvertedIndex.SearchResult> searchResults) {
+		searchResultsMap.put(query, searchResults);
+	}
+
 	public boolean hasSearchResults(String query) {
 		return searchResultsMap.containsKey(query);
 	}
-	
-    public int getTotalQueries() {
-        return searchResultsMap.size();
-    }
-    
-    public Set<String> viewQuerieResults() {
-        return Collections.unmodifiableSet(searchResultsMap.keySet());
-    }
+
+	public int getTotalQueries() {
+		return searchResultsMap.size();
+	}
+
+	public Set<String> viewQueryResults() {
+		return Collections.unmodifiableSet(searchResultsMap.keySet());
+	}
 
 	@Override
 	public String toString() {
