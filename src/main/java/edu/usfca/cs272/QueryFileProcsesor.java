@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -28,6 +27,9 @@ public class QueryFileProcsesor {
 	 */
 	private final InvertedIndex indexer;
 
+	/**
+	 * SnowballStemmer instance for query processing word stems
+	 */
 	private final SnowballStemmer stemmer;
 
 	private final boolean partial;
@@ -68,15 +70,14 @@ public class QueryFileProcsesor {
 	 * Processes a single search query line
 	 *
 	 * @param queryLine The query line to process
-	 * @param partial   A boolean indicating whether or not to partial search
 	 */
 	public void processQueries(String queryLine) {
-		TreeSet<String> query = FileStemmer.uniqueStems(queryLine);
+		TreeSet<String> query = FileStemmer.uniqueStems(queryLine, stemmer);
 		if (query.isEmpty()) {
 			return;
 		}
 		List<InvertedIndex.SearchResult> searchResults = null;
-		searchResults = search(new HashSet<>(query));
+		searchResults = search(query);
 		searchResultsMap.put(String.join(" ", query), searchResults);
 	}
 
@@ -110,11 +111,4 @@ public class QueryFileProcsesor {
 	public void writeResults(String resultsPath) throws IOException {
 		JsonWriter.writeResults(searchResultsMap, resultsPath);
 	}
-
-	/*
-	 * TODO You have some useful data stored in this class that we might want access
-	 * to, but can only get if we write to a file. What are some other useful
-	 * methods you might add to this class?
-	 */
-
 }
