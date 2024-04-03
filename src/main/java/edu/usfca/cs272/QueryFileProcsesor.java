@@ -41,6 +41,7 @@ public class QueryFileProcsesor {
 	 * Constructs a new QueryFileProcsesor with the InvertedIndex
 	 *
 	 * @param indexer The InvertedIndex instance for searching
+	 * @param partial  boolean for partial search or not
 	 */
 	public QueryFileProcsesor(InvertedIndex indexer, boolean partial) {
 		this.indexer = indexer;
