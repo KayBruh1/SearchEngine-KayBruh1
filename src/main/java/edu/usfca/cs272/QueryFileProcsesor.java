@@ -84,22 +84,6 @@ public class QueryFileProcsesor {
 	}
 
 	/**
-	 * Adds search results for a specific query
-	 * 
-	 * @param query         The query to add results for
-	 * @param searchResults The list of search results to add
-	 */
-	public void addSearchResults(String query, List<InvertedIndex.SearchResult> searchResults) {
-		/*
-		 * TODO Remove this. You already have a method that adds to your data
-		 * structure... that is the processQueries method. This one allows for arbitrary
-		 * results from any index to overwrite the correctly calculated results from the
-		 * index.
-		 */
-		searchResultsMap.put(query, searchResults);
-	}
-
-	/**
 	 * Checks if search results exist for a query
 	 *
 	 * @param query The query to check results for
