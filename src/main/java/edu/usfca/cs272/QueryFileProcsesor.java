@@ -87,32 +87,13 @@ public class QueryFileProcsesor {
 	/**
 	 * Checks if search results exist for a query
 	 *
-	 * @param query The query to check results for
+	 * @param queryLine The query to check results for
 	 * @return True if search results exist, false otherwise
 	 */
-	public boolean hasSearchResults(String query) {
-		/*
-		 * TODO: The processing done to a query line before storing the results in your
-		 * map (using the joined unique stems as the key, not the original query line)
-		 * is not visible outside of the method or to the user of this method.
-		 * 
-		 * For example a user might search for "44FOUR44 66SIX66" but that is stored as
-		 * "four six" in your map. The user has no idea that processing happened to the
-		 * query, so they are going to call this method with the unprocessed
-		 * "44FOUR44 66SIX66" version of the query line.
-		 * 
-		 * That means your code needs to do one of the following:
-		 * 
-		 * 1) Make that process visible via another public method and update the Javadoc
-		 * to make it clear it must be called first.
-		 * 
-		 * 2) Repeat that process to the line before accessing the results in this
-		 * method and any other that accesses the map of results by a key. (Therefore,
-		 * stem and join "44FOUR44 66SIX66" into "four six" instead before doing the
-		 * containsKey.)
-		 */
-
-		return searchResultsMap.containsKey(query);
+	public boolean hasSearchResults(String queryLine) {
+	    TreeSet<String> query = FileStemmer.uniqueStems(queryLine, stemmer);
+	    String queryVal = String.join(" ", query);
+	    return searchResultsMap.containsKey(queryVal);
 	}
 
 	/**
