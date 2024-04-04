@@ -84,6 +84,12 @@ public class FileBuilder {
 			while ((line = reader.readLine()) != null) {
 				String[] words = FileStemmer.parse(line);
 				for (String word : words) {
+					/*
+					 * TODO Looks like this slipped past project 1 code reviews. You should NOT call listStems
+					 * at all in this class. That is the point of replicating all of this code from FileStemmer.
+					 * Your code is sitll copying words into a list, and then into the index. Remove this call,
+					 * and figure out how you can stem inside of this method instead.
+					 */
 					List<String> stems = FileStemmer.listStems(word);
 					for (String stemmedWord : stems) {
 						position += 1;
