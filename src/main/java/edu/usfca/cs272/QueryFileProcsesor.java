@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -115,6 +116,25 @@ public class QueryFileProcsesor {
 	}
 
 	/**
+	 * Gets the search results for a query line
+	 *
+	 * @param queryLine The query line for search results
+	 * @return The search results for the query line
+	 */
+	public List<InvertedIndex.SearchResult> getQueryLineResults(String queryLine) {
+		TreeSet<String> query = FileStemmer.uniqueStems(queryLine, stemmer);
+		if (query.isEmpty()) {
+			return Collections.emptyList();
+		}
+		String queryVal = String.join(" ", query);
+		List<InvertedIndex.SearchResult> results = searchResultsMap.get(queryVal);
+		if (results == null) {
+			return Collections.emptyList();
+		}
+		return new ArrayList<>(results);
+	}
+
+	/**
 	 * Returns the total number processed queries
 	 *
 	 * @return The total number of processed queries
@@ -131,8 +151,6 @@ public class QueryFileProcsesor {
 	public Set<String> viewQueryResults() {
 		return Collections.unmodifiableSet(searchResultsMap.keySet());
 	}
-
-	// TODO Add one to get search results for a query line
 
 	/**
 	 * Writes the search results to a JSON file
