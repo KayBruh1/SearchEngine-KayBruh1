@@ -75,7 +75,22 @@ public class QueryFileProcsesor {
 		if (query.isEmpty()) {
 			return;
 		}
-		List<InvertedIndex.SearchResult> searchResults = null;
+		/*
+		 * TODO Do we need to re-search for the same query line multiple times?
+		 * 
+		 * Consider the respect.txt query file and its expected search results. How many
+		 * query lines do you see in the query file? How many query lines do you see in
+		 * the search results? Do you need to repeat search for every query line in that
+		 * respect.txt query file?
+		 * 
+		 * The files in question are linked below. What could you do here to avoid
+		 * reconducting a search that you already have results for?
+		 */
+
+		// TODO respect.txt: https://github.com/usf-cs272-spring2024/project-tests/blob/main/input/query/respect.txt
+		// TODO results: https://github.com/usf-cs272-spring2024/project-tests/blob/main/expected-nix/exact/exact-respect-stems.json 
+		
+		List<InvertedIndex.SearchResult> searchResults = null; // TODO No need to do this on two lines, declare and define on the same line!
 		searchResults = search(query);
 		searchResultsMap.put(String.join(" ", query), searchResults);
 	}
@@ -86,7 +101,7 @@ public class QueryFileProcsesor {
 	 * @param queries The set of queries to search for
 	 * @return A list of search results
 	 */
-	public List<InvertedIndex.SearchResult> search(Set<String> queries) {
+	public List<InvertedIndex.SearchResult> search(Set<String> queries) { // TODO This needs to be a method in the inverted index, not here. It has nothign to do with the query file, but everythign to do with the search methods implemented in the inverted index.
 		return partial ? indexer.partialSearch(queries) : indexer.exactSearch(queries);
 	}
 
@@ -97,6 +112,12 @@ public class QueryFileProcsesor {
 	 * @param searchResults The list of search results to add
 	 */
 	public void addSearchResults(String query, List<InvertedIndex.SearchResult> searchResults) {
+		/*
+		 * TODO Remove this. You already have a method that adds to your data
+		 * structure... that is the processQueries method. This one allows for arbitrary
+		 * results from any index to overwrite the correctly calculated results from the
+		 * index.
+		 */
 		searchResultsMap.put(query, searchResults);
 	}
 
@@ -107,6 +128,27 @@ public class QueryFileProcsesor {
 	 * @return True if search results exist, false otherwise
 	 */
 	public boolean hasSearchResults(String query) {
+		/*
+		 * TODO: The processing done to a query line before storing the results in your
+		 * map (using the joined unique stems as the key, not the original query line)
+		 * is not visible outside of the method or to the user of this method.
+		 * 
+		 * For example a user might search for "44FOUR44 66SIX66" but that is stored as
+		 * "four six" in your map. The user has no idea that processing happened to the
+		 * query, so they are going to call this method with the unprocessed
+		 * "44FOUR44 66SIX66" version of the query line.
+		 * 
+		 * That means your code needs to do one of the following:
+		 * 
+		 * 1) Make that process visible via another public method and update the Javadoc
+		 * to make it clear it must be called first.
+		 * 
+		 * 2) Repeat that process to the line before accessing the results in this
+		 * method and any other that accesses the map of results by a key. (Therefore,
+		 * stem and join "44FOUR44 66SIX66" into "four six" instead before doing the
+		 * containsKey.)
+		 */
+
 		return searchResultsMap.containsKey(query);
 	}
 
@@ -127,6 +169,8 @@ public class QueryFileProcsesor {
 	public Set<String> viewQueryResults() {
 		return Collections.unmodifiableSet(searchResultsMap.keySet());
 	}
+	
+	// TODO Add one to get search results for a query line
 
 	/**
 	 * Writes the search results to a JSON file
