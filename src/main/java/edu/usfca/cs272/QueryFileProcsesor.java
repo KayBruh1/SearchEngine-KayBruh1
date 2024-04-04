@@ -85,15 +85,25 @@ public class QueryFileProcsesor {
 	}
 
 	/**
+	 * Process query line to a stemmed query
+	 * 
+	 * @param queryLine The query line to process
+	 * @return The stemmed query
+	 */
+	private String processQueryLine(String queryLine) {
+		TreeSet<String> query = FileStemmer.uniqueStems(queryLine, stemmer);
+		return String.join(" ", query);
+	}
+
+	/**
 	 * Checks if search results exist for a query
 	 *
 	 * @param queryLine The query to check results for
 	 * @return True if search results exist, false otherwise
 	 */
 	public boolean hasSearchResults(String queryLine) {
-	    TreeSet<String> query = FileStemmer.uniqueStems(queryLine, stemmer);
-	    String queryVal = String.join(" ", query);
-	    return searchResultsMap.containsKey(queryVal);
+		String queryVal = processQueryLine(queryLine);
+		return searchResultsMap.containsKey(queryVal);
 	}
 
 	/**
@@ -103,16 +113,12 @@ public class QueryFileProcsesor {
 	 * @return The search results for the query line
 	 */
 	public List<InvertedIndex.SearchResult> getQueryLineResults(String queryLine) {
-		TreeSet<String> query = FileStemmer.uniqueStems(queryLine, stemmer);
-		if (query.isEmpty()) {
-			return Collections.emptyList();
-		}
-		String queryVal = String.join(" ", query);
+		String queryVal = processQueryLine(queryLine);
 		List<InvertedIndex.SearchResult> results = searchResultsMap.get(queryVal);
 		if (results == null) {
 			return Collections.emptyList();
 		}
-		return new ArrayList<>(results);
+		return Collections.unmodifiableList(new ArrayList<>(results));
 	}
 
 	/**
