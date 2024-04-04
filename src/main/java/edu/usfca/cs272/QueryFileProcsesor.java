@@ -91,18 +91,8 @@ public class QueryFileProcsesor {
 		// TODO results: https://github.com/usf-cs272-spring2024/project-tests/blob/main/expected-nix/exact/exact-respect-stems.json 
 		
 		List<InvertedIndex.SearchResult> searchResults = null; // TODO No need to do this on two lines, declare and define on the same line!
-		searchResults = search(query);
+		searchResults = indexer.search(query, partial);
 		searchResultsMap.put(String.join(" ", query), searchResults);
-	}
-
-	/**
-	 * Searches the inverted index for the specified queries
-	 * 
-	 * @param queries The set of queries to search for
-	 * @return A list of search results
-	 */
-	public List<InvertedIndex.SearchResult> search(Set<String> queries) { // TODO This needs to be a method in the inverted index, not here. It has nothign to do with the query file, but everythign to do with the search methods implemented in the inverted index.
-		return partial ? indexer.partialSearch(queries) : indexer.exactSearch(queries);
 	}
 
 	/**

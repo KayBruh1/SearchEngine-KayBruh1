@@ -32,6 +32,15 @@ public class Driver {
 			}
 		}
 
+		if (parser.hasFlag("-query")) {
+			Path queryPath = parser.getPath("-query");
+			try {
+				processor.processQueries(queryPath);
+			} catch (Exception e) {
+				System.out.println("Error reading the query file " + queryPath);
+			}
+		}
+
 		if (parser.hasFlag("-counts")) {
 			Path countsPath = parser.getPath("-counts", Path.of("counts.json"));
 			try {
@@ -47,15 +56,6 @@ public class Driver {
 				indexer.writeIndex(indexPath);
 			} catch (Exception e) {
 				System.out.println("Error building the inverted index " + indexPath);
-			}
-		}
-
-		if (parser.hasFlag("-query")) { // TODO Move this after -text block, so all the operations that read files are grouped before the ones that write files
-			Path queryPath = parser.getPath("-query");
-			try {
-				processor.processQueries(queryPath);
-			} catch (Exception e) {
-				System.out.println("Error reading the query file " + queryPath);
 			}
 		}
 
