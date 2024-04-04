@@ -50,7 +50,7 @@ public class Driver {
 			}
 		}
 
-		if (parser.hasFlag("-query")) {
+		if (parser.hasFlag("-query")) { // TODO Move this after -text block, so all the operations that read files are grouped before the ones that write files
 			Path queryPath = parser.getPath("-query");
 			try {
 				processor.processQueries(queryPath);
