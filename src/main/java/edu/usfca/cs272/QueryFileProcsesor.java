@@ -75,24 +75,12 @@ public class QueryFileProcsesor {
 		if (query.isEmpty()) {
 			return;
 		}
-		/*
-		 * TODO Do we need to re-search for the same query line multiple times?
-		 * 
-		 * Consider the respect.txt query file and its expected search results. How many
-		 * query lines do you see in the query file? How many query lines do you see in
-		 * the search results? Do you need to repeat search for every query line in that
-		 * respect.txt query file?
-		 * 
-		 * The files in question are linked below. What could you do here to avoid
-		 * reconducting a search that you already have results for?
-		 */
-
-		// TODO respect.txt: https://github.com/usf-cs272-spring2024/project-tests/blob/main/input/query/respect.txt
-		// TODO results: https://github.com/usf-cs272-spring2024/project-tests/blob/main/expected-nix/exact/exact-respect-stems.json 
-		
-		List<InvertedIndex.SearchResult> searchResults = null; // TODO No need to do this on two lines, declare and define on the same line!
-		searchResults = indexer.search(query, partial);
-		searchResultsMap.put(String.join(" ", query), searchResults);
+		String queryVal = String.join(" ", query);
+		if (searchResultsMap.get(queryVal) != null) {
+			return;
+		}
+		List<InvertedIndex.SearchResult> searchResults = indexer.search(query, partial);
+		searchResultsMap.put(queryVal, searchResults);
 	}
 
 	/**
@@ -159,7 +147,7 @@ public class QueryFileProcsesor {
 	public Set<String> viewQueryResults() {
 		return Collections.unmodifiableSet(searchResultsMap.keySet());
 	}
-	
+
 	// TODO Add one to get search results for a query line
 
 	/**
