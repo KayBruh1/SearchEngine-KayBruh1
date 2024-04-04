@@ -482,6 +482,10 @@ public class JsonWriter {
 	 */
 	public static void writeResults(Map<String, List<InvertedIndex.SearchResult>> results, String outputPath)
 			throws IOException {
+		/*
+		 * TODO Redesign this method to make it more reusable. Apply what you have learned from JsonWriter so far!
+		 */
+		
 		DecimalFormat formatter = new DecimalFormat("0.00000000");
 		try (BufferedWriter writer = new BufferedWriter(new FileWriter(outputPath))) {
 			writer.write("{\n");
