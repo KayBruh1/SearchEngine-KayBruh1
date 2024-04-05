@@ -35,10 +35,6 @@ public class CustomWorkQueue {
 	private static final Logger log = LogManager.getLogger();
 
 	int pending;
-
-	// TODO Modify existing methods if necessary.
-	// TODO Add new members and methods if necessary.
-
 	/**
 	 * Starts a work queue with the default number of threads.
 	 *
