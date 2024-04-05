@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -118,7 +117,7 @@ public class QueryFileProcsesor {
 		if (results == null) {
 			return Collections.emptyList();
 		}
-		return Collections.unmodifiableList(new ArrayList<>(results));
+		return Collections.unmodifiableList(results);
 	}
 
 	/**
