@@ -1,19 +1,22 @@
 package edu.usfca.cs272;
 
 public class ThreadSafeInvertedIndex extends InvertedIndex {
-    private final CustomrReadWriteLock lock;
+	private final CustomrReadWriteLock lock;
 
-    public ThreadSafeInvertedIndex() {
-        this.lock = new CustomrReadWriteLock();
-    }
+	private final InvertedIndex indexer;
 
-    @Override
+	public ThreadSafeInvertedIndex(InvertedIndex indexer) {
+		this.lock = new CustomrReadWriteLock();
+		this.indexer = indexer;
+	}
+
+	@Override
 	public void addWord(String word, String location, int position) {
-        lock.writeLock().lock();
-        try {
-            super.addWord(word, location, position);
-        } finally {
-            lock.writeLock().unlock();
-        }
-    }
+		lock.writeLock().lock();
+		try {
+			indexer.addWord(word, location, position);
+		} finally {
+			lock.writeLock().unlock();
+		}
+	}
 }

@@ -39,12 +39,13 @@ public class Driver {
 			}
 
 			CustomWorkQueue workQueue = new CustomWorkQueue(numThreads);
+			ThreadedFileBuilder builder = new ThreadedFileBuilder(indexer);
 
 			if (parser.hasFlag("-text")) {
 				Path inputPath = parser.getPath("-text");
 				workQueue.execute(() -> {
 					try {
-						fileBuilder.buildStructures(inputPath);
+						builder.buildStructures(inputPath);
 					} catch (Exception e) {
 						System.out.println("Error building the structures " + inputPath);
 					}
