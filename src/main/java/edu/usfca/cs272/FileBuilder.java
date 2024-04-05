@@ -49,7 +49,7 @@ public class FileBuilder {
 	 * @param inputPath The path of the file or directory to be processed
 	 * @throws IOException If an I/O error occurs
 	 */
-	public void buildStructures(Path inputPath) throws IOException {
+	public synchronized void buildStructures(Path inputPath) throws IOException {
 		if (Files.isDirectory(inputPath)) {
 			processDirectory(inputPath);
 		} else {
@@ -64,7 +64,7 @@ public class FileBuilder {
 	 * @param directory The directory to process
 	 * @throws IOException If an I/O error occurs
 	 */
-	public void processDirectory(Path directory) throws IOException {
+	public synchronized void processDirectory(Path directory) throws IOException {
 		try (DirectoryStream<Path> listing = Files.newDirectoryStream(directory)) {
 			for (Path path : listing) {
 				if (Files.isDirectory(path)) {
@@ -84,7 +84,7 @@ public class FileBuilder {
 	 * @param location The path of the file to process
 	 * @throws IOException If an I/O error occurs
 	 */
-	public void processFile(Path location) throws IOException {
+	public synchronized void processFile(Path location) throws IOException {
 		int position = 0;
 		String locationString = location.toString();
 		try (BufferedReader reader = Files.newBufferedReader(location)) {
