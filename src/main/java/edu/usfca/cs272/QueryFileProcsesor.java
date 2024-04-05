@@ -145,7 +145,7 @@ public class QueryFileProcsesor {
 	 * @param resultsPath the output path of the JSON file
 	 * @throws IOException if an I/O error occurs
 	 */
-	public void writeResults(String resultsPath) throws IOException {
+	public void writeResults(Path resultsPath) throws IOException {
 		JsonWriter.writeResults(searchResultsMap, resultsPath);
 	}
 

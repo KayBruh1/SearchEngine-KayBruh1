@@ -60,7 +60,7 @@ public class Driver {
 		}
 
 		if (parser.hasFlag("-results")) {
-			String resultsPath = parser.getString("-results", "results.json");
+			Path resultsPath = parser.getPath("-results", Path.of("results.json"));
 			try {
 				processor.writeResults(resultsPath);
 			} catch (Exception e) {
