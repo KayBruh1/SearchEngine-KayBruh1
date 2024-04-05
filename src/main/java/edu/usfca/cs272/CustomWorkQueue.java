@@ -60,15 +60,6 @@ public class CustomWorkQueue {
 			workers[i].start();
 		}
 	}
-	
-	public void waitForCompletion() throws InterruptedException {
-	    synchronized (tasks) {
-	        while (pending > 0) {
-	            tasks.wait();
-	        }
-	    }
-	}
-
 
 	/**
 	 * Adds a work (or task) request to the queue. A worker thread will process this

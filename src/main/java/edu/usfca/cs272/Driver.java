@@ -37,6 +37,40 @@ public class Driver {
 						"Invalid number of threads specified. Using default value: " + CustomWorkQueue.DEFAULT);
 				numThreads = CustomWorkQueue.DEFAULT;
 			}
+
+			CustomWorkQueue workQueue = new CustomWorkQueue(numThreads);
+
+			if (parser.hasFlag("-text")) {
+				Path inputPath = parser.getPath("-text");
+				workQueue.execute(() -> {
+					try {
+						fileBuilder.buildStructures(inputPath);
+					} catch (Exception e) {
+						System.out.println("Error building the structures " + inputPath);
+					}
+				});
+			}
+			
+			workQueue.finish();
+			workQueue.shutdown();
+
+			if (parser.hasFlag("-counts")) {
+				Path countsPath = parser.getPath("-counts", Path.of("counts.json"));
+				try {
+					indexer.writeCounts(countsPath);
+				} catch (Exception e) {
+					System.out.println("Error building the file word counts " + countsPath);
+				}
+			}
+
+			if (parser.hasFlag("-index")) {
+				Path indexPath = parser.getPath("-index", Path.of("index.json"));
+				try {
+					indexer.writeIndex(indexPath);
+				} catch (Exception e) {
+					System.out.println("Error building the inverted index " + indexPath);
+				}
+			}
 		} else {
 			if (parser.hasFlag("-text")) {
 				Path inputPath = parser.getPath("-text");
