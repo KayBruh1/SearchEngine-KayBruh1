@@ -1,3 +1,4 @@
+
 package edu.usfca.cs272;
 
 import java.io.BufferedReader;
@@ -5,7 +6,8 @@ import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
+
+import opennlp.tools.stemmer.snowball.SnowballStemmer;
 
 /**
  * Class for building and processing files/directories to generate word counts
@@ -18,12 +20,18 @@ public class FileBuilder {
 	private final InvertedIndex indexer;
 
 	/**
+	 * SnowballStemmer instance for stemming
+	 */
+	private final SnowballStemmer stemmer;
+
+	/**
 	 * Creates a new FileBuilder object with the InvertedIndex
 	 *
 	 * @param indexer the InvertedIndex object
 	 */
 	public FileBuilder(InvertedIndex indexer) {
 		this.indexer = indexer;
+		this.stemmer = new SnowballStemmer(SnowballStemmer.ALGORITHM.ENGLISH);
 	}
 
 	/**
@@ -84,11 +92,9 @@ public class FileBuilder {
 			while ((line = reader.readLine()) != null) {
 				String[] words = FileStemmer.parse(line);
 				for (String word : words) {
-					List<String> stems = FileStemmer.listStems(word);
-					for (String stemmedWord : stems) {
-						position += 1;
-						indexer.addWord(stemmedWord, locationString, position);
-					}
+					String stemmedWord = stemmer.stem(word).toString();
+					position += 1;
+					indexer.addWord(stemmedWord, locationString, position);
 				}
 			}
 		}

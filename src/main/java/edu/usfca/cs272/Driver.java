@@ -1,3 +1,4 @@
+
 package edu.usfca.cs272;
 
 import java.nio.file.Path;
@@ -32,6 +33,15 @@ public class Driver {
 			}
 		}
 
+		if (parser.hasFlag("-query")) {
+			Path queryPath = parser.getPath("-query");
+			try {
+				processor.processQueries(queryPath);
+			} catch (Exception e) {
+				System.out.println("Error reading the query file " + queryPath);
+			}
+		}
+
 		if (parser.hasFlag("-counts")) {
 			Path countsPath = parser.getPath("-counts", Path.of("counts.json"));
 			try {
@@ -50,17 +60,8 @@ public class Driver {
 			}
 		}
 
-		if (parser.hasFlag("-query")) {
-			Path queryPath = parser.getPath("-query");
-			try {
-				processor.processQueries(queryPath);
-			} catch (Exception e) {
-				System.out.println("Error reading the query file " + queryPath);
-			}
-		}
-
 		if (parser.hasFlag("-results")) {
-			String resultsPath = parser.getString("-results", "results.json");
+			Path resultsPath = parser.getPath("-results", Path.of("results.json"));
 			try {
 				processor.writeResults(resultsPath);
 			} catch (Exception e) {

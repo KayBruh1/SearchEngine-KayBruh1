@@ -1,9 +1,11 @@
+
 package edu.usfca.cs272;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -75,39 +77,49 @@ public class QueryFileProcsesor {
 		if (query.isEmpty()) {
 			return;
 		}
-		List<InvertedIndex.SearchResult> searchResults = null;
-		searchResults = search(query);
-		searchResultsMap.put(String.join(" ", query), searchResults);
+		String queryVal = String.join(" ", query);
+		if (searchResultsMap.get(queryVal) != null) {
+			return;
+		}
+		List<InvertedIndex.SearchResult> searchResults = indexer.search(query, partial);
+		searchResultsMap.put(queryVal, searchResults);
 	}
 
 	/**
-	 * Searches the inverted index for the specified queries
+	 * Process query line to a stemmed query
 	 * 
-	 * @param queries The set of queries to search for
-	 * @return A list of search results
+	 * @param queryLine The query line to process
+	 * @return The stemmed query
 	 */
-	public List<InvertedIndex.SearchResult> search(Set<String> queries) {
-		return partial ? indexer.partialSearch(queries) : indexer.exactSearch(queries);
-	}
-
-	/**
-	 * Adds search results for a specific query
-	 * 
-	 * @param query         The query to add results for
-	 * @param searchResults The list of search results to add
-	 */
-	public void addSearchResults(String query, List<InvertedIndex.SearchResult> searchResults) {
-		searchResultsMap.put(query, searchResults);
+	private String processQueryLine(String queryLine) {
+		TreeSet<String> query = FileStemmer.uniqueStems(queryLine, stemmer);
+		return String.join(" ", query);
 	}
 
 	/**
 	 * Checks if search results exist for a query
 	 *
-	 * @param query The query to check results for
+	 * @param queryLine The query to check results for
 	 * @return True if search results exist, false otherwise
 	 */
-	public boolean hasSearchResults(String query) {
-		return searchResultsMap.containsKey(query);
+	public boolean hasSearchResults(String queryLine) {
+		String queryVal = processQueryLine(queryLine);
+		return searchResultsMap.containsKey(queryVal);
+	}
+
+	/**
+	 * Gets the search results for a query line
+	 *
+	 * @param queryLine The query line for search results
+	 * @return The search results for the query line
+	 */
+	public List<InvertedIndex.SearchResult> getQueryLineResults(String queryLine) {
+		String queryVal = processQueryLine(queryLine);
+		List<InvertedIndex.SearchResult> results = searchResultsMap.get(queryVal);
+		if (results == null) {
+			return Collections.emptyList();
+		}
+		return Collections.unmodifiableList(new ArrayList<>(results));
 	}
 
 	/**
@@ -134,7 +146,7 @@ public class QueryFileProcsesor {
 	 * @param resultsPath the output path of the JSON file
 	 * @throws IOException if an I/O error occurs
 	 */
-	public void writeResults(String resultsPath) throws IOException {
+	public void writeResults(Path resultsPath) throws IOException {
 		JsonWriter.writeResults(searchResultsMap, resultsPath);
 	}
 

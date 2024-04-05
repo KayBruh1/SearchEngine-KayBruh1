@@ -1,3 +1,4 @@
+
 package edu.usfca.cs272;
 
 import java.io.IOException;
@@ -232,6 +233,17 @@ public class InvertedIndex {
 	@Override
 	public String toString() {
 		return invertedIndex.toString();
+	}
+
+	/**
+	 * Searches the inverted index for the specified queries
+	 * 
+	 * @param queries The set of queries to search for
+	 * @param partial Boolean for whether or not to partial search
+	 * @return A list of search results
+	 */
+	public List<InvertedIndex.SearchResult> search(Set<String> queries, boolean partial) {
+		return partial ? partialSearch(queries) : exactSearch(queries);
 	}
 
 	/**
