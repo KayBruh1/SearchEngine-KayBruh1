@@ -7,7 +7,7 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class CustomrReadWriteLock{
+public class CustomReadWriteLock{
 	/** The conditional lock used for reading. */
 	private final SimpleLock readerLock;
 
@@ -39,7 +39,7 @@ public class CustomrReadWriteLock{
 	/**
 	 * Initializes a new simple read/write lock.
 	 */
-	public CustomrReadWriteLock() {
+	public CustomReadWriteLock() {
 		readerLock = new ReadLock();
 		writerLock = new WriteLock();
 
