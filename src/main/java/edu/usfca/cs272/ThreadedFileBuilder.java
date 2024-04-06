@@ -43,17 +43,8 @@ public class ThreadedFileBuilder {
 		listFiles(directory, paths);
 
 		for (Path path : paths) {
-			workQueue.execute(() -> {
-				try {
-					processFile(path);
-				} catch (IOException e) {
-					System.out.println("Error processing file: " + path);
-				}
-			});
+			workQueue.execute(new FileTask(path));
 		}
-
-		workQueue.finish();
-		workQueue.shutdown();
 	}
 
 	private void listFiles(Path directory, Set<Path> paths) {
