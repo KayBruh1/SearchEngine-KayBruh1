@@ -1,4 +1,5 @@
 
+
 package edu.usfca.cs272;
 
 import java.nio.file.Path;
@@ -39,7 +40,7 @@ public class Driver {
 			}
 
 			CustomWorkQueue workQueue = new CustomWorkQueue(numThreads);
-			ThreadedFileBuilder builder = new ThreadedFileBuilder(indexer);
+			ThreadedFileBuilder builder = new ThreadedFileBuilder(indexer, numThreads);
 
 			if (parser.hasFlag("-text")) {
 				Path inputPath = parser.getPath("-text");

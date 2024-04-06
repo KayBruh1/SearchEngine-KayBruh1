@@ -5,82 +5,108 @@ import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import opennlp.tools.stemmer.snowball.SnowballStemmer;
 
 public class ThreadedFileBuilder {
-	/**
-	 * The InvertedIndex class used for storing word counts and the inverted index
-	 */
 	private final ThreadSafeInvertedIndex indexer;
-
-	/**
-	 * SnowballStemmer instance for stemming
-	 */
 	private final SnowballStemmer stemmer;
+	private final CustomWorkQueue workQueue;
 
-	/**
-	 * Creates a new FileBuilder object with the InvertedIndex
-	 *
-	 * @param indexer the InvertedIndex object
-	 */
-	public ThreadedFileBuilder(InvertedIndex indexer) {
+	public ThreadedFileBuilder(InvertedIndex indexer, int numThreads) {
 		this.indexer = new ThreadSafeInvertedIndex(indexer);
 		this.stemmer = new SnowballStemmer(SnowballStemmer.ALGORITHM.ENGLISH);
+		this.workQueue = new CustomWorkQueue(numThreads);
 	}
 
-    public void buildStructures(Path inputPath) throws IOException, InterruptedException {
-        if (Files.isDirectory(inputPath)) {
-            processDirectory(inputPath);
-        } else {
-            processFile(inputPath);
-        }
-    }
+	public void buildStructures(Path inputPath) throws InterruptedException {
+		if (Files.isDirectory(inputPath)) {
+			processDirectory(inputPath);
+		} else {
+			workQueue.execute(() -> {
+				try {
+					processFile(inputPath);
+				} catch (IOException e) {
+					System.out.println("Error processing file: " + inputPath);
+				}
+			});
+		}
 
-    public void processDirectory(Path directory) throws IOException, InterruptedException {
-        try (DirectoryStream<Path> listing = Files.newDirectoryStream(directory)) {
-            List<Thread> threads = new ArrayList<>();
-            for (Path path : listing) {
-                if (Files.isDirectory(path)) {
-                    processDirectory(path);
-                } else {
-                    if (isTextFile(path)) {
-                        Thread thread = new Thread(() -> {
-                            try {
-                                processFile(path);
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                        });
-                        threads.add(thread);
-                        thread.start();
-                        thread.join();
-                    }
-                }
-            }
-        }
-    }
+		workQueue.finish();
+		workQueue.shutdown();
+	}
 
-    public void processFile(Path location) throws IOException {
-        String locationString = location.toString();
-        int position = 0;
-        try (BufferedReader reader = Files.newBufferedReader(location)) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] words = FileStemmer.parse(line);
-                for (String word : words) {
-                    String stemmedWord = stemmer.stem(word).toString();
-                    position++;
-                    indexer.addWord(stemmedWord, locationString, position);
-                }
-            }
-        }
-    }
+	private void processDirectory(Path directory) throws InterruptedException {
+		Set<Path> paths = new HashSet<>();
+		listFiles(directory, paths);
 
-    public boolean isTextFile(Path file) {
-        String fileName = file.getFileName().toString().toLowerCase();
-        return Files.isRegularFile(file) && (fileName.endsWith(".txt") || fileName.endsWith(".text"));
-    }
+		for (Path path : paths) {
+			workQueue.execute(() -> {
+				try {
+					processFile(path);
+				} catch (IOException e) {
+					System.out.println("Error processing file: " + path);
+				}
+			});
+		}
+
+		workQueue.finish();
+		workQueue.shutdown();
+	}
+
+	private void listFiles(Path directory, Set<Path> paths) {
+		try (DirectoryStream<Path> stream = Files.newDirectoryStream(directory)) {
+			for (Path path : stream) {
+				if (Files.isDirectory(path)) {
+					listFiles(path, paths);
+				} else {
+					if (isTextFile(path)) {
+						paths.add(path);
+					}
+				}
+			}
+		} catch (IOException e) {
+			System.out.println("Error listing files in directory: " + directory);
+		}
+	}
+
+	private class FileTask implements Runnable {
+		private final Path location;
+
+		public FileTask(Path location) {
+			this.location = location;
+		}
+
+		@Override
+		public void run() {
+			try {
+				processFile(location);
+			} catch (IOException e) {
+				System.out.println("Error processing file: " + location);
+			}
+		}
+	}
+
+	private synchronized void processFile(Path location) throws IOException {
+		int position = 0;
+		String locationString = location.toString();
+		try (BufferedReader reader = Files.newBufferedReader(location)) {
+			String line;
+			while ((line = reader.readLine()) != null) {
+				String[] words = FileStemmer.parse(line);
+				for (String word : words) {
+					String stemmedWord = stemmer.stem(word).toString();
+					position += 1;
+					indexer.addWord(stemmedWord, locationString, position);
+				}
+			}
+		}
+	}
+
+	private static boolean isTextFile(Path file) {
+		String fileName = file.getFileName().toString().toLowerCase();
+		return Files.isRegularFile(file) && (fileName.endsWith(".txt") || fileName.endsWith(".text"));
+	}
 }
