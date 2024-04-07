@@ -71,7 +71,7 @@ public class CustomWorkQueue {
 		synchronized (tasks) {
 			tasks.addLast(task);
 			tasks.notifyAll();
-			pending ++;
+			pending++;
 		}
 	}
 
