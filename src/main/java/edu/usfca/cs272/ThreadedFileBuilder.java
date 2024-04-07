@@ -5,8 +5,6 @@ import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashSet;
-import java.util.Set;
 
 import opennlp.tools.stemmer.snowball.SnowballStemmer;
 
@@ -25,13 +23,7 @@ public class ThreadedFileBuilder {
 		if (Files.isDirectory(inputPath)) {
 			processDirectory(inputPath);
 		} else {
-			workQueue.execute(() -> {
-				try {
-					processFile(inputPath);
-				} catch (IOException e) {
-					System.out.println("Error processing file: " + inputPath);
-				}
-			});
+			workQueue.execute(new FileTask(inputPath));
 		}
 
 		workQueue.finish();
@@ -39,23 +31,12 @@ public class ThreadedFileBuilder {
 	}
 
 	private void processDirectory(Path directory) throws InterruptedException {
-		Set<Path> paths = new HashSet<>();
-		listFiles(directory, paths);
-
-		for (Path path : paths) {
-			workQueue.execute(new FileTask(path));
-		}
-	}
-
-	private void listFiles(Path directory, Set<Path> paths) {
 		try (DirectoryStream<Path> stream = Files.newDirectoryStream(directory)) {
 			for (Path path : stream) {
 				if (Files.isDirectory(path)) {
-					listFiles(path, paths);
-				} else {
-					if (isTextFile(path)) {
-						paths.add(path);
-					}
+					processDirectory(path);
+				} else if (isTextFile(path)) {
+					workQueue.execute(new FileTask(path));
 				}
 			}
 		} catch (IOException e) {
@@ -89,7 +70,7 @@ public class ThreadedFileBuilder {
 				String[] words = FileStemmer.parse(line);
 				for (String word : words) {
 					String stemmedWord = stemmer.stem(word).toString();
-					position += 1;
+					position++;
 					indexer.addWord(stemmedWord, locationString, position);
 				}
 			}
