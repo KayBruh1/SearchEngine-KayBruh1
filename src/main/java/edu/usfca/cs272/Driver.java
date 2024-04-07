@@ -1,5 +1,4 @@
 
-
 package edu.usfca.cs272;
 
 import java.nio.file.Path;
@@ -39,22 +38,17 @@ public class Driver {
 				numThreads = CustomWorkQueue.DEFAULT;
 			}
 
-			CustomWorkQueue workQueue = new CustomWorkQueue(numThreads);
 			ThreadedFileBuilder builder = new ThreadedFileBuilder(indexer, numThreads);
 
 			if (parser.hasFlag("-text")) {
 				Path inputPath = parser.getPath("-text");
-				workQueue.execute(() -> {
-					try {
-						builder.buildStructures(inputPath);
-					} catch (Exception e) {
-						System.out.println("Error building the structures " + inputPath);
-					}
-				});
+				try {
+					builder.buildStructures(inputPath);
+				} catch (Exception e) {
+					System.out.println("Error building the structures " + inputPath);
+				}
+
 			}
-			
-			workQueue.finish();
-			workQueue.shutdown();
 
 			if (parser.hasFlag("-counts")) {
 				Path countsPath = parser.getPath("-counts", Path.of("counts.json"));
