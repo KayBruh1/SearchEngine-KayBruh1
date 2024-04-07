@@ -9,12 +9,12 @@ import java.nio.file.Path;
 import opennlp.tools.stemmer.snowball.SnowballStemmer;
 
 public class ThreadedFileBuilder {
-	private final ThreadSafeInvertedIndex indexer;
+	private final ThreadSafeInvertedIndex mtIndexer;
 	private final SnowballStemmer stemmer;
 	private final CustomWorkQueue workQueue;
 
 	public ThreadedFileBuilder(InvertedIndex indexer, int numThreads) {
-		this.indexer = new ThreadSafeInvertedIndex(indexer);
+		this.mtIndexer = new ThreadSafeInvertedIndex(indexer);
 		this.stemmer = new SnowballStemmer(SnowballStemmer.ALGORITHM.ENGLISH);
 		this.workQueue = new CustomWorkQueue(numThreads);
 	}
@@ -71,7 +71,7 @@ public class ThreadedFileBuilder {
 				for (String word : words) {
 					String stemmedWord = stemmer.stem(word).toString();
 					position++;
-					indexer.addWord(stemmedWord, locationString, position);
+					mtIndexer.addWord(stemmedWord, locationString, position);
 				}
 			}
 		}

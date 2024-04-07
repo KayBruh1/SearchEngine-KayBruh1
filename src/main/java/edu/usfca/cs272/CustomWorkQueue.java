@@ -71,7 +71,7 @@ public class CustomWorkQueue {
 		synchronized (tasks) {
 			tasks.addLast(task);
 			tasks.notifyAll();
-			pending += 1;
+			pending ++;
 		}
 	}
 
@@ -163,7 +163,7 @@ public class CustomWorkQueue {
 			Runnable task = null;
 
 			try {
-				while (true) {
+				while (!shutdown) {
 					synchronized (tasks) {
 						while (tasks.isEmpty() && !shutdown) {
 							tasks.wait();
@@ -187,7 +187,7 @@ public class CustomWorkQueue {
 						log.catching(Level.ERROR, e);
 					} finally {
 						synchronized (tasks) {
-							pending -= 1;
+							pending--;
 							if (pending <= 0) {
 								tasks.notifyAll();
 							}
