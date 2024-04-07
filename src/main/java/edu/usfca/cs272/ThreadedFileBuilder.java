@@ -25,7 +25,6 @@ public class ThreadedFileBuilder {
 		} else {
 			workQueue.execute(new FileTask(inputPath));
 		}
-
 		workQueue.finish();
 		workQueue.shutdown();
 	}
