@@ -27,7 +27,6 @@ public class ThreadedFileBuilder {
 		}
 
 		workQueue.finish();
-		workQueue.shutdown();
 	}
 
 	private void processDirectory(Path directory) throws InterruptedException {
