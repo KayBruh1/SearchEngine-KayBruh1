@@ -23,7 +23,7 @@ public class Driver {
 		InvertedIndex indexer = new InvertedIndex();
 
 		if (parser.hasFlag("-threads")) {
-			int numThreads = CustomWorkQueue.DEFAULT;
+			int numThreads = 5;
 			try {
 				numThreads = Integer.parseInt(parser.getString("-threads"));
 			} catch (NumberFormatException e) {
@@ -33,7 +33,7 @@ public class Driver {
 			if (numThreads < 1) {
 				System.out.println(
 						"Invalid number of threads specified. Using default value: " + CustomWorkQueue.DEFAULT);
-				numThreads = CustomWorkQueue.DEFAULT;
+				numThreads = 5;
 			}
 
 			ThreadedFileBuilder builder = new ThreadedFileBuilder(indexer, numThreads);
