@@ -21,8 +21,6 @@ public class Driver {
 	public static void main(String[] args) {
 		ArgumentParser parser = new ArgumentParser(args);
 		InvertedIndex indexer = new InvertedIndex();
-		FileBuilder fileBuilder = new FileBuilder(indexer);
-		QueryFileProcsesor processor = new QueryFileProcsesor(indexer, parser.hasFlag("-partial"));
 
 		if (parser.hasFlag("-threads")) {
 			int numThreads = CustomWorkQueue.DEFAULT;
@@ -68,6 +66,9 @@ public class Driver {
 				}
 			}
 		} else {
+			FileBuilder fileBuilder = new FileBuilder(indexer);
+			QueryFileProcsesor processor = new QueryFileProcsesor(indexer, parser.hasFlag("-partial"));
+
 			if (parser.hasFlag("-text")) {
 				Path inputPath = parser.getPath("-text");
 				try {
