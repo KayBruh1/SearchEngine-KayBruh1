@@ -35,6 +35,7 @@ public class CustomWorkQueue {
 	private static final Logger log = LogManager.getLogger();
 
 	int pending;
+
 	/**
 	 * Starts a work queue with the default number of threads.
 	 *
@@ -69,9 +70,9 @@ public class CustomWorkQueue {
 	 */
 	public void execute(Runnable task) {
 		synchronized (tasks) {
+			pending++;
 			tasks.addLast(task);
 			tasks.notifyAll();
-			pending++;
 		}
 	}
 
@@ -80,13 +81,11 @@ public class CustomWorkQueue {
 	 * worker threads so that the work queue can continue to be used.
 	 */
 	public void finish() {
-		synchronized (tasks) {
-			while (pending > 0) {
-				try {
-					tasks.wait();
-				} catch (Exception e) {
-					Thread.currentThread().interrupt();
-				}
+		while (pending > 0) {
+			try {
+				tasks.wait();
+			} catch (Exception e) {
+				Thread.currentThread().interrupt();
 			}
 		}
 	}
