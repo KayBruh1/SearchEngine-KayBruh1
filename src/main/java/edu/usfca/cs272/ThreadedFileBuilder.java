@@ -1,10 +1,10 @@
 package edu.usfca.cs272;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 
 import opennlp.tools.stemmer.snowball.SnowballStemmer;
 
@@ -60,19 +60,13 @@ public class ThreadedFileBuilder {
 		}
 	}
 
-	private synchronized void processFile(Path location) throws IOException {
-		int position = 0;
+	private void processFile(Path location) throws IOException {
 		String locationString = location.toString();
-		try (BufferedReader reader = Files.newBufferedReader(location)) {
-			String line;
-			while ((line = reader.readLine()) != null) {
-				String[] words = FileStemmer.parse(line);
-				for (String word : words) {
-					String stemmedWord = stemmer.stem(word).toString();
-					position++;
-					mtIndexer.addWord(stemmedWord, locationString, position);
-				}
-			}
+		List<String> stems = FileStemmer.listStems(location);
+		int position = 0;
+		for (String stem : stems) {
+			position++;
+			mtIndexer.addWord(stem, locationString, position);
 		}
 	}
 
