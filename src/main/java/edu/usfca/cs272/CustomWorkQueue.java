@@ -34,7 +34,7 @@ public class CustomWorkQueue {
 	/** Logger used for this class. */
 	private static final Logger log = LogManager.getLogger();
 
-	int pending;
+	private static int pending;
 
 	/**
 	 * Starts a work queue with the default number of threads.
@@ -117,11 +117,6 @@ public class CustomWorkQueue {
 	public void shutdown() {
 		// safe to do unsynchronized due to volatile keyword
 		shutdown = true;
-
-		synchronized (tasks) {
-			tasks.notifyAll();
-		}
-
 		for (Thread worker : workers) {
 			try {
 				worker.join();
