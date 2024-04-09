@@ -26,7 +26,8 @@ public class ThreadedQueryFileProcsesor {
 	/**
 	 * Inverted index instance for searching
 	 */
-	private final InvertedIndex indexer;
+	private final ThreadSafeInvertedIndex mtIndexer;
+	private final CustomWorkQueue workQueue;
 
 	/**
 	 * SnowballStemmer instance for query processing word stems
@@ -44,9 +45,10 @@ public class ThreadedQueryFileProcsesor {
 	 * @param indexer The InvertedIndex instance for searching
 	 * @param partial boolean for partial search or not
 	 */
-	public ThreadedQueryFileProcsesor(InvertedIndex indexer, boolean partial) {
-		this.indexer = indexer;
+	public ThreadedQueryFileProcsesor(InvertedIndex indexer, boolean partial, int numThreads) {
+		this.mtIndexer = new ThreadSafeInvertedIndex(indexer);
 		this.searchResultsMap = new TreeMap<>();
+		this.workQueue = new CustomWorkQueue(numThreads);
 		this.stemmer = new SnowballStemmer(SnowballStemmer.ALGORITHM.ENGLISH);
 		this.partial = partial;
 	}
@@ -80,7 +82,7 @@ public class ThreadedQueryFileProcsesor {
 		if (searchResultsMap.get(queryVal) != null) {
 			return;
 		}
-		List<InvertedIndex.SearchResult> searchResults = indexer.search(query, partial);
+		List<InvertedIndex.SearchResult> searchResults = mtIndexer.search(query, partial);
 		searchResultsMap.put(queryVal, searchResults);
 	}
 

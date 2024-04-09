@@ -65,9 +65,10 @@ public class Driver {
 					System.out.println("Error building the inverted index " + indexPath);
 				}
 			}
-			
-			ThreadedQueryFileProcsesor processor = new ThreadedQueryFileProcsesor(indexer, parser.hasFlag("-partial"));
-			
+
+			ThreadedQueryFileProcsesor processor = new ThreadedQueryFileProcsesor(indexer, parser.hasFlag("-partial"),
+					numThreads);
+
 			if (parser.hasFlag("-query")) {
 				Path queryPath = parser.getPath("-query");
 				try {
@@ -76,7 +77,7 @@ public class Driver {
 					System.out.println("Error reading the query file " + queryPath);
 				}
 			}
-			
+
 			if (parser.hasFlag("-results")) {
 				Path resultsPath = parser.getPath("-results", Path.of("results.json"));
 				try {
