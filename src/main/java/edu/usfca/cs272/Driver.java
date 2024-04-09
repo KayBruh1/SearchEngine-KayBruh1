@@ -65,6 +65,26 @@ public class Driver {
 					System.out.println("Error building the inverted index " + indexPath);
 				}
 			}
+			
+			ThreadedQueryFileProcsesor processor = new ThreadedQueryFileProcsesor(indexer, parser.hasFlag("-partial"));
+			
+			if (parser.hasFlag("-query")) {
+				Path queryPath = parser.getPath("-query");
+				try {
+					processor.processQueries(queryPath);
+				} catch (Exception e) {
+					System.out.println("Error reading the query file " + queryPath);
+				}
+			}
+			
+			if (parser.hasFlag("-results")) {
+				Path resultsPath = parser.getPath("-results", Path.of("results.json"));
+				try {
+					processor.writeResults(resultsPath);
+				} catch (Exception e) {
+					System.out.println("Error writing results to file " + resultsPath);
+				}
+			}
 		} else {
 			FileBuilder fileBuilder = new FileBuilder(indexer);
 			QueryFileProcsesor processor = new QueryFileProcsesor(indexer, parser.hasFlag("-partial"));
