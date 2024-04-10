@@ -2,12 +2,34 @@ package edu.usfca.cs272;
 
 import java.util.ConcurrentModificationException;
 import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class CustomReadWriteLock{
+/**
+ * Maintains a pair of associated locks, one for read-only operations and one
+ * for writing. The read lock may be held simultaneously by multiple reader
+ * threads, so long as there are no writers. The write lock is exclusive. The
+ * active writer is able to acquire read or write locks as long as it is active.
+ *
+ * <!-- simplified lock used for this class -->
+ * 
+ * @see SimpleLock
+ *
+ *      <!-- built-in Java locks that are similar (but more complex) -->
+ * @see Lock
+ * @see ReentrantLock
+ * @see ReadWriteLock
+ * @see ReentrantReadWriteLock
+ *
+ * @author CS 272 Software Development (University of San Francisco)
+ * @version Spring 2024
+ */
+public class CustomReadWriteLock {
 	/** The conditional lock used for reading. */
 	private final SimpleLock readerLock;
 
@@ -167,9 +189,10 @@ public class CustomReadWriteLock{
 				if (readers == 0) {
 					throw new IllegalStateException("No readers");
 				}
-
 				readers--;
-				lock.notifyAll();
+				if (readers == 0) {
+					lock.notifyAll();
+				}
 			}
 		}
 	}
@@ -225,8 +248,8 @@ public class CustomReadWriteLock{
 				writers--;
 				if (writers == 0) {
 					activeWriter = null;
+					lock.notifyAll();
 				}
-				lock.notifyAll();
 			}
 		}
 	}
