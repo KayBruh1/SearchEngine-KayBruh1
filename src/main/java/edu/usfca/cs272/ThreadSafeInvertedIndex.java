@@ -56,7 +56,6 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 	 */
 	@Override
 	public List<SearchResult> partialSearch(Set<String> queries) {
-		System.out.println("your ");
 		lock.writeLock().lock();
 		try {
 			return indexer.partialSearch(queries);
