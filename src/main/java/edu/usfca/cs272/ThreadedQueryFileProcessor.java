@@ -17,7 +17,7 @@ import opennlp.tools.stemmer.snowball.SnowballStemmer;
 /**
  * Class responsible for query handling and adding search results
  */
-public class ThreadedQueryFileProcsesor {
+public class ThreadedQueryFileProcessor {
 	/**
 	 * Map to store search results
 	 */
@@ -45,7 +45,7 @@ public class ThreadedQueryFileProcsesor {
 	 * @param indexer The InvertedIndex instance for searching
 	 * @param partial boolean for partial search or not
 	 */
-	public ThreadedQueryFileProcsesor(InvertedIndex indexer, boolean partial, int numThreads) {
+	public ThreadedQueryFileProcessor(InvertedIndex indexer, boolean partial, int numThreads) {
 		this.mtIndexer = new ThreadSafeInvertedIndex(indexer);
 		this.searchResultsMap = new TreeMap<>();
 		this.workQueue = new CustomWorkQueue(numThreads);
@@ -53,14 +53,12 @@ public class ThreadedQueryFileProcsesor {
 		this.partial = partial;
 	}
 
-	public void processQueries(Path queryPath) throws InterruptedException {
+	public void processQueries(Path queryPath) throws IOException {
 		try (BufferedReader reader = Files.newBufferedReader(queryPath)) {
 			String line;
 			while ((line = reader.readLine()) != null) {
 				workQueue.execute(new QueryTask(line));
 			}
-		} catch (IOException e) {
-			System.out.println("Error reading query file: " + e.getMessage());
 		}
 		workQueue.finish();
 		workQueue.shutdown();

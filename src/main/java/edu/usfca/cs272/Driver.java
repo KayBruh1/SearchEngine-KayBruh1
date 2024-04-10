@@ -21,8 +21,7 @@ public class Driver {
 	public static void main(String[] args) {
 		ArgumentParser parser = new ArgumentParser(args);
 		InvertedIndex indexer = new InvertedIndex();
-		QueryFileProcsesor processor = new QueryFileProcsesor(indexer, parser.hasFlag("-partial"));
-
+		
 		if (parser.hasFlag("-threads")) {
 			int numThreads = 5;
 			try {
@@ -38,7 +37,6 @@ public class Driver {
 			}
 
 			ThreadedFileBuilder builder = new ThreadedFileBuilder(indexer, numThreads);
-
 			if (parser.hasFlag("-text")) {
 				Path inputPath = parser.getPath("-text");
 				try {
@@ -67,9 +65,8 @@ public class Driver {
 				}
 			}
 
-			ThreadedQueryFileProcsesor mtProcessor = new ThreadedQueryFileProcsesor(indexer, parser.hasFlag("-partial"),
+			ThreadedQueryFileProcessor mtProcessor = new ThreadedQueryFileProcessor(indexer, parser.hasFlag("-partial"),
 					numThreads);
-
 			if (parser.hasFlag("-query")) {
 				Path queryPath = parser.getPath("-query");
 				try {
@@ -89,7 +86,6 @@ public class Driver {
 			}
 		} else {
 			FileBuilder fileBuilder = new FileBuilder(indexer);
-
 			if (parser.hasFlag("-text")) {
 				Path inputPath = parser.getPath("-text");
 				try {
@@ -99,6 +95,7 @@ public class Driver {
 				}
 			}
 
+			QueryFileProcessor processor = new QueryFileProcessor(indexer, parser.hasFlag("-partial"));
 			if (parser.hasFlag("-query")) {
 				Path queryPath = parser.getPath("-query");
 				try {
