@@ -34,6 +34,9 @@ public class CustomWorkQueue {
 	/** Logger used for this class. */
 	private static final Logger log = LogManager.getLogger();
 
+	private final Object pendingLock = new Object();
+
+	/** Variable to track unfinished work */
 	private static int pending;
 
 	/**
@@ -70,9 +73,11 @@ public class CustomWorkQueue {
 	 */
 	public void execute(Runnable task) {
 		synchronized (tasks) {
-			pending++;
 			tasks.addLast(task);
 			tasks.notifyAll();
+			synchronized (pendingLock) {
+				pending++;
+			}
 		}
 	}
 
@@ -81,11 +86,13 @@ public class CustomWorkQueue {
 	 * worker threads so that the work queue can continue to be used.
 	 */
 	public void finish() {
-		while (pending > 0) {
-			try {
-				tasks.wait();
-			} catch (Exception e) {
-				Thread.currentThread().interrupt();
+		synchronized (pendingLock) {
+			while (pending > 0) {
+				try {
+					pendingLock.wait();
+				} catch (Exception e) {
+					Thread.currentThread().interrupt();
+				}
 			}
 		}
 	}
@@ -117,6 +124,11 @@ public class CustomWorkQueue {
 	public void shutdown() {
 		// safe to do unsynchronized due to volatile keyword
 		shutdown = true;
+
+		synchronized (tasks) {
+			tasks.notifyAll();
+		}
+
 		for (Thread worker : workers) {
 			try {
 				worker.join();
@@ -157,7 +169,7 @@ public class CustomWorkQueue {
 			Runnable task = null;
 
 			try {
-				while (!shutdown) {
+				while (true) {
 					synchronized (tasks) {
 						while (tasks.isEmpty() && !shutdown) {
 							tasks.wait();
@@ -180,10 +192,10 @@ public class CustomWorkQueue {
 						System.err.printf("Error: %s encountered an exception while running.%n", this.getName());
 						log.catching(Level.ERROR, e);
 					} finally {
-						synchronized (tasks) {
+						synchronized (pendingLock) {
 							pending--;
 							if (pending <= 0) {
-								tasks.notifyAll();
+								pendingLock.notifyAll();
 							}
 						}
 					}
