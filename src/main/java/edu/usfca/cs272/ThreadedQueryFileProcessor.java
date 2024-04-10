@@ -27,6 +27,7 @@ public class ThreadedQueryFileProcessor {
 	 * Inverted index instance for searching
 	 */
 	private final ThreadSafeInvertedIndex mtIndexer;
+	
 	private final CustomWorkQueue workQueue;
 
 	/**
@@ -53,6 +54,12 @@ public class ThreadedQueryFileProcessor {
 		this.partial = partial;
 	}
 
+	/**
+	 * Processes search queries from a path
+	 *
+	 * @param queryPath The path containing search queries
+	 * @throws IOException If an I/O error occurs
+	 */
 	public void processQueries(Path queryPath) throws IOException {
 		try (BufferedReader reader = Files.newBufferedReader(queryPath)) {
 			String line;
@@ -77,6 +84,11 @@ public class ThreadedQueryFileProcessor {
 		}
 	}
 
+	/**
+	 * Processes a single search query line
+	 *
+	 * @param queryLine The query line to process
+	 */
 	private synchronized void processQuery(String queryLine) {
 		TreeSet<String> query = FileStemmer.uniqueStems(queryLine, stemmer);
 		if (query.isEmpty()) {

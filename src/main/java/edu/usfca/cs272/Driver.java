@@ -21,18 +21,16 @@ public class Driver {
 	public static void main(String[] args) {
 		ArgumentParser parser = new ArgumentParser(args);
 		InvertedIndex indexer = new InvertedIndex();
-		
+
 		if (parser.hasFlag("-threads")) {
 			int numThreads = 5;
 			try {
 				numThreads = Integer.parseInt(parser.getString("-threads"));
-			} catch (NumberFormatException e) {
-				System.out.println(
-						"Invalid number of threads specified. Using default value: " + CustomWorkQueue.DEFAULT);
+			} catch (Exception e) {
+				System.out.println("Invalid number of threads Using default value.");
 			}
 			if (numThreads < 1) {
-				System.out.println(
-						"Invalid number of threads specified. Using default value: " + CustomWorkQueue.DEFAULT);
+				System.out.println("Invalid number of threads. Using default value.");
 				numThreads = 5;
 			}
 
