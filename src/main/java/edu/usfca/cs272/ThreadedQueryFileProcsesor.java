@@ -53,27 +53,33 @@ public class ThreadedQueryFileProcsesor {
 		this.partial = partial;
 	}
 
-	/**
-	 * Processes search queries from a path
-	 *
-	 * @param queryPath The path containing search queries
-	 * @throws IOException If an I/O error occurs
-	 */
-	public void processQueries(Path queryPath) throws IOException {
+	public void processQueries(Path queryPath) throws InterruptedException {
 		try (BufferedReader reader = Files.newBufferedReader(queryPath)) {
 			String line;
 			while ((line = reader.readLine()) != null) {
-				processQueries(line);
+				workQueue.execute(new QueryTask(line));
 			}
+		} catch (IOException e) {
+			System.out.println("Error reading query file: " + e.getMessage());
+		}
+		workQueue.finish();
+		workQueue.shutdown();
+	}
+
+	private class QueryTask implements Runnable {
+		private final String queryLine;
+
+		public QueryTask(String queryLine) {
+			this.queryLine = queryLine;
+		}
+
+		@Override
+		public void run() {
+			processQuery(queryLine);
 		}
 	}
 
-	/**
-	 * Processes a single search query line
-	 *
-	 * @param queryLine The query line to process
-	 */
-	public void processQueries(String queryLine) {
+	private synchronized void processQuery(String queryLine) {
 		TreeSet<String> query = FileStemmer.uniqueStems(queryLine, stemmer);
 		if (query.isEmpty()) {
 			return;
@@ -92,7 +98,7 @@ public class ThreadedQueryFileProcsesor {
 	 * @param queryLine The query line to process
 	 * @return The stemmed query
 	 */
-	private String processQueryLine(String queryLine) {
+	public String processQueryLine(String queryLine) {
 		TreeSet<String> query = FileStemmer.uniqueStems(queryLine, stemmer);
 		return String.join(" ", query);
 	}
