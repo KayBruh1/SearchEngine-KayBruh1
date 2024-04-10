@@ -16,7 +16,7 @@ import opennlp.tools.stemmer.snowball.SnowballStemmer;
 /**
  * Class responsible for query handling and adding search results
  */
-public class QueryFileProcsesor {
+public class QueryFileProcessor {
 	/**
 	 * Map to store search results
 	 */
@@ -43,7 +43,7 @@ public class QueryFileProcsesor {
 	 * @param indexer The InvertedIndex instance for searching
 	 * @param partial boolean for partial search or not
 	 */
-	public QueryFileProcsesor(InvertedIndex indexer, boolean partial) {
+	public QueryFileProcessor(InvertedIndex indexer, boolean partial) {
 		this.indexer = indexer;
 		this.searchResultsMap = new TreeMap<>();
 		this.stemmer = new SnowballStemmer(SnowballStemmer.ALGORITHM.ENGLISH);
