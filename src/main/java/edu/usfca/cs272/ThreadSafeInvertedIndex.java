@@ -3,10 +3,21 @@ package edu.usfca.cs272;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Class for thread safe methods
+ */
 public class ThreadSafeInvertedIndex extends InvertedIndex {
+	/** The lock used to protect concurrent access*/
 	private final CustomReadWriteLock lock;
+	
+	/**
+	 * The InvertedIndex instance for adding and searching
+	 */
 	private final InvertedIndex indexer;
 
+	/**
+	 * @param indexer The instance to use for adding and searching
+	 */
 	public ThreadSafeInvertedIndex(InvertedIndex indexer) {
 		this.lock = new CustomReadWriteLock();
 		this.indexer = indexer;
