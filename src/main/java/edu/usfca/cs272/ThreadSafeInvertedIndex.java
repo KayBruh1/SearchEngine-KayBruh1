@@ -7,9 +7,9 @@ import java.util.Set;
  * Class for thread safe methods
  */
 public class ThreadSafeInvertedIndex extends InvertedIndex {
-	/** The lock used to protect concurrent access*/
+	/** The lock used to protect concurrent access */
 	private final CustomReadWriteLock lock;
-	
+
 	/**
 	 * The InvertedIndex instance for adding and searching
 	 */
@@ -23,6 +23,13 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 		this.indexer = indexer;
 	}
 
+	/**
+	 * Adds a word with its position in a file to the inverted index
+	 *
+	 * @param word     The word to add
+	 * @param location The path of the file
+	 * @param position The position of the word in the file
+	 */
 	@Override
 	public void addWord(String word, String location, int position) {
 		lock.writeLock().lock();
@@ -41,7 +48,8 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 	 * @return A list of search results
 	 */
 	@Override
-	public List<InvertedIndex.SearchResult> search(Set<String> queries, boolean partial) {;
+	public List<InvertedIndex.SearchResult> search(Set<String> queries, boolean partial) {
+		;
 		lock.writeLock().lock();
 		try {
 			return partial ? partialSearch(queries) : exactSearch(queries);
