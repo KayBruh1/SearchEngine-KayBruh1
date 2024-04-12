@@ -27,7 +27,10 @@ public class ThreadedQueryFileProcessor {
 	 * Inverted index instance for searching
 	 */
 	private final ThreadSafeInvertedIndex mtIndexer;
-	
+
+	/**
+	 * Work queue instance for multithreading
+	 */
 	private final CustomWorkQueue workQueue;
 
 	/**
@@ -71,9 +74,18 @@ public class ThreadedQueryFileProcessor {
 		workQueue.shutdown();
 	}
 
+	/**
+	 * Class to help process queries
+	 */
 	private class QueryTask implements Runnable {
+		/**
+		 * The query line to process
+		 */
 		private final String queryLine;
 
+		/**
+		 * @param queryLine The query line to process
+		 */
 		public QueryTask(String queryLine) {
 			this.queryLine = queryLine;
 		}
