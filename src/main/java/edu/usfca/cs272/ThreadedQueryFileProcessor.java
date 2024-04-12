@@ -48,6 +48,7 @@ public class ThreadedQueryFileProcessor {
 	 *
 	 * @param indexer The InvertedIndex instance for searching
 	 * @param partial boolean for partial search or not
+	 * @param numThreads The number of threads for the work queue
 	 */
 	public ThreadedQueryFileProcessor(InvertedIndex indexer, boolean partial, int numThreads) {
 		this.mtIndexer = new ThreadSafeInvertedIndex(indexer);
