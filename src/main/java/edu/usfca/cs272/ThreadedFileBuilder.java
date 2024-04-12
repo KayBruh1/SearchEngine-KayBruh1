@@ -47,6 +47,13 @@ public class ThreadedFileBuilder {
 		workQueue.shutdown();
 	}
 
+	/**
+	 * Processes the files in the specified directory to generate word counts and
+	 * the inverted index
+	 *
+	 * @param directory The directory to process
+	 * @throws InterruptedException If an error occurs
+	 */
 	private void processDirectory(Path directory) throws InterruptedException {
 		try (DirectoryStream<Path> stream = Files.newDirectoryStream(directory)) {
 			for (Path path : stream) {
