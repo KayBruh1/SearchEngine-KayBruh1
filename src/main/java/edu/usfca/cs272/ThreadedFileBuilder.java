@@ -7,23 +7,22 @@ import java.nio.file.Path;
 import java.util.List;
 
 /**
- * Multithreaded class for building and processing files/directories to generate word counts
- * and an inverted index
+ * Multithreaded class for building and processing files/directories to generate
+ * word counts and an inverted index
  */
 public class ThreadedFileBuilder {
 	/**
 	 * Thread safe inverted index instance for searching
 	 */
 	private final ThreadSafeInvertedIndex mtIndexer;
-	
+
 	/**
 	 * Work queue instance for multithreading
 	 */
 	private final CustomWorkQueue workQueue;
 
-	
 	/**
-	 * @param indexer Inverted index instance for processing
+	 * @param indexer    Inverted index instance for processing
 	 * @param numThreads Number of threads for the work queue
 	 */
 	public ThreadedFileBuilder(InvertedIndex indexer, int numThreads) {
@@ -110,6 +109,12 @@ public class ThreadedFileBuilder {
 		}
 	}
 
+	/**
+	 * Determines if given a valid file
+	 * 
+	 * @param file The file to be checked
+	 * @return True for a valid file, false otherwise
+	 */
 	private static boolean isTextFile(Path file) {
 		String fileName = file.getFileName().toString().toLowerCase();
 		return Files.isRegularFile(file) && (fileName.endsWith(".txt") || fileName.endsWith(".text"));
