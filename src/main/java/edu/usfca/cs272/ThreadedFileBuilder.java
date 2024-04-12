@@ -6,20 +6,23 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
-import opennlp.tools.stemmer.snowball.SnowballStemmer;
-
 /**
  * Multithreaded class for building and processing files/directories to generate word counts
  * and an inverted index
  */
 public class ThreadedFileBuilder {
+	/**
+	 * Thread safe inverted index instance for searching
+	 */
 	private final ThreadSafeInvertedIndex mtIndexer;
-	private final SnowballStemmer stemmer;
+	
+	/**
+	 * Work queue instance for multithreading
+	 */
 	private final CustomWorkQueue workQueue;
 
 	public ThreadedFileBuilder(InvertedIndex indexer, int numThreads) {
 		this.mtIndexer = new ThreadSafeInvertedIndex(indexer);
-		this.stemmer = new SnowballStemmer(SnowballStemmer.ALGORITHM.ENGLISH);
 		this.workQueue = new CustomWorkQueue(numThreads);
 	}
 
