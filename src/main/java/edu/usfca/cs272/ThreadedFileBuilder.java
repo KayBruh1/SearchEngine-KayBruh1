@@ -21,6 +21,11 @@ public class ThreadedFileBuilder {
 	 */
 	private final CustomWorkQueue workQueue;
 
+	
+	/**
+	 * @param indexer Inverted index instance for processing
+	 * @param numThreads Number of threads for the work queue
+	 */
 	public ThreadedFileBuilder(InvertedIndex indexer, int numThreads) {
 		this.mtIndexer = new ThreadSafeInvertedIndex(indexer);
 		this.workQueue = new CustomWorkQueue(numThreads);
