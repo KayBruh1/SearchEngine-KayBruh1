@@ -34,6 +34,10 @@ public class CustomWorkQueue {
 	/** Logger used for this class. */
 	private static final Logger log = LogManager.getLogger();
 
+	
+	/**
+	 * The pendingLock to help synchronize pending
+	 */
 	private final Object pendingLock = new Object();
 
 	/** Variable to track unfinished work */
@@ -41,8 +45,6 @@ public class CustomWorkQueue {
 
 	/**
 	 * Starts a work queue with the default number of threads.
-	 *
-	 * @see #WorkQueue(int)
 	 */
 	public CustomWorkQueue() {
 		this(DEFAULT);
