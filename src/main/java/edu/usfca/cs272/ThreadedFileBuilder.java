@@ -94,6 +94,12 @@ public class ThreadedFileBuilder {
 		}
 	}
 
+	/**
+	 * Processes the specified file to generate word counts and an inverted index
+	 *
+	 * @param location The path of the file to process
+	 * @throws IOException If an I/O error occurs
+	 */
 	private void processFile(Path location) throws IOException {
 		String locationString = location.toString();
 		List<String> stems = FileStemmer.listStems(location);
