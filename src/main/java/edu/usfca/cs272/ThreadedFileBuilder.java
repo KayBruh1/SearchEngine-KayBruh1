@@ -68,9 +68,18 @@ public class ThreadedFileBuilder {
 		}
 	}
 
+	/**
+	 * Class to help process files
+	 */
 	private class FileTask implements Runnable {
+		/**
+		 * Location to process
+		 */
 		private final Path location;
 
+		/**
+		 * @param location Path to process
+		 */
 		public FileTask(Path location) {
 			this.location = location;
 		}
