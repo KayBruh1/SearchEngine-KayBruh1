@@ -31,6 +31,12 @@ public class ThreadedFileBuilder {
 		this.workQueue = new CustomWorkQueue(numThreads);
 	}
 
+	/**
+	 * Builds word count and inverted index structures for the specified input path.
+	 *
+	 * @param inputPath The path of the file or directory to be processed
+	 * @throws InterruptedException If an error occurs
+	 */
 	public void buildStructures(Path inputPath) throws InterruptedException {
 		if (Files.isDirectory(inputPath)) {
 			processDirectory(inputPath);
