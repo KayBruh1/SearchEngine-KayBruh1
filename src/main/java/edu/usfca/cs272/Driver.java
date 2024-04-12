@@ -44,6 +44,17 @@ public class Driver {
 
 			}
 
+			ThreadedQueryFileProcessor mtProcessor = new ThreadedQueryFileProcessor(indexer, parser.hasFlag("-partial"),
+					numThreads);
+			if (parser.hasFlag("-query")) {
+				Path queryPath = parser.getPath("-query");
+				try {
+					mtProcessor.processQueries(queryPath);
+				} catch (Exception e) {
+					System.out.println("Error reading the query file " + queryPath);
+				}
+			}
+
 			if (parser.hasFlag("-counts")) {
 				Path countsPath = parser.getPath("-counts", Path.of("counts.json"));
 				try {
@@ -62,23 +73,12 @@ public class Driver {
 				}
 			}
 
-			ThreadedQueryFileProcessor mtProcessor = new ThreadedQueryFileProcessor(indexer, parser.hasFlag("-partial"),
-					numThreads);
-			if (parser.hasFlag("-query")) {
-				Path queryPath = parser.getPath("-query");
-				try {
-					mtProcessor.processQueries(queryPath);
-				} catch (Exception e) {
-					System.out.println("Error reading the query file " + queryPath);
-				}
-			}
-
 			if (parser.hasFlag("-results")) {
 				Path resultsPath = parser.getPath("-results", Path.of("results.json"));
 				try {
 					mtProcessor.writeResults(resultsPath);
 				} catch (Exception e) {
-					e.printStackTrace();
+					System.out.println("Error writing results to file " + resultsPath);
 				}
 			}
 		} else {
