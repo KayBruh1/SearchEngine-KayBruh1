@@ -8,6 +8,10 @@ import java.util.List;
 
 import opennlp.tools.stemmer.snowball.SnowballStemmer;
 
+/**
+ * Multithreaded class for building and processing files/directories to generate word counts
+ * and an inverted index
+ */
 public class ThreadedFileBuilder {
 	private final ThreadSafeInvertedIndex mtIndexer;
 	private final SnowballStemmer stemmer;
@@ -38,8 +42,8 @@ public class ThreadedFileBuilder {
 					workQueue.execute(new FileTask(path));
 				}
 			}
-		} catch (IOException e) {
-			System.out.println("Error listing files in directory: " + directory);
+		} catch (Exception e) {
+			System.out.println("Error processing files in directory: " + directory);
 		}
 	}
 
@@ -54,7 +58,7 @@ public class ThreadedFileBuilder {
 		public void run() {
 			try {
 				processFile(location);
-			} catch (IOException e) {
+			} catch (Exception e) {
 				System.out.println("Error processing file: " + location);
 			}
 		}
