@@ -471,6 +471,15 @@ public class JsonWriter {
 		writer.write(": ");
 		writeObjectArrays(filePositions, writer, indent);
 	}
+	
+	/*
+	 * TODO Great that this is broken up into 3 methods, but there is still an if
+	 * statement inside of a for loop, and no reusability to output a single search
+	 * result as JSON or a list of search results.
+	 * 
+	 * If you don't want to create the convenience methods for everything, that is
+	 * okay. But, the reusable forms of those methods should exist! 
+	 */
 
 	/**
 	 * Writes the search results as a pretty JSON object
