@@ -98,6 +98,25 @@ public class FileBuilder {
 			}
 		}
 	}
+	
+	/*
+	 * TODO It can be helpful to have a static version of processFile when directory
+	 * traversing is not needed. I suggest this minor tweak to the design:
+	 * 
+	 * 1) Change your current processFile declaration as follows (make no changes to
+	 * the method implementation):
+	 * 
+	 * public static void processFile(Path location, InvertedIndex indexer) throws IOException
+	 * 
+	 * 2) Make a NEW version of processFile as follows:
+	 * 
+	 * public void processFile(Path location) throws IOException {
+	 *     processFile(location, this.indexer);
+	 * }
+	 * 
+	 * This gives you the benefits of an instance-based approach with the quick
+	 * reusability of a static approach.
+	 */
 
 	/**
 	 * Determines if given a valid file
