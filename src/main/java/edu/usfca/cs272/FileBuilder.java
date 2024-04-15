@@ -21,7 +21,7 @@ public class FileBuilder {
 	/**
 	 * SnowballStemmer instance for stemming
 	 */
-	private final SnowballStemmer stemmer;
+	private static SnowballStemmer stemmer;
 
 	/**
 	 * Creates a new FileBuilder object with the InvertedIndex
@@ -30,7 +30,7 @@ public class FileBuilder {
 	 */
 	public FileBuilder(InvertedIndex indexer) {
 		this.indexer = indexer;
-		this.stemmer = new SnowballStemmer(SnowballStemmer.ALGORITHM.ENGLISH);
+		FileBuilder.stemmer = new SnowballStemmer(SnowballStemmer.ALGORITHM.ENGLISH);
 	}
 
 	/**
@@ -76,14 +76,23 @@ public class FileBuilder {
 			}
 		}
 	}
+	
+	  /**
+	 * @param location The location to process
+	 * @throws IOException If an I/O error occurs
+	 */
+	public void processFile(Path location) throws IOException {
+	      processFile(location, this.indexer);
+	  }
 
 	/**
 	 * Processes the specified file to generate word counts and an inverted index
 	 *
 	 * @param location The path of the file to process
+	 * @param indexer The index to help with processing
 	 * @throws IOException If an I/O error occurs
 	 */
-	public void processFile(Path location) throws IOException {
+	public static void processFile(Path location, InvertedIndex indexer) throws IOException {
 		int position = 0;
 		String locationString = location.toString();
 		try (BufferedReader reader = Files.newBufferedReader(location)) {
@@ -98,25 +107,6 @@ public class FileBuilder {
 			}
 		}
 	}
-	
-	/*
-	 * TODO It can be helpful to have a static version of processFile when directory
-	 * traversing is not needed. I suggest this minor tweak to the design:
-	 * 
-	 * 1) Change your current processFile declaration as follows (make no changes to
-	 * the method implementation):
-	 * 
-	 * public static void processFile(Path location, InvertedIndex indexer) throws IOException
-	 * 
-	 * 2) Make a NEW version of processFile as follows:
-	 * 
-	 * public void processFile(Path location) throws IOException {
-	 *     processFile(location, this.indexer);
-	 * }
-	 * 
-	 * This gives you the benefits of an instance-based approach with the quick
-	 * reusability of a static approach.
-	 */
 
 	/**
 	 * Determines if given a valid file
