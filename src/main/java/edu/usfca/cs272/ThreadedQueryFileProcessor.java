@@ -16,7 +16,7 @@ import opennlp.tools.stemmer.snowball.SnowballStemmer;
 /**
  * Class responsible for query handling and adding search results
  */
-public class QueryFileProcessor {
+public class ThreadedQueryFileProcessor {
 	/**
 	 * Map to store search results
 	 */
@@ -25,7 +25,12 @@ public class QueryFileProcessor {
 	/**
 	 * Inverted index instance for searching
 	 */
-	private final InvertedIndex indexer;
+	private final ThreadSafeInvertedIndex mtIndexer;
+
+	/**
+	 * Work queue instance for multithreading
+	 */
+	private final CustomWorkQueue workQueue;
 
 	/**
 	 * SnowballStemmer instance for query processing word stems
@@ -42,10 +47,12 @@ public class QueryFileProcessor {
 	 *
 	 * @param indexer The InvertedIndex instance for searching
 	 * @param partial boolean for partial search or not
+	 * @param numThreads The number of threads for the work queue
 	 */
-	public QueryFileProcessor(InvertedIndex indexer, boolean partial) {
-		this.indexer = indexer;
+	public ThreadedQueryFileProcessor(InvertedIndex indexer, boolean partial, int numThreads) {
+		this.mtIndexer = new ThreadSafeInvertedIndex(indexer);
 		this.searchResultsMap = new TreeMap<>();
+		this.workQueue = new CustomWorkQueue(numThreads);
 		this.stemmer = new SnowballStemmer(SnowballStemmer.ALGORITHM.ENGLISH);
 		this.partial = partial;
 	}
@@ -60,8 +67,32 @@ public class QueryFileProcessor {
 		try (BufferedReader reader = Files.newBufferedReader(queryPath)) {
 			String line;
 			while ((line = reader.readLine()) != null) {
-				processQueries(line);
+				workQueue.execute(new QueryTask(line));
 			}
+		}
+		workQueue.finish();
+		workQueue.shutdown();
+	}
+
+	/**
+	 * Class to help process queries
+	 */
+	private class QueryTask implements Runnable {
+		/**
+		 * The query line to process
+		 */
+		private final String queryLine;
+
+		/**
+		 * @param queryLine The query line to process
+		 */
+		public QueryTask(String queryLine) {
+			this.queryLine = queryLine;
+		}
+
+		@Override
+		public void run() {
+			processQuery(queryLine);
 		}
 	}
 
@@ -70,7 +101,7 @@ public class QueryFileProcessor {
 	 *
 	 * @param queryLine The query line to process
 	 */
-	public void processQueries(String queryLine) {
+	private synchronized void processQuery(String queryLine) {
 		TreeSet<String> query = FileStemmer.uniqueStems(queryLine, stemmer);
 		if (query.isEmpty()) {
 			return;
@@ -79,7 +110,7 @@ public class QueryFileProcessor {
 		if (searchResultsMap.get(queryVal) != null) {
 			return;
 		}
-		List<InvertedIndex.SearchResult> searchResults = indexer.search(query, partial);
+		List<InvertedIndex.SearchResult> searchResults = mtIndexer.search(query, partial);
 		searchResultsMap.put(queryVal, searchResults);
 	}
 
@@ -89,7 +120,7 @@ public class QueryFileProcessor {
 	 * @param queryLine The query line to process
 	 * @return The stemmed query
 	 */
-	private String processQueryLine(String queryLine) {
+	public String processQueryLine(String queryLine) {
 		TreeSet<String> query = FileStemmer.uniqueStems(queryLine, stemmer);
 		return String.join(" ", query);
 	}
