@@ -11,6 +11,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.DecimalFormat;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -471,15 +472,62 @@ public class JsonWriter {
 		writer.write(": ");
 		writeObjectArrays(filePositions, writer, indent);
 	}
-	
-	/*
-	 * TODO Great that this is broken up into 3 methods, but there is still an if
-	 * statement inside of a for loop, and no reusability to output a single search
-	 * result as JSON or a list of search results.
-	 * 
-	 * If you don't want to create the convenience methods for everything, that is
-	 * okay. But, the reusable forms of those methods should exist! 
+
+	/**
+	 * Writes a single search result
+	 *
+	 * @param result the search result to write
+	 * @param writer the writer to use
+	 * @param indent the initial indentation level for the JSON output
+	 * @throws IOException if an I/O error occurs
 	 */
+	public static void writeSearchResult(InvertedIndex.SearchResult result, Writer writer, int indent)
+			throws IOException {
+		DecimalFormat formatter = new DecimalFormat("0.00000000");
+		writer.write("{\n");
+		writeIndent(writer, indent + 1);
+		writer.write("\"count\": " + result.getCount() + ",\n");
+		writeIndent(writer, indent + 1);
+		writer.write("\"score\": " + formatter.format(result.getScore()) + ",\n");
+		writeIndent(writer, indent + 1);
+		writeQuote("where", writer, 0);
+		writer.write(": ");
+		writeQuote(result.getLocation(), writer, 0);
+		writer.write("\n");
+		writeIndent(writer, indent);
+		writer.write("}");
+	}
+
+	/**
+	 * Writes a list of search results
+	 *
+	 * @param results the list of search results to write
+	 * @param writer  the writer to use
+	 * @param indent  the initial indentation level for the JSON output
+	 * @throws IOException if an I/O error occurs
+	 */
+	public static void writeSearchResults(List<InvertedIndex.SearchResult> results, Writer writer, int indent)
+			throws IOException {
+		writer.write("[");
+		if (!results.isEmpty()) {
+			writer.write("\n");
+			Iterator<InvertedIndex.SearchResult> iterator = results.iterator();
+			if (iterator.hasNext()) {
+				writeIndent(writer, indent + 1);
+				writeSearchResult(iterator.next(), writer, indent + 1);
+			}
+			while (iterator.hasNext()) {
+				writer.write(",\n");
+				writeIndent(writer, indent + 1);
+				writeSearchResult(iterator.next(), writer, indent + 1);
+			}
+			writer.write("\n");
+		} else {
+			writer.write("\n");
+		}
+		writeIndent(writer, indent);
+		writer.write("]");
+	}
 
 	/**
 	 * Writes the search results as a pretty JSON object
@@ -491,50 +539,27 @@ public class JsonWriter {
 	 */
 	public static void writeResults(Map<String, List<InvertedIndex.SearchResult>> results, Writer writer, int indent)
 			throws IOException {
-		DecimalFormat formatter = new DecimalFormat("0.00000000");
-		writer.write("{\n");
-		int count = 0;
-		for (Map.Entry<String, List<InvertedIndex.SearchResult>> entry : results.entrySet()) {
-			List<InvertedIndex.SearchResult> resultList = entry.getValue();
-			if (count > 0) {
-				writer.write(",\n");
-			}
-			writeIndent(writer, indent + 1);
-			writeQuote(entry.getKey(), writer, 0);
-			writer.write(": ");
-			if (resultList.isEmpty()) {
-				writer.write("[\n");
-				writeIndent(writer, 1);
-				writer.write("]");
-			} else {
-				writer.write("[\n");
-				int resultCount = 0;
-				for (InvertedIndex.SearchResult result : resultList) {
-					if (resultCount > 0) {
-						writer.write(",\n");
-					}
-					writeIndent(writer, indent + 2);
-					writer.write("{\n");
-					writeIndent(writer, indent + 3);
-					writer.write("\"count\": " + result.getCount() + ",\n");
-					writeIndent(writer, indent + 3);
-					writer.write("\"score\": " + formatter.format(result.getScore()) + ",\n");
-					writeIndent(writer, indent + 3);
-					writeQuote("where", writer, 0);
-					writer.write(": ");
-					writeQuote(result.getLocation(), writer, 0);
-					writer.write("\n");
-					writeIndent(writer, indent + 2);
-					writer.write("}");
-					resultCount += 1;
-				}
-				writer.write("\n");
+		writer.write("{");
+		if (!results.isEmpty()) {
+			writer.write("\n");
+			Iterator<Map.Entry<String, List<InvertedIndex.SearchResult>>> iterator = results.entrySet().iterator();
+			if (iterator.hasNext()) {
+				Map.Entry<String, List<InvertedIndex.SearchResult>> firstEntry = iterator.next();
 				writeIndent(writer, indent + 1);
-				writer.write("]");
+				writeQuote(firstEntry.getKey(), writer, 0);
+				writer.write(": ");
+				writeSearchResults(firstEntry.getValue(), writer, indent + 1);
 			}
-			count += 1;
+			while (iterator.hasNext()) {
+				writer.write(",\n");
+				writeIndent(writer, indent + 1);
+				Map.Entry<String, List<InvertedIndex.SearchResult>> entry = iterator.next();
+				writeQuote(entry.getKey(), writer, 0);
+				writer.write(": ");
+				writeSearchResults(entry.getValue(), writer, indent + 1);
+			}
+			writer.write("\n");
 		}
-		writer.write("\n");
 		writeIndent(writer, indent);
 		writer.write("}");
 	}
