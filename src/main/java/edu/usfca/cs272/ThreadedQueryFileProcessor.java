@@ -49,7 +49,7 @@ public class ThreadedQueryFileProcessor {
 	 * @param partial boolean for partial search or not
 	 * @param numThreads The number of threads for the work queue
 	 */
-	public ThreadedQueryFileProcessor(InvertedIndex indexer, boolean partial, int numThreads) {
+	public ThreadedQueryFileProcessor(InvertedIndex indexer, boolean partial, int numThreads) { // TODO Pass in the work queue
 		this.mtIndexer = new ThreadSafeInvertedIndex(indexer);
 		this.searchResultsMap = new TreeMap<>();
 		this.workQueue = new CustomWorkQueue(numThreads);
@@ -102,6 +102,10 @@ public class ThreadedQueryFileProcessor {
 	 * @param queryLine The query line to process
 	 */
 	private synchronized void processQuery(String queryLine) {
+		/*
+		 * TODO Synchronize around smaller parts
+		 * And consider local data... consider creating a local stemmer 
+		 */
 		TreeSet<String> query = FileStemmer.uniqueStems(queryLine, stemmer);
 		if (query.isEmpty()) {
 			return;

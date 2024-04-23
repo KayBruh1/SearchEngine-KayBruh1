@@ -77,6 +77,7 @@ public class FileBuilder {
 		}
 	}
 	
+	// TODO Mix of tabs and spaces
 	  /**
 	 * @param location The location to process
 	 * @throws IOException If an I/O error occurs

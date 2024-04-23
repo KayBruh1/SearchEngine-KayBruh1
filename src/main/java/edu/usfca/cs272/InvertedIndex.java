@@ -30,6 +30,14 @@ public class InvertedIndex {
 		this.counts = new TreeMap<>();
 		this.invertedIndex = new TreeMap<>();
 	}
+	
+	/* TODO 
+	public void addAll(InvertedIndex other) {
+		to start, just loop through other and add one at a time
+		
+		then think about whether you can make it faster
+	}
+	*/
 
 	/**
 	 * Returns the word counts
