@@ -19,11 +19,9 @@ public class Driver {
 	 */
 	public static void main(String[] args) {
 		ArgumentParser parser = new ArgumentParser(args);
-		InvertedIndex indexer = new InvertedIndex(); // TODO Remove
+		InvertedIndex indexer = new InvertedIndex();
 
-		if (parser.hasFlag("-threads") || parser.hasFlag("-html")) {
-			String uri = parser.getString("-html"); 
-			System.out.println("URI " + uri);
+		if (parser.hasFlag("-threads")) {
 			int numThreads = 5;
 			try {
 				numThreads = Integer.parseInt(parser.getString("-threads"));
@@ -34,8 +32,6 @@ public class Driver {
 				System.out.println("Invalid number of threads. Using default value.");
 				numThreads = 5;
 			}
-			
-			// TODO ThreadSafeInvertedIndex indexer = new ThreadSafeInvertedIndex();
 
 			ThreadedFileBuilder builder = new ThreadedFileBuilder(indexer, numThreads);
 			if (parser.hasFlag("-text")) {
@@ -86,7 +82,6 @@ public class Driver {
 				}
 			}
 		} else {
-			// TODO InvertedIndex indexer = new InvertedIndex();
 			FileBuilder fileBuilder = new FileBuilder(indexer);
 			if (parser.hasFlag("-text")) {
 				Path inputPath = parser.getPath("-text");
