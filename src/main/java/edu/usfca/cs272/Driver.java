@@ -19,7 +19,7 @@ public class Driver {
 	 */
 	public static void main(String[] args) {
 		ArgumentParser parser = new ArgumentParser(args);
-		InvertedIndex indexer = new InvertedIndex();
+		InvertedIndex indexer = new InvertedIndex(); // TODO Remove
 
 		if (parser.hasFlag("-threads")) {
 			int numThreads = 5;
@@ -32,6 +32,8 @@ public class Driver {
 				System.out.println("Invalid number of threads. Using default value.");
 				numThreads = 5;
 			}
+			
+			// TODO ThreadSafeInvertedIndex indexer = new ThreadSafeInvertedIndex();
 
 			ThreadedFileBuilder builder = new ThreadedFileBuilder(indexer, numThreads);
 			if (parser.hasFlag("-text")) {
@@ -82,6 +84,7 @@ public class Driver {
 				}
 			}
 		} else {
+			// TODO InvertedIndex indexer = new InvertedIndex();
 			FileBuilder fileBuilder = new FileBuilder(indexer);
 			if (parser.hasFlag("-text")) {
 				Path inputPath = parser.getPath("-text");

@@ -13,12 +13,18 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 	/**
 	 * The InvertedIndex instance for adding and searching
 	 */
-	private final InvertedIndex indexer;
+	private final InvertedIndex indexer; // TODO Remove
 
+	/* TODO 
+	public ThreadSafeInvertedIndex() {
+		this.lock = new CustomReadWriteLock();
+	}
+	*/
+	
 	/**
 	 * @param indexer The instance to use for adding and searching
 	 */
-	public ThreadSafeInvertedIndex(InvertedIndex indexer) {
+	public ThreadSafeInvertedIndex(InvertedIndex indexer) { // TODO Remove
 		this.lock = new CustomReadWriteLock();
 		this.indexer = indexer;
 	}
@@ -38,7 +44,17 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 		} finally {
 			lock.writeLock().unlock();
 		}
+		/* TODO 
+		lock.writeLock().lock();
+		try {
+			super.addWord(word, location, position);
+		} finally {
+			lock.writeLock().unlock();
+		}
+		*/
 	}
+	
+	// TODO Need to override and lock more methods
 
 	/**
 	 * Searches the inverted index for the specified queries
@@ -48,7 +64,7 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 	 * @return A list of search results
 	 */
 	@Override
-	public List<InvertedIndex.SearchResult> search(Set<String> queries, boolean partial) {
+	public List<InvertedIndex.SearchResult> search(Set<String> queries, boolean partial) { // TODO Remove, let get automatically inherited
 		;
 		lock.writeLock().lock();
 		try {
@@ -66,7 +82,7 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 	 */
 	@Override
 	public List<SearchResult> exactSearch(Set<String> queries) {
-		lock.writeLock().lock();
+		lock.writeLock().lock(); // TODO Read
 		try {
 			return indexer.exactSearch(queries);
 		} finally {
@@ -82,7 +98,7 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 	 */
 	@Override
 	public List<SearchResult> partialSearch(Set<String> queries) {
-		lock.writeLock().lock();
+		lock.writeLock().lock(); // TODO Read
 		try {
 			return indexer.partialSearch(queries);
 		} finally {
