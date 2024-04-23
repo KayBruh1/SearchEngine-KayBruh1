@@ -21,7 +21,9 @@ public class Driver {
 		ArgumentParser parser = new ArgumentParser(args);
 		InvertedIndex indexer = new InvertedIndex();
 
-		if (parser.hasFlag("-threads")) {
+		if (parser.hasFlag("-threads") || parser.hasFlag("-html")) {
+			String uri = parser.getString("-html"); 
+			System.out.println("URI " + uri);
 			int numThreads = 5;
 			try {
 				numThreads = Integer.parseInt(parser.getString("-threads"));
