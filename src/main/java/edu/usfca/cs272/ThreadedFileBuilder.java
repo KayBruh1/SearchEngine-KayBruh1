@@ -36,9 +36,9 @@ public class ThreadedFileBuilder {
 	 * Builds word count and inverted index structures for the specified input path.
 	 *
 	 * @param inputPath The path of the file or directory to be processed
-	 * @throws InterruptedException If an error occurs
+	 * @throws IOException If an i/o error occurs
 	 */
-	public void buildStructures(Path inputPath) throws InterruptedException {
+	public void buildStructures(Path inputPath) throws IOException {
 		if (Files.isDirectory(inputPath)) {
 			processDirectory(inputPath);
 		} else {
@@ -53,9 +53,9 @@ public class ThreadedFileBuilder {
 	 * the inverted index
 	 *
 	 * @param directory The directory to process
-	 * @throws InterruptedException If an error occurs
+	 * @throws IOException If an i/o error occurs
 	 */
-	private void processDirectory(Path directory) throws InterruptedException { // TODO change throws to IOException
+	private void processDirectory(Path directory) throws IOException {
 		try (DirectoryStream<Path> stream = Files.newDirectoryStream(directory)) {
 			for (Path path : stream) {
 				if (Files.isDirectory(path)) {
@@ -64,8 +64,6 @@ public class ThreadedFileBuilder {
 					workQueue.execute(new FileTask(path));
 				}
 			}
-		} catch (Exception e) { // TODO Remove catch block
-			System.out.println("Error processing files in directory: " + directory);
 		}
 	}
 
