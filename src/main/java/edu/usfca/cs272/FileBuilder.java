@@ -19,18 +19,13 @@ public class FileBuilder {
 	private final InvertedIndex indexer;
 
 	/**
-	 * SnowballStemmer instance for stemming
-	 */
-	private static SnowballStemmer stemmer;
-
-	/**
 	 * Creates a new FileBuilder object with the InvertedIndex
 	 *
 	 * @param indexer the InvertedIndex object
 	 */
 	public FileBuilder(InvertedIndex indexer) {
 		this.indexer = indexer;
-		FileBuilder.stemmer = new SnowballStemmer(SnowballStemmer.ALGORITHM.ENGLISH);
+		new SnowballStemmer(SnowballStemmer.ALGORITHM.ENGLISH);
 	}
 
 	/**
@@ -76,23 +71,24 @@ public class FileBuilder {
 			}
 		}
 	}
-	
-	  /**
+
+	/**
 	 * @param location The location to process
 	 * @throws IOException If an I/O error occurs
 	 */
 	public void processFile(Path location) throws IOException {
-	      processFile(location, this.indexer);
-	  }
+		processFile(location, this.indexer);
+	}
 
 	/**
 	 * Processes the specified file to generate word counts and an inverted index
 	 *
 	 * @param location The path of the file to process
-	 * @param indexer The index to help with processing
+	 * @param indexer  The index to help with processing
 	 * @throws IOException If an I/O error occurs
 	 */
 	public static void processFile(Path location, InvertedIndex indexer) throws IOException {
+		SnowballStemmer stemmer = new SnowballStemmer(SnowballStemmer.ALGORITHM.ENGLISH);
 		int position = 0;
 		String locationString = location.toString();
 		try (BufferedReader reader = Files.newBufferedReader(location)) {

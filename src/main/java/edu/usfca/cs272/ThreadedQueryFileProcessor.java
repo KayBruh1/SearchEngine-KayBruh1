@@ -45,14 +45,14 @@ public class ThreadedQueryFileProcessor {
 	/**
 	 * Constructs a new QueryFileProcsesor with the InvertedIndex
 	 *
-	 * @param indexer The InvertedIndex instance for searching
-	 * @param partial boolean for partial search or not
-	 * @param numThreads The number of threads for the work queue
+	 * @param indexer   The InvertedIndex instance for searching
+	 * @param workQueue The work queue for multithreading
+	 * @param partial   boolean for partial search or not
 	 */
-	public ThreadedQueryFileProcessor(InvertedIndex indexer, boolean partial, int numThreads) {
-		this.mtIndexer = new ThreadSafeInvertedIndex(indexer);
+	public ThreadedQueryFileProcessor(ThreadSafeInvertedIndex indexer, CustomWorkQueue workQueue, boolean partial) {
 		this.searchResultsMap = new TreeMap<>();
-		this.workQueue = new CustomWorkQueue(numThreads);
+		this.mtIndexer = indexer;
+		this.workQueue = workQueue;
 		this.stemmer = new SnowballStemmer(SnowballStemmer.ALGORITHM.ENGLISH);
 		this.partial = partial;
 	}
@@ -71,7 +71,6 @@ public class ThreadedQueryFileProcessor {
 			}
 		}
 		workQueue.finish();
-		workQueue.shutdown();
 	}
 
 	/**
@@ -101,17 +100,20 @@ public class ThreadedQueryFileProcessor {
 	 *
 	 * @param queryLine The query line to process
 	 */
-	private synchronized void processQuery(String queryLine) {
+	private void processQuery(String queryLine) {
+		SnowballStemmer stemmer = new SnowballStemmer(SnowballStemmer.ALGORITHM.ENGLISH);
 		TreeSet<String> query = FileStemmer.uniqueStems(queryLine, stemmer);
 		if (query.isEmpty()) {
 			return;
 		}
 		String queryVal = String.join(" ", query);
-		if (searchResultsMap.get(queryVal) != null) {
-			return;
+		synchronized (this) {
+			if (searchResultsMap.containsKey(queryVal)) {
+				return;
+			}
+			List<InvertedIndex.SearchResult> searchResults = mtIndexer.search(query, partial);
+			searchResultsMap.put(queryVal, searchResults);
 		}
-		List<InvertedIndex.SearchResult> searchResults = mtIndexer.search(query, partial);
-		searchResultsMap.put(queryVal, searchResults);
 	}
 
 	/**

@@ -19,7 +19,6 @@ public class Driver {
 	 */
 	public static void main(String[] args) {
 		ArgumentParser parser = new ArgumentParser(args);
-		InvertedIndex indexer = new InvertedIndex();
 
 		if (parser.hasFlag("-threads")) {
 			int numThreads = 5;
@@ -33,7 +32,9 @@ public class Driver {
 				numThreads = 5;
 			}
 
-			ThreadedFileBuilder builder = new ThreadedFileBuilder(indexer, numThreads);
+			CustomWorkQueue workQueue = new CustomWorkQueue(numThreads);
+			ThreadSafeInvertedIndex indexer = new ThreadSafeInvertedIndex();
+			ThreadedFileBuilder builder = new ThreadedFileBuilder(indexer, workQueue);
 			if (parser.hasFlag("-text")) {
 				Path inputPath = parser.getPath("-text");
 				try {
@@ -44,8 +45,8 @@ public class Driver {
 
 			}
 
-			ThreadedQueryFileProcessor mtProcessor = new ThreadedQueryFileProcessor(indexer, parser.hasFlag("-partial"),
-					numThreads);
+			ThreadedQueryFileProcessor mtProcessor = new ThreadedQueryFileProcessor(indexer, workQueue,
+					parser.hasFlag("-partial"));
 			if (parser.hasFlag("-query")) {
 				Path queryPath = parser.getPath("-query");
 				try {
@@ -54,6 +55,7 @@ public class Driver {
 					System.out.println("Error reading the query file " + queryPath);
 				}
 			}
+			workQueue.shutdown();
 
 			if (parser.hasFlag("-counts")) {
 				Path countsPath = parser.getPath("-counts", Path.of("counts.json"));
@@ -82,6 +84,7 @@ public class Driver {
 				}
 			}
 		} else {
+			InvertedIndex indexer = new InvertedIndex();
 			FileBuilder fileBuilder = new FileBuilder(indexer);
 			if (parser.hasFlag("-text")) {
 				Path inputPath = parser.getPath("-text");

@@ -188,6 +188,25 @@ public class InvertedIndex {
 	}
 
 	/**
+	 * Adds all entries to the InvertedIndex
+	 *
+	 * @param other The InvertedIndex entries to add
+	 */
+	public void addAll(InvertedIndex other) {
+		for (Map.Entry<String, TreeMap<String, TreeSet<Integer>>> entry : other.invertedIndex.entrySet()) {
+			String word = entry.getKey();
+			TreeMap<String, TreeSet<Integer>> locations = entry.getValue();
+			for (Map.Entry<String, TreeSet<Integer>> locationEntry : locations.entrySet()) {
+				String location = locationEntry.getKey();
+				TreeSet<Integer> positions = locationEntry.getValue();
+				for (int position : positions) {
+					addWord(word, location, position);
+				}
+			}
+		}
+	}
+
+	/**
 	 * Adds a word with its position in a file to the inverted index
 	 *
 	 * @param word     The word to add
