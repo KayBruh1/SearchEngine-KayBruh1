@@ -33,7 +33,6 @@ public class Driver {
 			}
 
 			CustomWorkQueue workQueue = new CustomWorkQueue(numThreads);
-
 			ThreadSafeInvertedIndex indexer = new ThreadSafeInvertedIndex();
 
 			ThreadedFileBuilder builder = new ThreadedFileBuilder(indexer, workQueue);
@@ -57,7 +56,6 @@ public class Driver {
 					System.out.println("Error reading the query file " + queryPath);
 				}
 			}
-			
 			workQueue.shutdown();
 
 			if (parser.hasFlag("-counts")) {
