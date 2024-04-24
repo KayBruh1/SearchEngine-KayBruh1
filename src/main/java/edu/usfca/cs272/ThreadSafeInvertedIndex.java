@@ -33,8 +33,7 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 			lock.writeLock().unlock();
 		}
 	}
-	
-	
+
 	@Override
 	public void addAll(InvertedIndex localIndex) {
 		lock.writeLock().lock();
@@ -44,7 +43,7 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 			lock.writeLock().unlock();
 		}
 	}
-	
+
 	/**
 	 * Returns the word counts
 	 *
@@ -59,8 +58,152 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 			lock.readLock().unlock();
 		}
 	}
-	
-	// TODO Need to override and lock more methods
+
+	/**
+	 * Gets the total word count for a specific location
+	 *
+	 * @param location The location of the document
+	 * @return The total word count at the location
+	 */
+	@Override
+	public int getTotalWordCount(String location) {
+		lock.readLock().lock();
+		try {
+			return super.getTotalWordCount(location);
+		} finally {
+			lock.readLock().unlock();
+		}
+	}
+
+	/**
+	 * Finds the amount of different files
+	 * 
+	 * @return The number of files
+	 */
+	@Override
+	public int numCounts() {
+		lock.readLock().lock();
+		try {
+			return super.numCounts();
+		} finally {
+			lock.readLock().unlock();
+		}
+	}
+
+	/**
+	 * Finds the amount of different words
+	 * 
+	 * @return The number of words
+	 */
+	@Override
+	public int numWords() {
+		lock.readLock().lock();
+		try {
+			return super.numWords();
+		} finally {
+			lock.readLock().unlock();
+		}
+	}
+
+	/**
+	 * Returns the number of locations of a word
+	 *
+	 * @param word The word to get locations for
+	 * @return The number of locations the word appears
+	 */
+	@Override
+	public int numWordLocations(String word) {
+		lock.readLock().lock();
+		try {
+			return super.numWordLocations(word);
+		} finally {
+			lock.readLock().unlock();
+		}
+	}
+
+	/**
+	 * Returns the number of positions a word appears in a file
+	 *
+	 * @param word     The word to get positions for
+	 * @param location The location to get positions for
+	 * @return The number of positions the word appears in the location
+	 */
+	@Override
+	public int numWordPositions(String word, String location) {
+		lock.readLock().lock();
+		try {
+			return super.numWordPositions(word, location);
+		} finally {
+			lock.readLock().unlock();
+		}
+	}
+
+	/**
+	 * Check if the location exists in the word counts
+	 *
+	 * @param location The location to check
+	 * @return True if the location exists, false otherwise
+	 */
+	@Override
+	public boolean hasLocation(String location) {
+		lock.readLock().lock();
+		try {
+			return super.hasLocation(location);
+		} finally {
+			lock.readLock().unlock();
+		}
+	}
+
+	/**
+	 * Check if the word exists in the inverted index
+	 *
+	 * @param word The word to check
+	 * @return True if the word exists, false otherwise
+	 */
+	@Override
+	public boolean hasWord(String word) {
+		lock.readLock().lock();
+		try {
+			return super.hasWord(word);
+		} finally {
+			lock.readLock().unlock();
+		}
+	}
+
+	/**
+	 * Checks if a word at a specific location exists
+	 *
+	 * @param word     The word to check
+	 * @param location The location to check
+	 * @return True if the word at location exists, false otherwise
+	 */
+	@Override
+	public boolean hasWordLocation(String word, String location) {
+		lock.readLock().lock();
+		try {
+			return super.hasWordLocation(word, location);
+		} finally {
+			lock.readLock().unlock();
+		}
+	}
+
+	/**
+	 * Checks if a word exists at a specific location position
+	 *
+	 * @param word     The word to check
+	 * @param location The location to check
+	 * @param position The position of the word
+	 * @return True if the word exists at the location position, false otherwise
+	 */
+	@Override
+	public boolean hasWordPosition(String word, String location, int position) {
+		lock.readLock().lock();
+		try {
+			return super.hasWordPosition(word, location, position);
+		} finally {
+			lock.readLock().unlock();
+		}
+	}
 
 	/**
 	 * Performs an exact search based on the provided set of queries.
@@ -93,7 +236,7 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 			lock.readLock().unlock();
 		}
 	}
-	
+
 	/**
 	 * Writes the word counts to a JSON file
 	 *
@@ -123,6 +266,21 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 			super.writeIndex(indexPath);
 		} finally {
 			lock.writeLock().unlock();
+		}
+	}
+
+	/**
+	 * Returns a string representation of the inverted index
+	 * 
+	 * @return a string representation of the inverted index
+	 */
+	@Override
+	public String toString() {
+		lock.readLock().lock();
+		try {
+			return super.toString();
+		} finally {
+			lock.readLock().unlock();
 		}
 	}
 }
