@@ -93,6 +93,7 @@ public class FileBuilder {
 	 * @throws IOException If an I/O error occurs
 	 */
 	public static void processFile(Path location, InvertedIndex indexer) throws IOException {
+		SnowballStemmer stemmer = new SnowballStemmer(SnowballStemmer.ALGORITHM.ENGLISH);
 		int position = 0;
 		String locationString = location.toString();
 		try (BufferedReader reader = Files.newBufferedReader(location)) {
