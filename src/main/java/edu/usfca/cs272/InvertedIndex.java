@@ -30,14 +30,6 @@ public class InvertedIndex {
 		this.counts = new TreeMap<>();
 		this.invertedIndex = new TreeMap<>();
 	}
-	
-	/* TODO 
-	public void addAll(InvertedIndex other) {
-		to start, just loop through other and add one at a time
-		
-		then think about whether you can make it faster
-	}
-	*/
 
 	/**
 	 * Returns the word counts
@@ -193,6 +185,25 @@ public class InvertedIndex {
 	public Set<String> viewLocations(String word) {
 		TreeMap<String, TreeSet<Integer>> locations = invertedIndex.get(word);
 		return locations != null ? Collections.unmodifiableSet(locations.keySet()) : Collections.emptySet();
+	}
+	
+	/**
+	 * Adds all entries from another InvertedIndex object into this InvertedIndex.
+	 *
+	 * @param other The InvertedIndex object to add entries from
+	 */
+	public void addAll(InvertedIndex other) {
+		for (Map.Entry<String, TreeMap<String, TreeSet<Integer>>> entry : other.invertedIndex.entrySet()) {
+			String word = entry.getKey();
+			TreeMap<String, TreeSet<Integer>> locations = entry.getValue();
+			for (Map.Entry<String, TreeSet<Integer>> locationEntry : locations.entrySet()) {
+				String location = locationEntry.getKey();
+				TreeSet<Integer> positions = locationEntry.getValue();
+				for (int position : positions) {
+					addWord(word, location, position);
+				}
+			}
+		}
 	}
 
 	/**
