@@ -1,4 +1,3 @@
-
 package edu.usfca.cs272;
 
 import java.io.BufferedReader;
@@ -46,8 +45,8 @@ public class ThreadedQueryFileProcessor {
 	/**
 	 * Constructs a new QueryFileProcsesor with the InvertedIndex
 	 *
-	 * @param indexer The InvertedIndex instance for searching
-	 * @param partial boolean for partial search or not
+	 * @param indexer    The InvertedIndex instance for searching
+	 * @param partial    boolean for partial search or not
 	 * @param numThreads The number of threads for the work queue
 	 */
 	public ThreadedQueryFileProcessor(InvertedIndex indexer, boolean partial, CustomWorkQueue workQueue) {
@@ -101,21 +100,20 @@ public class ThreadedQueryFileProcessor {
 	 *
 	 * @param queryLine The query line to process
 	 */
-	private synchronized void processQuery(String queryLine) {
-		/*
-		 * TODO Synchronize around smaller parts
-		 * And consider local data... consider creating a local stemmer 
-		 */
+	private void processQuery(String queryLine) {
+		SnowballStemmer stemmer = new SnowballStemmer(SnowballStemmer.ALGORITHM.ENGLISH);
 		TreeSet<String> query = FileStemmer.uniqueStems(queryLine, stemmer);
 		if (query.isEmpty()) {
 			return;
 		}
 		String queryVal = String.join(" ", query);
-		if (searchResultsMap.get(queryVal) != null) {
-			return;
+		synchronized (this) {
+			if (searchResultsMap.containsKey(queryVal)) {
+				return;
+			}
+			List<InvertedIndex.SearchResult> searchResults = mtIndexer.search(query, partial);
+			searchResultsMap.put(queryVal, searchResults);
 		}
-		List<InvertedIndex.SearchResult> searchResults = mtIndexer.search(query, partial);
-		searchResultsMap.put(queryVal, searchResults);
 	}
 
 	/**
