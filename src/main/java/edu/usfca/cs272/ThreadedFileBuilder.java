@@ -1,4 +1,3 @@
-
 package edu.usfca.cs272;
 
 import java.io.IOException;
@@ -26,9 +25,8 @@ public class ThreadedFileBuilder {
 	 * @param indexer    Inverted index instance for processing
 	 * @param workQueue Number of threads for the work queue
 	 */
-	// TODO ThreadSafeInvertedIndex indexer
-	public ThreadedFileBuilder(InvertedIndex indexer, CustomWorkQueue workQueue) {
-		this.mtIndexer = new ThreadSafeInvertedIndex(indexer);
+	public ThreadedFileBuilder(ThreadSafeInvertedIndex indexer, CustomWorkQueue workQueue) {
+		this.mtIndexer = indexer;
 		this.workQueue = new CustomWorkQueue();
 	}
 

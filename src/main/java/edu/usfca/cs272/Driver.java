@@ -1,4 +1,3 @@
-
 package edu.usfca.cs272;
 
 import java.nio.file.Path;
@@ -20,7 +19,6 @@ public class Driver {
 	 */
 	public static void main(String[] args) {
 		ArgumentParser parser = new ArgumentParser(args);
-		InvertedIndex indexer = new InvertedIndex(); // TODO Remove
 
 		if (parser.hasFlag("-threads")) {
 			int numThreads = 5;
@@ -36,7 +34,7 @@ public class Driver {
 
 			CustomWorkQueue workQueue = new CustomWorkQueue(numThreads);
 
-			// TODO ThreadSafeInvertedIndex indexer = new ThreadSafeInvertedIndex();
+			ThreadSafeInvertedIndex indexer = new ThreadSafeInvertedIndex();
 
 			ThreadedFileBuilder builder = new ThreadedFileBuilder(indexer, workQueue);
 			if (parser.hasFlag("-text")) {
@@ -89,7 +87,7 @@ public class Driver {
 				}
 			}
 		} else {
-			// TODO InvertedIndex indexer = new InvertedIndex();
+			InvertedIndex indexer = new InvertedIndex();
 			FileBuilder fileBuilder = new FileBuilder(indexer);
 			if (parser.hasFlag("-text")) {
 				Path inputPath = parser.getPath("-text");

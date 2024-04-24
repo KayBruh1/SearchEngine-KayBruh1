@@ -1,6 +1,7 @@
-
 package edu.usfca.cs272;
 
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Set;
 
@@ -11,23 +12,8 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 	/** The lock used to protect concurrent access */
 	private final CustomReadWriteLock lock;
 
-	/**
-	 * The InvertedIndex instance for adding and searching
-	 */
-	private final InvertedIndex indexer; // TODO Remove
-
-	/* TODO 
 	public ThreadSafeInvertedIndex() {
 		this.lock = new CustomReadWriteLock();
-	}
-	*/
-	
-	/**
-	 * @param indexer The instance to use for adding and searching
-	 */
-	public ThreadSafeInvertedIndex(InvertedIndex indexer) { // TODO Remove
-		this.lock = new CustomReadWriteLock();
-		this.indexer = indexer;
 	}
 
 	/**
@@ -41,18 +27,10 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 	public void addWord(String word, String location, int position) {
 		lock.writeLock().lock();
 		try {
-			indexer.addWord(word, location, position);
-		} finally {
-			lock.writeLock().unlock();
-		}
-		/* TODO 
-		lock.writeLock().lock();
-		try {
 			super.addWord(word, location, position);
 		} finally {
 			lock.writeLock().unlock();
 		}
-		*/
 	}
 	
 	// TODO Need to override and lock more methods
@@ -67,7 +45,7 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 	public List<SearchResult> exactSearch(Set<String> queries) {
 		lock.readLock().lock();
 		try {
-			return indexer.exactSearch(queries);
+			return super.exactSearch(queries);
 		} finally {
 			lock.readLock().unlock();
 		}
@@ -83,9 +61,32 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 	public List<SearchResult> partialSearch(Set<String> queries) {
 		lock.readLock().lock();
 		try {
-			return indexer.partialSearch(queries);
+			return super.partialSearch(queries);
 		} finally {
 			lock.readLock().unlock();
 		}
+	}
+	
+	/**
+	 * Writes the word counts to a JSON file
+	 *
+	 * @param countsPath the output path of the JSON file
+	 * @throws IOException if an I/O error occurs
+	 */
+	@Override
+	public void writeCounts(Path countsPath) throws IOException {
+		System.out.println("o");
+		super.writeCounts(countsPath);;
+	}
+
+	/**
+	 * Writes the inverted index to a JSON file
+	 *
+	 * @param indexPath the output path of the JSON file
+	 * @throws IOException if an I/O error occurs
+	 */
+	@Override
+	public void writeIndex(Path indexPath) throws IOException {
+		super.writeIndex(indexPath);
 	}
 }
