@@ -58,24 +58,6 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 	// TODO Need to override and lock more methods
 
 	/**
-	 * Searches the inverted index for the specified queries
-	 * 
-	 * @param queries The set of queries to search for
-	 * @param partial Boolean for whether or not to partial search
-	 * @return A list of search results
-	 */
-	@Override
-	public List<InvertedIndex.SearchResult> search(Set<String> queries, boolean partial) { // TODO Remove, let get automatically inherited
-		;
-		lock.writeLock().lock();
-		try {
-			return partial ? partialSearch(queries) : exactSearch(queries);
-		} finally {
-			lock.writeLock().unlock();
-		}
-	}
-
-	/**
 	 * Performs an exact search based on the provided set of queries.
 	 *
 	 * @param queries The set of queries to search for
