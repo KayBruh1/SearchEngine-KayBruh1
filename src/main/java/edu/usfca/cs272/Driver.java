@@ -33,10 +33,12 @@ public class Driver {
 				System.out.println("Invalid number of threads. Using default value.");
 				numThreads = 5;
 			}
-			
+
+			CustomWorkQueue workQueue = new CustomWorkQueue(numThreads);
+
 			// TODO ThreadSafeInvertedIndex indexer = new ThreadSafeInvertedIndex();
 
-			ThreadedFileBuilder builder = new ThreadedFileBuilder(indexer, numThreads);
+			ThreadedFileBuilder builder = new ThreadedFileBuilder(indexer, workQueue);
 			if (parser.hasFlag("-text")) {
 				Path inputPath = parser.getPath("-text");
 				try {
@@ -48,7 +50,7 @@ public class Driver {
 			}
 
 			ThreadedQueryFileProcessor mtProcessor = new ThreadedQueryFileProcessor(indexer, parser.hasFlag("-partial"),
-					numThreads);
+					workQueue);
 			if (parser.hasFlag("-query")) {
 				Path queryPath = parser.getPath("-query");
 				try {

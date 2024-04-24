@@ -24,12 +24,12 @@ public class ThreadedFileBuilder {
 
 	/**
 	 * @param indexer    Inverted index instance for processing
-	 * @param numThreads Number of threads for the work queue
+	 * @param workQueue Number of threads for the work queue
 	 */
 	// TODO ThreadSafeInvertedIndex indexer
-	public ThreadedFileBuilder(InvertedIndex indexer, int numThreads) { // TODO Pass in the work queue instead of # of threads
+	public ThreadedFileBuilder(InvertedIndex indexer, CustomWorkQueue workQueue) {
 		this.mtIndexer = new ThreadSafeInvertedIndex(indexer);
-		this.workQueue = new CustomWorkQueue(numThreads); // TODO Create the work queue in Driver
+		this.workQueue = new CustomWorkQueue();
 	}
 
 	/**

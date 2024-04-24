@@ -65,7 +65,7 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 	 */
 	@Override
 	public List<SearchResult> exactSearch(Set<String> queries) {
-		lock.readLock().lock();
+		lock.writeLock().lock(); // TODO Read
 		try {
 			return indexer.exactSearch(queries);
 		} finally {
@@ -81,7 +81,7 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 	 */
 	@Override
 	public List<SearchResult> partialSearch(Set<String> queries) {
-		lock.readLock().lock();
+		lock.writeLock().lock(); // TODO Read
 		try {
 			return indexer.partialSearch(queries);
 		} finally {

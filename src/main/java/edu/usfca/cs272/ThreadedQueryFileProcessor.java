@@ -50,10 +50,10 @@ public class ThreadedQueryFileProcessor {
 	 * @param partial boolean for partial search or not
 	 * @param numThreads The number of threads for the work queue
 	 */
-	public ThreadedQueryFileProcessor(InvertedIndex indexer, boolean partial, int numThreads) { // TODO Pass in the work queue
+	public ThreadedQueryFileProcessor(InvertedIndex indexer, boolean partial, CustomWorkQueue workQueue) {
 		this.mtIndexer = new ThreadSafeInvertedIndex(indexer);
 		this.searchResultsMap = new TreeMap<>();
-		this.workQueue = new CustomWorkQueue(numThreads);
+		this.workQueue = new CustomWorkQueue();
 		this.stemmer = new SnowballStemmer(SnowballStemmer.ALGORITHM.ENGLISH);
 		this.partial = partial;
 	}
