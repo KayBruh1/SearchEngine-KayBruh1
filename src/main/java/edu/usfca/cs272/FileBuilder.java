@@ -19,18 +19,13 @@ public class FileBuilder {
 	private final InvertedIndex indexer;
 
 	/**
-	 * SnowballStemmer instance for stemming
-	 */
-	private static SnowballStemmer stemmer;
-
-	/**
 	 * Creates a new FileBuilder object with the InvertedIndex
 	 *
 	 * @param indexer the InvertedIndex object
 	 */
 	public FileBuilder(InvertedIndex indexer) {
 		this.indexer = indexer;
-		FileBuilder.stemmer = new SnowballStemmer(SnowballStemmer.ALGORITHM.ENGLISH);
+		new SnowballStemmer(SnowballStemmer.ALGORITHM.ENGLISH);
 	}
 
 	/**

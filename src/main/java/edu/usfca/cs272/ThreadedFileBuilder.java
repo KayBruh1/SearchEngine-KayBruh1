@@ -22,7 +22,7 @@ public class ThreadedFileBuilder {
 
 	/**
 	 * @param indexer   Inverted index instance for processing
-	 * @param workQueue Number of threads for the work queue
+	 * @param workQueue The work queue for multithreading
 	 */
 	public ThreadedFileBuilder(ThreadSafeInvertedIndex indexer, CustomWorkQueue workQueue) {
 		this.mtIndexer = indexer;

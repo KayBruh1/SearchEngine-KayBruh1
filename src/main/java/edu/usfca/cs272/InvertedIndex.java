@@ -186,11 +186,11 @@ public class InvertedIndex {
 		TreeMap<String, TreeSet<Integer>> locations = invertedIndex.get(word);
 		return locations != null ? Collections.unmodifiableSet(locations.keySet()) : Collections.emptySet();
 	}
-	
+
 	/**
-	 * Adds all entries from another InvertedIndex object into this InvertedIndex.
+	 * Adds all entries to the InvertedIndex
 	 *
-	 * @param other The InvertedIndex object to add entries from
+	 * @param other The InvertedIndex entries to add
 	 */
 	public void addAll(InvertedIndex other) {
 		for (Map.Entry<String, TreeMap<String, TreeSet<Integer>>> entry : other.invertedIndex.entrySet()) {

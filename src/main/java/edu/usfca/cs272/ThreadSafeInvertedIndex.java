@@ -13,6 +13,9 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 	/** The lock used to protect concurrent access */
 	private final CustomReadWriteLock lock;
 
+	/**
+	 * 
+	 */
 	public ThreadSafeInvertedIndex() {
 		this.lock = new CustomReadWriteLock();
 	}
@@ -34,6 +37,11 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 		}
 	}
 
+	/**
+	 * Adds all entries to the InvertedIndex
+	 *
+	 * @param localIndex The InvertedIndex entries to add
+	 */
 	@Override
 	public void addAll(InvertedIndex localIndex) {
 		lock.writeLock().lock();

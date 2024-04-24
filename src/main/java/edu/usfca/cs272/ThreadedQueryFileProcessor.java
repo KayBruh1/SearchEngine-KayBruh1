@@ -47,7 +47,7 @@ public class ThreadedQueryFileProcessor {
 	 *
 	 * @param indexer    The InvertedIndex instance for searching
 	 * @param partial    boolean for partial search or not
-	 * @param numThreads The number of threads for the work queue
+	 * @param workQueue  The work queue for multithreading
 	 */
 	public ThreadedQueryFileProcessor(ThreadSafeInvertedIndex indexer, boolean partial, CustomWorkQueue workQueue) {
 		this.searchResultsMap = new TreeMap<>();

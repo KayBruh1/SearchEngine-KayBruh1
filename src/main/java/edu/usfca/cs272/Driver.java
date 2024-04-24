@@ -34,7 +34,6 @@ public class Driver {
 
 			CustomWorkQueue workQueue = new CustomWorkQueue(numThreads);
 			ThreadSafeInvertedIndex indexer = new ThreadSafeInvertedIndex();
-
 			ThreadedFileBuilder builder = new ThreadedFileBuilder(indexer, workQueue);
 			if (parser.hasFlag("-text")) {
 				Path inputPath = parser.getPath("-text");
