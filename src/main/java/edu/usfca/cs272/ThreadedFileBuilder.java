@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
 
 /**
  * Multithreaded class for building and processing files/directories to generate
@@ -22,7 +21,7 @@ public class ThreadedFileBuilder {
 	private final CustomWorkQueue workQueue;
 
 	/**
-	 * @param indexer    Inverted index instance for processing
+	 * @param indexer   Inverted index instance for processing
 	 * @param workQueue Number of threads for the work queue
 	 */
 	public ThreadedFileBuilder(ThreadSafeInvertedIndex indexer, CustomWorkQueue workQueue) {
@@ -97,20 +96,8 @@ public class ThreadedFileBuilder {
 	 * @throws IOException If an I/O error occurs
 	 */
 	private void processFile(Path location) throws IOException {
-		
-		/* TODO Try this instead:
-		InvertedIndex local = new InvertedIndex();
-		FileBuilder.processFile(location, local);
-		mtIndexer.addAll(local);
-		*/
-		
-		
-		String locationString = location.toString();
-		List<String> stems = FileStemmer.listStems(location);
-		int position = 0;
-		for (String stem : stems) {
-			position++;
-			mtIndexer.addWord(stem, locationString, position);
-		}
+		InvertedIndex localIndex = new InvertedIndex();
+		FileBuilder.processFile(location, localIndex);
+		mtIndexer.addAll(localIndex);
 	}
 }

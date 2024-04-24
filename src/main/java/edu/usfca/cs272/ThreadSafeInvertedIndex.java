@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Set;
+import java.util.SortedMap;
 
 /**
  * Class for thread safe methods
@@ -30,6 +31,32 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 			super.addWord(word, location, position);
 		} finally {
 			lock.writeLock().unlock();
+		}
+	}
+	
+	
+	@Override
+	public void addAll(InvertedIndex localIndex) {
+		lock.writeLock().lock();
+		try {
+			super.addAll(localIndex);
+		} finally {
+			lock.writeLock().unlock();
+		}
+	}
+	
+	/**
+	 * Returns the word counts
+	 *
+	 * @return the TreeMap containing word counts
+	 */
+	@Override
+	public SortedMap<String, Integer> getCounts() {
+		lock.readLock().lock();
+		try {
+			return super.getCounts();
+		} finally {
+			lock.readLock().unlock();
 		}
 	}
 	
@@ -75,8 +102,12 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 	 */
 	@Override
 	public void writeCounts(Path countsPath) throws IOException {
-		System.out.println("o");
-		super.writeCounts(countsPath);;
+		lock.writeLock().lock();
+		try {
+			super.writeCounts(countsPath);
+		} finally {
+			lock.writeLock().unlock();
+		}
 	}
 
 	/**
@@ -87,6 +118,11 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 	 */
 	@Override
 	public void writeIndex(Path indexPath) throws IOException {
-		super.writeIndex(indexPath);
+		lock.writeLock().lock();
+		try {
+			super.writeIndex(indexPath);
+		} finally {
+			lock.writeLock().unlock();
+		}
 	}
 }
