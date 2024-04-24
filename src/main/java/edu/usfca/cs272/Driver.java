@@ -45,8 +45,8 @@ public class Driver {
 
 			}
 
-			ThreadedQueryFileProcessor mtProcessor = new ThreadedQueryFileProcessor(indexer, parser.hasFlag("-partial"),
-					workQueue);
+			ThreadedQueryFileProcessor mtProcessor = new ThreadedQueryFileProcessor(indexer, workQueue,
+					parser.hasFlag("-partial"));
 			if (parser.hasFlag("-query")) {
 				Path queryPath = parser.getPath("-query");
 				try {

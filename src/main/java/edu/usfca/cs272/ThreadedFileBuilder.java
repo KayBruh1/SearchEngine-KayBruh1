@@ -28,7 +28,7 @@ public class ThreadedFileBuilder {
 	 */
 	public ThreadedFileBuilder(ThreadSafeInvertedIndex indexer, CustomWorkQueue workQueue) {
 		this.mtIndexer = indexer;
-		this.workQueue = new CustomWorkQueue();
+		this.workQueue = workQueue;
 	}
 
 	/**

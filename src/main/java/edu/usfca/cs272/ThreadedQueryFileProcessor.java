@@ -45,14 +45,14 @@ public class ThreadedQueryFileProcessor {
 	/**
 	 * Constructs a new QueryFileProcsesor with the InvertedIndex
 	 *
-	 * @param indexer    The InvertedIndex instance for searching
-	 * @param partial    boolean for partial search or not
-	 * @param workQueue  The work queue for multithreading
+	 * @param indexer   The InvertedIndex instance for searching
+	 * @param workQueue The work queue for multithreading
+	 * @param partial   boolean for partial search or not
 	 */
-	public ThreadedQueryFileProcessor(ThreadSafeInvertedIndex indexer, boolean partial, CustomWorkQueue workQueue) {
+	public ThreadedQueryFileProcessor(ThreadSafeInvertedIndex indexer, CustomWorkQueue workQueue, boolean partial) {
 		this.searchResultsMap = new TreeMap<>();
 		this.mtIndexer = indexer;
-		this.workQueue = new CustomWorkQueue();
+		this.workQueue = workQueue;
 		this.stemmer = new SnowballStemmer(SnowballStemmer.ALGORITHM.ENGLISH);
 		this.partial = partial;
 	}
