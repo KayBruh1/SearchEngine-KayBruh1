@@ -59,6 +59,8 @@ public class Driver {
 					System.out.println("Error reading the query file " + queryPath);
 				}
 			}
+			
+			workQueue.shutdown();
 
 			if (parser.hasFlag("-counts")) {
 				Path countsPath = parser.getPath("-counts", Path.of("counts.json"));

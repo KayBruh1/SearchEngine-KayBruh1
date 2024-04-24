@@ -72,7 +72,6 @@ public class ThreadedQueryFileProcessor {
 			}
 		}
 		workQueue.finish();
-		workQueue.shutdown();
 	}
 
 	/**

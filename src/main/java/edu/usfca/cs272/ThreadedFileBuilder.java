@@ -45,7 +45,6 @@ public class ThreadedFileBuilder {
 			workQueue.execute(new FileTask(inputPath));
 		}
 		workQueue.finish();
-		workQueue.shutdown(); // TODO Call this in Driver
 	}
 
 	/**
