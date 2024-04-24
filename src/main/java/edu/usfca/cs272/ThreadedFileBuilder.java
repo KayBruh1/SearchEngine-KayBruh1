@@ -21,6 +21,8 @@ public class ThreadedFileBuilder {
 	private final CustomWorkQueue workQueue;
 
 	/**
+	 * Constructs an indexer and work queue for building
+	 * 
 	 * @param indexer   Inverted index instance for processing
 	 * @param workQueue The work queue for multithreading
 	 */

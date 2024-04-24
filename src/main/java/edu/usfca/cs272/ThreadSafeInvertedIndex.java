@@ -14,7 +14,7 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 	private final CustomReadWriteLock lock;
 
 	/**
-	 * 
+	 * Constructs a work queue to use
 	 */
 	public ThreadSafeInvertedIndex() {
 		this.lock = new CustomReadWriteLock();
