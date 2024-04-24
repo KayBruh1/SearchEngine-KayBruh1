@@ -60,7 +60,7 @@ public class ThreadedFileBuilder {
 			for (Path path : stream) {
 				if (Files.isDirectory(path)) {
 					processDirectory(path);
-				} else if (isTextFile(path)) {
+				} else if (FileBuilder.isTextFile(path)) {
 					workQueue.execute(new FileTask(path));
 				}
 			}
@@ -115,16 +115,5 @@ public class ThreadedFileBuilder {
 			position++;
 			mtIndexer.addWord(stem, locationString, position);
 		}
-	}
-
-	/**
-	 * Determines if given a valid file
-	 * 
-	 * @param file The file to be checked
-	 * @return True for a valid file, false otherwise
-	 */
-	private static boolean isTextFile(Path file) { // TODO Remove
-		String fileName = file.getFileName().toString().toLowerCase();
-		return Files.isRegularFile(file) && (fileName.endsWith(".txt") || fileName.endsWith(".text"));
 	}
 }
