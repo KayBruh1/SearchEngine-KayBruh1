@@ -49,15 +49,12 @@ public class HtmlFetcher {
 	 */
 	public static int getStatusCode(Map<String, List<String>> headers) {
 		List<String> statusLine = headers.get(null);
-		if (headers != null) {
-			String[] headerParts = statusLine.get(0).split(" ");
-			try {
-				return Integer.parseInt(headerParts[1]);
-			} catch (Exception e) {
-				return -1;
-			}
+		String[] headerParts = statusLine.get(0).split(" ");
+		try {
+			return Integer.parseInt(headerParts[1]);
+		} catch (Exception e) {
+			return -1;
 		}
-		return -1;
 	}
 
 	/**
