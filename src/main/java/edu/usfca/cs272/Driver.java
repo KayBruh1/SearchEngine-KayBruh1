@@ -26,7 +26,7 @@ public class Driver {
             try {
                 numThreads = Integer.parseInt(parser.getString("-threads"));
             } catch (Exception e) {
-                System.out.println("Invalid number of threads Using default value.");
+                System.out.println("Invalid number of threads. Using default value.");
             }
             if (numThreads < 1) {
                 System.out.println("Invalid number of threads. Using default value.");
@@ -58,11 +58,10 @@ public class Driver {
             }
             
             if (parser.hasFlag("-html")) {
-                String htmlSeed = parser.getString("-html");
-                URI seedUri = URI.create(htmlSeed);
+                String seed = parser.getString("-html");
                 WebCrawler crawler = new WebCrawler();
                 try {
-                    crawler.crawl(seedUri, 3, indexer);
+                    crawler.crawl(new URI(seed), 3, indexer);
                     System.out.println(indexer.toString());
                 } catch (Exception e) {
                     e.printStackTrace();

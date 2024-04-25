@@ -28,7 +28,9 @@ public class WebCrawler {
 					int position = 0;
 					for (String word : words) {
 						position++;
-						indexer.addWord(word, uri.toString(), position);
+						URI cleanURI = LinkFinder.clean(uri);
+						System.out.println(cleanURI.toString());
+						indexer.addWord(word, cleanURI.toString(), position);
 					}
 				}
 			} else if (statusCode >= 300 && statusCode <= 399 && redirects > 0) { // Check for redirects
