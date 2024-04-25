@@ -21,7 +21,6 @@ public class Driver {
         ArgumentParser parser = new ArgumentParser(args);
 
         if (parser.hasFlag("-threads") || parser.hasFlag("-html")) {
-
             int numThreads = 5;
             try {
                 numThreads = Integer.parseInt(parser.getString("-threads"));

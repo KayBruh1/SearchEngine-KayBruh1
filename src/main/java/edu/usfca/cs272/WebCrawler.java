@@ -33,7 +33,7 @@ public class WebCrawler {
 						indexer.addWord(word, cleanURI.toString(), position);
 					}
 				}
-			} else if (statusCode >= 300 && statusCode <= 399 && redirects > 0) { // Check for redirects
+			} else if (statusCode >= 300 && statusCode <= 399 && redirects > 0) {
 				String redirect = HtmlFetcher.getRedirect(headers);
 				if (redirect != null) {
 					crawl(new URI(redirect), redirects - 1, indexer);
