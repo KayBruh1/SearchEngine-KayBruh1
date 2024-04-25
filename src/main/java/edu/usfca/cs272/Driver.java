@@ -65,7 +65,7 @@ public class Driver {
                     crawler.crawl(seedUri, 3, indexer);
                     System.out.println(indexer.toString());
                 } catch (Exception e) {
-                    System.out.println("Error crawling HTML content: " + e.getMessage());
+                    e.printStackTrace();
                 }
             }
 
