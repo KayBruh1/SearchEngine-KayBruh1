@@ -34,21 +34,8 @@ public class Driver {
 
 			CustomWorkQueue workQueue = new CustomWorkQueue(numThreads);
 			ThreadSafeInvertedIndex indexer = new ThreadSafeInvertedIndex();
+			
 			ThreadedFileBuilder builder = new ThreadedFileBuilder(indexer, workQueue);
-			ThreadedQueryFileProcessor mtProcessor = new ThreadedQueryFileProcessor(indexer, workQueue,
-					parser.hasFlag("-partial"));
-
-			if (parser.hasFlag("-html")) {
-				String seed = parser.getString("-html");
-				WebCrawler crawler = new WebCrawler(indexer, workQueue);
-				try {
-					crawler.crawl(new URI(seed), 3);
-					System.out.println(indexer.toString());
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-
 			if (parser.hasFlag("-text")) {
 				Path inputPath = parser.getPath("-text");
 				try {
@@ -59,6 +46,19 @@ public class Driver {
 
 			}
 
+			if (parser.hasFlag("-html")) {
+				String seed = parser.getString("-html");
+				WebCrawler crawler = new WebCrawler(indexer, workQueue);
+				try {
+					crawler.crawl(new URI(seed));
+					System.out.println(indexer.toString());
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+
+			ThreadedQueryFileProcessor mtProcessor = new ThreadedQueryFileProcessor(indexer, workQueue,
+					parser.hasFlag("-partial"));
 			if (parser.hasFlag("-query")) {
 				Path queryPath = parser.getPath("-query");
 				try {
@@ -88,8 +88,8 @@ public class Driver {
 				}
 			}
 
-			if (parser.hasFlag("-results")) {
-				Path resultsPath = parser.getPath("-results", Path.of("results.json"));
+			if (parser.hasFlag("-html")) {
+				Path resultsPath = parser.getPath("-html", Path.of("html.json"));
 				try {
 					mtProcessor.writeResults(resultsPath);
 				} catch (Exception e) {
@@ -97,8 +97,8 @@ public class Driver {
 				}
 			}
 
-			if (parser.hasFlag("-html")) {
-				Path resultsPath = parser.getPath("-html", Path.of("html.json"));
+			if (parser.hasFlag("-results")) {
+				Path resultsPath = parser.getPath("-results", Path.of("results.json"));
 				try {
 					mtProcessor.writeResults(resultsPath);
 				} catch (Exception e) {
