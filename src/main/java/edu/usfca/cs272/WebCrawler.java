@@ -8,12 +8,24 @@ import java.util.HashSet;
 
 public class WebCrawler {
 	private final HashSet<URI> visited;
+	
+	/**
+	 * Thread safe inverted index instance for crawling
+	 */
+	private final ThreadSafeInvertedIndex indexer;
 
-	public WebCrawler() {
+	/**
+	 * Work queue instance for multithreading
+	 */
+	private final CustomWorkQueue workQueue;
+
+	public WebCrawler(ThreadSafeInvertedIndex indexer, CustomWorkQueue workQueue) {
+		this.indexer = indexer;
+		this.workQueue = workQueue;
 		visited = new HashSet<>();
 	}
 
-	public void crawl(URI uri, int redirects, ThreadSafeInvertedIndex indexer) throws IOException, URISyntaxException {
+	public void crawl(URI uri, int redirects) throws IOException, URISyntaxException {
 		if (!visited.contains(uri)) {
 			visited.add(uri);
 			String htmlContent = HtmlFetcher.fetch(uri, redirects);
@@ -24,7 +36,6 @@ public class WebCrawler {
 				for (String word : words) {
 					position++;
 					URI cleanURI = LinkFinder.clean(uri);
-					System.out.println(cleanURI.toString());
 					indexer.addWord(word, cleanURI.toString(), position);
 				}
 			}

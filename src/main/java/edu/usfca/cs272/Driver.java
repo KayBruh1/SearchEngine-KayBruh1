@@ -40,9 +40,9 @@ public class Driver {
 
 			if (parser.hasFlag("-html")) {
 				String seed = parser.getString("-html");
-				WebCrawler crawler = new WebCrawler();
+				WebCrawler crawler = new WebCrawler(indexer, workQueue);
 				try {
-					crawler.crawl(new URI(seed), 3, indexer);
+					crawler.crawl(new URI(seed), 3);
 					System.out.println(indexer.toString());
 				} catch (Exception e) {
 					e.printStackTrace();
