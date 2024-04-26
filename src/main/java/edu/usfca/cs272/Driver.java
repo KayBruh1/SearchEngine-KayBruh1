@@ -49,15 +49,6 @@ public class Driver {
 				}
 			}
 
-			if (parser.hasFlag("-html")) {
-				Path resultsPath = parser.getPath("-html", Path.of("html.json"));
-				try {
-					mtProcessor.writeResults(resultsPath);
-				} catch (Exception e) {
-					System.out.println("Error writing results to file " + resultsPath);
-				}
-			}
-
 			if (parser.hasFlag("-text")) {
 				Path inputPath = parser.getPath("-text");
 				try {
@@ -99,6 +90,15 @@ public class Driver {
 
 			if (parser.hasFlag("-results")) {
 				Path resultsPath = parser.getPath("-results", Path.of("results.json"));
+				try {
+					mtProcessor.writeResults(resultsPath);
+				} catch (Exception e) {
+					System.out.println("Error writing results to file " + resultsPath);
+				}
+			}
+
+			if (parser.hasFlag("-html")) {
+				Path resultsPath = parser.getPath("-html", Path.of("html.json"));
 				try {
 					mtProcessor.writeResults(resultsPath);
 				} catch (Exception e) {
