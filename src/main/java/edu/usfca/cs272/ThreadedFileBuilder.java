@@ -1,15 +1,14 @@
 package edu.usfca.cs272;
 
 import java.io.IOException;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
+import java.io.UncheckedIOException;
 import java.nio.file.Path;
 
 /**
  * Multithreaded class for building and processing files/directories to generate
  * word counts and an inverted index
  */
-public class ThreadedFileBuilder { // TODO extends FileBuilder
+public class ThreadedFileBuilder extends FileBuilder {
 	/**
 	 * Thread safe inverted index instance for searching
 	 */
@@ -27,7 +26,7 @@ public class ThreadedFileBuilder { // TODO extends FileBuilder
 	 * @param workQueue The work queue for multithreading
 	 */
 	public ThreadedFileBuilder(ThreadSafeInvertedIndex indexer, CustomWorkQueue workQueue) {
-		// TODO super(indexer)
+		super(indexer);
 		this.mtIndexer = indexer;
 		this.workQueue = workQueue;
 	}
@@ -38,38 +37,10 @@ public class ThreadedFileBuilder { // TODO extends FileBuilder
 	 * @param inputPath The path of the file or directory to be processed
 	 * @throws IOException If an i/o error occurs
 	 */
+	@Override
 	public void buildStructures(Path inputPath) throws IOException {
-		if (Files.isDirectory(inputPath)) {
-			processDirectory(inputPath);
-		} else {
-			workQueue.execute(new FileTask(inputPath));
-		}
-		workQueue.finish();
-		
-		/* TODO 
 		super.buildStructures(inputPath);
 		workQueue.finish();
-		*/
-	}
-
-	// TODO Remove
-	/**
-	 * Processes the files in the specified directory to generate word counts and
-	 * the inverted index
-	 *
-	 * @param directory The directory to process
-	 * @throws IOException If an i/o error occurs
-	 */
-	private void processDirectory(Path directory) throws IOException {
-		try (DirectoryStream<Path> stream = Files.newDirectoryStream(directory)) {
-			for (Path path : stream) {
-				if (Files.isDirectory(path)) {
-					processDirectory(path);
-				} else if (FileBuilder.isTextFile(path)) {
-					workQueue.execute(new FileTask(path));
-				}
-			}
-		}
 	}
 
 	/**
@@ -91,16 +62,11 @@ public class ThreadedFileBuilder { // TODO extends FileBuilder
 		@Override
 		public void run() {
 			try {
-				processFile(location);
-
-				/* TODO 
 				InvertedIndex localIndex = new InvertedIndex();
 				FileBuilder.processFile(location, localIndex);
 				mtIndexer.addAll(localIndex);
-				*/
-			} catch (Exception e) {
-				// TODO throw new UncheckedIOException(e);
-				System.out.println("Error processing file: " + location);
+			} catch (IOException e) {
+				throw new UncheckedIOException(e);
 			}
 		}
 	}
@@ -111,11 +77,8 @@ public class ThreadedFileBuilder { // TODO extends FileBuilder
 	 * @param location The path of the file to process
 	 * @throws IOException If an I/O error occurs
 	 */
-	// TODO public
-	private void processFile(Path location) throws IOException {
-		// TODO workQueue.execute(new FileTask(path));
-		InvertedIndex localIndex = new InvertedIndex();
-		FileBuilder.processFile(location, localIndex);
-		mtIndexer.addAll(localIndex);
+	@Override
+	public void processFile(Path location) throws IOException {
+		workQueue.execute(new FileTask(location));
 	}
 }
