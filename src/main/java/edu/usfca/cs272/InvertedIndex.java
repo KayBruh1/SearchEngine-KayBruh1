@@ -193,6 +193,28 @@ public class InvertedIndex {
 	 * @param other The InvertedIndex entries to add
 	 */
 	public void addAll(InvertedIndex other) {
+		/* TODO 
+		for (Map.Entry<String, TreeMap<String, TreeSet<Integer>>> entry : other.invertedIndex.entrySet()) {
+			String word = entry.getKey();
+			TreeMap<String, TreeSet<Integer>> locations = entry.getValue();
+			
+			var thisLocations = this.invertedIndex.get(word);
+			
+			if (thisLocations == null) {
+				this.invertedIndex.put(word, locations);
+			}
+			else {			
+				for (Map.Entry<String, TreeSet<Integer>> locationEntry : locations.entrySet()) {
+					
+				}
+			}
+		}
+		
+		for (var entry : other.counts.entrySet()) {
+			
+		}
+		*/
+		
 		for (Map.Entry<String, TreeMap<String, TreeSet<Integer>>> entry : other.invertedIndex.entrySet()) {
 			String word = entry.getKey();
 			TreeMap<String, TreeSet<Integer>> locations = entry.getValue();

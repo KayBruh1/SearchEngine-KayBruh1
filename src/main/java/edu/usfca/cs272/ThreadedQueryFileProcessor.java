@@ -35,7 +35,7 @@ public class ThreadedQueryFileProcessor {
 	/**
 	 * SnowballStemmer instance for query processing word stems
 	 */
-	private final SnowballStemmer stemmer;
+	private final SnowballStemmer stemmer; // TODO Remove
 
 	/**
 	 * A boolean indicating whether or not to partial search
@@ -107,6 +107,21 @@ public class ThreadedQueryFileProcessor {
 			return;
 		}
 		String queryVal = String.join(" ", query);
+		
+		/* TODO 
+		synchronized (this) {
+			if (searchResultsMap.containsKey(queryVal)) {
+				return;
+			}
+		}
+		
+			List<InvertedIndex.SearchResult> searchResults = mtIndexer.search(query, partial);
+			
+		synchronized (this) {
+			searchResultsMap.put(queryVal, searchResults);
+		}
+		*/
+		
 		synchronized (this) {
 			if (searchResultsMap.containsKey(queryVal)) {
 				return;
@@ -115,6 +130,8 @@ public class ThreadedQueryFileProcessor {
 			searchResultsMap.put(queryVal, searchResults);
 		}
 	}
+	
+	// TODO Need to synchronize all access to searchResultsMap below
 
 	/**
 	 * Process query line to a stemmed query
@@ -123,7 +140,7 @@ public class ThreadedQueryFileProcessor {
 	 * @return The stemmed query
 	 */
 	public String processQueryLine(String queryLine) {
-		TreeSet<String> query = FileStemmer.uniqueStems(queryLine, stemmer);
+		TreeSet<String> query = FileStemmer.uniqueStems(queryLine, stemmer); // TODO remove stemmer
 		return String.join(" ", query);
 	}
 

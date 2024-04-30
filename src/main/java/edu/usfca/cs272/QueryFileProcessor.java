@@ -13,6 +13,17 @@ import java.util.TreeSet;
 
 import opennlp.tools.stemmer.snowball.SnowballStemmer;
 
+/*
+ * TODO Create a QueryFileProcessorInterface
+ * 
+ * It should have all of the same methods as this class
+ * See what can be made default implementations in the interface
+ * 
+ * Then implement that interface here and in the threaded version
+ *  
+ */
+
+
 /**
  * Class responsible for query handling and adding search results
  */

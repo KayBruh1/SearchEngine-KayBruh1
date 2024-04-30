@@ -19,6 +19,8 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 	public ThreadSafeInvertedIndex() {
 		this.lock = new CustomReadWriteLock();
 	}
+	
+	// TODO Override and lock the view methods too
 
 	/**
 	 * Adds a word with its position in a file to the inverted index
@@ -253,7 +255,7 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 	 */
 	@Override
 	public void writeCounts(Path countsPath) throws IOException {
-		lock.writeLock().lock();
+		lock.writeLock().lock(); // TODO read lock
 		try {
 			super.writeCounts(countsPath);
 		} finally {
@@ -269,7 +271,7 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 	 */
 	@Override
 	public void writeIndex(Path indexPath) throws IOException {
-		lock.writeLock().lock();
+		lock.writeLock().lock(); // TODO read lock
 		try {
 			super.writeIndex(indexPath);
 		} finally {

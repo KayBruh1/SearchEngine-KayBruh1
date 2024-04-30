@@ -18,6 +18,14 @@ public class Driver {
 	 * @param args Command line arguments
 	 */
 	public static void main(String[] args) {
+		/*
+		 * TODO See if you can take advantage of inheritance and
+		 * upcasting to reduce the duplicate code in Driver
+		 * 
+		 * (Do this last, after the other changes)
+		 */
+		
+		
 		ArgumentParser parser = new ArgumentParser(args);
 
 		if (parser.hasFlag("-threads")) {
