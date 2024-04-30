@@ -46,17 +46,29 @@ public class Driver {
 
 			}
 
-			if (parser.hasFlag("-html")) {
-				String seed = parser.getString("-html");
-				WebCrawler crawler = new WebCrawler(indexer, workQueue);
+		    if (parser.hasFlag("-html")) {
+		        String seed = parser.getString("-html");
+		        int total = 1;
 				try {
-					crawler.crawl(new URI(seed));
-					System.out.println(indexer.toString());
+					total = Integer.parseInt(parser.getString("-crawl"));
 				} catch (Exception e) {
-					e.printStackTrace();
+					System.out.println("Invalid total. Using default value.");
 				}
-			}
-
+				if (total < 1) {
+					System.out.println("Invalid total. Using default value.");
+					total = 1;
+				}
+		        try {
+		        	System.out.println("Total " + total);
+		            for (int i = 0; i < total; i++) {
+		                WebCrawler crawler = new WebCrawler(indexer, workQueue);
+		                crawler.crawl(new URI(seed));
+		            }
+		        } catch (Exception e) {
+		            System.out.println("Error crawling HTML content from " + seed);
+		            e.printStackTrace();
+		        }
+		    }
 			ThreadedQueryFileProcessor mtProcessor = new ThreadedQueryFileProcessor(indexer, workQueue,
 					parser.hasFlag("-partial"));
 			if (parser.hasFlag("-query")) {
