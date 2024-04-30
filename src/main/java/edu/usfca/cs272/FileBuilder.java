@@ -25,7 +25,7 @@ public class FileBuilder {
 	 */
 	public FileBuilder(InvertedIndex indexer) {
 		this.indexer = indexer;
-		new SnowballStemmer(SnowballStemmer.ALGORITHM.ENGLISH);
+		new SnowballStemmer(SnowballStemmer.ALGORITHM.ENGLISH); // TODO Remove
 	}
 
 	/**

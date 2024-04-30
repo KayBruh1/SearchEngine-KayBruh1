@@ -9,7 +9,7 @@ import java.nio.file.Path;
  * Multithreaded class for building and processing files/directories to generate
  * word counts and an inverted index
  */
-public class ThreadedFileBuilder {
+public class ThreadedFileBuilder { // TODO extends FileBuilder
 	/**
 	 * Thread safe inverted index instance for searching
 	 */
@@ -27,6 +27,7 @@ public class ThreadedFileBuilder {
 	 * @param workQueue The work queue for multithreading
 	 */
 	public ThreadedFileBuilder(ThreadSafeInvertedIndex indexer, CustomWorkQueue workQueue) {
+		// TODO super(indexer)
 		this.mtIndexer = indexer;
 		this.workQueue = workQueue;
 	}
@@ -44,8 +45,14 @@ public class ThreadedFileBuilder {
 			workQueue.execute(new FileTask(inputPath));
 		}
 		workQueue.finish();
+		
+		/* TODO 
+		super.buildStructures(inputPath);
+		workQueue.finish();
+		*/
 	}
 
+	// TODO Remove
 	/**
 	 * Processes the files in the specified directory to generate word counts and
 	 * the inverted index
@@ -85,7 +92,14 @@ public class ThreadedFileBuilder {
 		public void run() {
 			try {
 				processFile(location);
+
+				/* TODO 
+				InvertedIndex localIndex = new InvertedIndex();
+				FileBuilder.processFile(location, localIndex);
+				mtIndexer.addAll(localIndex);
+				*/
 			} catch (Exception e) {
+				// TODO throw new UncheckedIOException(e);
 				System.out.println("Error processing file: " + location);
 			}
 		}
@@ -97,7 +111,9 @@ public class ThreadedFileBuilder {
 	 * @param location The path of the file to process
 	 * @throws IOException If an I/O error occurs
 	 */
+	// TODO public
 	private void processFile(Path location) throws IOException {
+		// TODO workQueue.execute(new FileTask(path));
 		InvertedIndex localIndex = new InvertedIndex();
 		FileBuilder.processFile(location, localIndex);
 		mtIndexer.addAll(localIndex);
