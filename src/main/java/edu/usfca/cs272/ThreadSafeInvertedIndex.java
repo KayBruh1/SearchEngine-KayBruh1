@@ -20,9 +20,7 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 	public ThreadSafeInvertedIndex() {
 		this.lock = new CustomReadWriteLock();
 	}
-
-	// TODO Override and lock the view methods too
-
+	
 	/**
 	 * Adds a word with its position in a file to the inverted index
 	 *

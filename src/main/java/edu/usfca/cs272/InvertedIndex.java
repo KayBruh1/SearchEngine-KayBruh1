@@ -188,43 +188,34 @@ public class InvertedIndex {
 	}
 
 	/**
-	 * Adds all entries to the InvertedIndex
+	 * Adds all entries from another InvertedIndex to the current one.
 	 *
 	 * @param other The InvertedIndex entries to add
 	 */
 	public void addAll(InvertedIndex other) {
-		/* TODO 
 		for (Map.Entry<String, TreeMap<String, TreeSet<Integer>>> entry : other.invertedIndex.entrySet()) {
 			String word = entry.getKey();
 			TreeMap<String, TreeSet<Integer>> locations = entry.getValue();
-			
-			var thisLocations = this.invertedIndex.get(word);
-			
+			TreeMap<String, TreeSet<Integer>> thisLocations = this.invertedIndex.get(word);
 			if (thisLocations == null) {
 				this.invertedIndex.put(word, locations);
-			}
-			else {			
+			} else {
 				for (Map.Entry<String, TreeSet<Integer>> locationEntry : locations.entrySet()) {
-					
+					String location = locationEntry.getKey();
+					TreeSet<Integer> positions = locationEntry.getValue();
+					TreeSet<Integer> thisPositions = thisLocations.get(location);
+					if (thisPositions == null) {
+						thisLocations.put(location, new TreeSet<>(positions));
+					} else {
+						thisPositions.addAll(positions);
+					}
 				}
 			}
 		}
-		
-		for (var entry : other.counts.entrySet()) {
-			
-		}
-		*/
-		
-		for (Map.Entry<String, TreeMap<String, TreeSet<Integer>>> entry : other.invertedIndex.entrySet()) {
-			String word = entry.getKey();
-			TreeMap<String, TreeSet<Integer>> locations = entry.getValue();
-			for (Map.Entry<String, TreeSet<Integer>> locationEntry : locations.entrySet()) {
-				String location = locationEntry.getKey();
-				TreeSet<Integer> positions = locationEntry.getValue();
-				for (int position : positions) {
-					addWord(word, location, position);
-				}
-			}
+		for (Map.Entry<String, Integer> entry : other.counts.entrySet()) {
+			String location = entry.getKey();
+			int count = entry.getValue();
+			this.counts.put(location, Math.max(this.counts.getOrDefault(location, 0), count));
 		}
 	}
 
