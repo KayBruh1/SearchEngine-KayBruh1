@@ -58,7 +58,7 @@ public class Driver {
 		if (parser.hasFlag("-query")) {
 			Path queryPath = parser.getPath("-query");
 			try {
-				((ThreadedQueryFileProcessor) processor).processQueries(queryPath); // Upcast here
+				processor.processQueries(queryPath);
 			} catch (Exception e) {
 				System.out.println("Error reading the query file " + queryPath);
 			}
