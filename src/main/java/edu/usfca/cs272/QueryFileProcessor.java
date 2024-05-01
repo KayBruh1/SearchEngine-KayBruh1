@@ -1,8 +1,6 @@
 package edu.usfca.cs272;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
@@ -13,21 +11,10 @@ import java.util.TreeSet;
 
 import opennlp.tools.stemmer.snowball.SnowballStemmer;
 
-/*
- * TODO Create a QueryFileProcessorInterface
- * 
- * It should have all of the same methods as this class
- * See what can be made default implementations in the interface
- * 
- * Then implement that interface here and in the threaded version
- *  
- */
-
-
 /**
  * Class responsible for query handling and adding search results
  */
-public class QueryFileProcessor {
+public class QueryFileProcessor implements QueryFileProcessorInterface {
 	/**
 	 * Map to store search results
 	 */
@@ -62,25 +49,11 @@ public class QueryFileProcessor {
 	}
 
 	/**
-	 * Processes search queries from a path
-	 *
-	 * @param queryPath The path containing search queries
-	 * @throws IOException If an I/O error occurs
-	 */
-	public void processQueries(Path queryPath) throws IOException {
-		try (BufferedReader reader = Files.newBufferedReader(queryPath)) {
-			String line;
-			while ((line = reader.readLine()) != null) {
-				processQueries(line);
-			}
-		}
-	}
-
-	/**
 	 * Processes a single search query line
 	 *
 	 * @param queryLine The query line to process
 	 */
+	@Override
 	public void processQueries(String queryLine) {
 		TreeSet<String> query = FileStemmer.uniqueStems(queryLine, stemmer);
 		if (query.isEmpty()) {
@@ -95,22 +68,12 @@ public class QueryFileProcessor {
 	}
 
 	/**
-	 * Process query line to a stemmed query
-	 * 
-	 * @param queryLine The query line to process
-	 * @return The stemmed query
-	 */
-	private String processQueryLine(String queryLine) {
-		TreeSet<String> query = FileStemmer.uniqueStems(queryLine, stemmer);
-		return String.join(" ", query);
-	}
-
-	/**
 	 * Checks if search results exist for a query
 	 *
 	 * @param queryLine The query to check results for
 	 * @return True if search results exist, false otherwise
 	 */
+	@Override
 	public boolean hasSearchResults(String queryLine) {
 		String queryVal = processQueryLine(queryLine);
 		return searchResultsMap.containsKey(queryVal);
@@ -122,6 +85,7 @@ public class QueryFileProcessor {
 	 * @param queryLine The query line for search results
 	 * @return The search results for the query line
 	 */
+	@Override
 	public List<InvertedIndex.SearchResult> getQueryLineResults(String queryLine) {
 		String queryVal = processQueryLine(queryLine);
 		List<InvertedIndex.SearchResult> results = searchResultsMap.get(queryVal);
@@ -136,6 +100,7 @@ public class QueryFileProcessor {
 	 *
 	 * @return The total number of processed queries
 	 */
+	@Override
 	public int getTotalQueries() {
 		return searchResultsMap.size();
 	}
@@ -145,6 +110,7 @@ public class QueryFileProcessor {
 	 *
 	 * @return An unmodifiable set containing the queries for search results
 	 */
+	@Override
 	public Set<String> viewQueryResults() {
 		return Collections.unmodifiableSet(searchResultsMap.keySet());
 	}
@@ -155,6 +121,7 @@ public class QueryFileProcessor {
 	 * @param resultsPath the output path of the JSON file
 	 * @throws IOException if an I/O error occurs
 	 */
+	@Override
 	public void writeResults(Path resultsPath) throws IOException {
 		JsonWriter.writeResults(searchResultsMap, resultsPath);
 	}

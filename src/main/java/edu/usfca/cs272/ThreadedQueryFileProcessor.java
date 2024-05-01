@@ -16,7 +16,7 @@ import opennlp.tools.stemmer.snowball.SnowballStemmer;
 /**
  * Class responsible for query handling and adding search results
  */
-public class ThreadedQueryFileProcessor {
+public class ThreadedQueryFileProcessor implements QueryFileProcessorInterface {
 	/**
 	 * Map to store search results
 	 */
@@ -57,6 +57,7 @@ public class ThreadedQueryFileProcessor {
 	 * @param queryPath The path containing search queries
 	 * @throws IOException If an I/O error occurs
 	 */
+	@Override
 	public void processQueries(Path queryPath) throws IOException {
 		try (BufferedReader reader = Files.newBufferedReader(queryPath)) {
 			String line;
@@ -85,7 +86,7 @@ public class ThreadedQueryFileProcessor {
 
 		@Override
 		public void run() {
-			processQuery(queryLine);
+			processQueries(queryLine);
 		}
 	}
 
@@ -94,7 +95,8 @@ public class ThreadedQueryFileProcessor {
 	 *
 	 * @param queryLine The query line to process
 	 */
-	private void processQuery(String queryLine) {
+	@Override
+	public void processQueries(String queryLine) {
 		SnowballStemmer stemmer = new SnowballStemmer(SnowballStemmer.ALGORITHM.ENGLISH);
 		TreeSet<String> query = FileStemmer.uniqueStems(queryLine, stemmer);
 		if (query.isEmpty()) {
@@ -118,6 +120,7 @@ public class ThreadedQueryFileProcessor {
 	 * @param queryLine The query line to process
 	 * @return The stemmed query
 	 */
+	@Override
 	public synchronized String processQueryLine(String queryLine) {
 		TreeSet<String> query = FileStemmer.uniqueStems(queryLine);
 		return String.join(" ", query);
@@ -129,6 +132,7 @@ public class ThreadedQueryFileProcessor {
 	 * @param queryLine The query to check results for
 	 * @return True if search results exist, false otherwise
 	 */
+	@Override
 	public synchronized boolean hasSearchResults(String queryLine) {
 		String queryVal = processQueryLine(queryLine);
 		return searchResultsMap.containsKey(queryVal);
@@ -140,6 +144,7 @@ public class ThreadedQueryFileProcessor {
 	 * @param queryLine The query line for search results
 	 * @return The search results for the query line
 	 */
+	@Override
 	public synchronized List<InvertedIndex.SearchResult> getQueryLineResults(String queryLine) {
 		String queryVal = processQueryLine(queryLine);
 		List<InvertedIndex.SearchResult> results = searchResultsMap.get(queryVal);
@@ -154,6 +159,7 @@ public class ThreadedQueryFileProcessor {
 	 *
 	 * @return The total number of processed queries
 	 */
+	@Override
 	public synchronized int getTotalQueries() {
 		return searchResultsMap.size();
 	}
@@ -163,6 +169,7 @@ public class ThreadedQueryFileProcessor {
 	 *
 	 * @return An unmodifiable set containing the queries for search results
 	 */
+	@Override
 	public synchronized Set<String> viewQueryResults() {
 		return Collections.unmodifiableSet(searchResultsMap.keySet());
 	}
@@ -173,6 +180,7 @@ public class ThreadedQueryFileProcessor {
 	 * @param resultsPath the output path of the JSON file
 	 * @throws IOException if an I/O error occurs
 	 */
+	@Override
 	public synchronized void writeResults(Path resultsPath) throws IOException {
 		JsonWriter.writeResults(searchResultsMap, resultsPath);
 	}

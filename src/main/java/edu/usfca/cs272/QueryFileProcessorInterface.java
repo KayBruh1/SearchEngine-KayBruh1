@@ -6,6 +6,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
+
+import opennlp.tools.stemmer.snowball.SnowballStemmer;
 
 /**
  * Interface for query processing
@@ -39,7 +42,11 @@ public interface QueryFileProcessorInterface {
      * @param queryLine The query line to process
      * @return The stemmed query
      */
-    String processQueryLine(String queryLine);
+    default String processQueryLine(String queryLine) {
+    	SnowballStemmer stemmer = new SnowballStemmer(SnowballStemmer.ALGORITHM.ENGLISH);
+		TreeSet<String> query = FileStemmer.uniqueStems(queryLine, stemmer);
+		return String.join(" ", query);
+    }
 
     /**
      * Checks if search results exist for a query
