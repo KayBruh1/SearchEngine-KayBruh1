@@ -3,6 +3,7 @@ package edu.usfca.cs272;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
 
@@ -19,7 +20,7 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 	public ThreadSafeInvertedIndex() {
 		this.lock = new CustomReadWriteLock();
 	}
-	
+
 	// TODO Override and lock the view methods too
 
 	/**
@@ -216,6 +217,69 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 	}
 
 	/**
+	 * Returns an unmodifiable view of the word counts
+	 *
+	 * @return an unmodifiable view of the word counts
+	 */
+	@Override
+	public Map<String, Integer> viewCounts() {
+		lock.readLock().lock();
+		try {
+			return super.viewCounts();
+		} finally {
+			lock.readLock().unlock();
+		}
+	}
+
+	/**
+	 * Returns an unmodifiable view of the positions of a word's location
+	 *
+	 * @param word     The word to get positions for
+	 * @param location The location to get positions for
+	 * @return An unmodifiable view of the word location's position
+	 */
+	@Override
+	public Set<Integer> viewPositions(String word, String location) {
+		lock.readLock().lock();
+		try {
+			return super.viewPositions(word, location);
+		} finally {
+			lock.readLock().unlock();
+		}
+	}
+
+	/**
+	 * Returns an unmodifiable view of the inverted index words
+	 *
+	 * @return An unmodifiable view of the words in the inverted index
+	 */
+	@Override
+	public Set<String> viewWords() {
+		lock.readLock().lock();
+		try {
+			return super.viewWords();
+		} finally {
+			lock.readLock().unlock();
+		}
+	}
+
+	/**
+	 * Returns an unmodifiable view of an inverted index word location
+	 *
+	 * @param word The word to get locations for
+	 * @return An unmodifiable view of the word locations
+	 */
+	@Override
+	public Set<String> viewLocations(String word) {
+		lock.readLock().lock();
+		try {
+			return super.viewLocations(word);
+		} finally {
+			lock.readLock().unlock();
+		}
+	}
+
+	/**
 	 * Performs an exact search based on the provided set of queries.
 	 *
 	 * @param queries The set of queries to search for
@@ -255,11 +319,11 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 	 */
 	@Override
 	public void writeCounts(Path countsPath) throws IOException {
-		lock.writeLock().lock(); // TODO read lock
+		lock.readLock().lock();
 		try {
 			super.writeCounts(countsPath);
 		} finally {
-			lock.writeLock().unlock();
+			lock.readLock().unlock();
 		}
 	}
 
@@ -271,11 +335,11 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 	 */
 	@Override
 	public void writeIndex(Path indexPath) throws IOException {
-		lock.writeLock().lock(); // TODO read lock
+		lock.readLock().lock();
 		try {
 			super.writeIndex(indexPath);
 		} finally {
-			lock.writeLock().unlock();
+			lock.readLock().unlock();
 		}
 	}
 
