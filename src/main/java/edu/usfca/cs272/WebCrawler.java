@@ -1,6 +1,7 @@
 package edu.usfca.cs272;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashSet;
 
@@ -21,6 +22,13 @@ public class WebCrawler {
 		this.indexer = indexer;
 		this.workQueue = workQueue;
 		visited = new HashSet<>();
+	}
+	
+	public void startCrawl(WebCrawler crawler, String seed, int total) throws URISyntaxException {
+        for (int i = 0; i < total; i++) {
+        	System.out.println(seed);
+            crawler.crawl(new URI(seed));
+        }	
 	}
 
 	public void crawl(URI uri) {

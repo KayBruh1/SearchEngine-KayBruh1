@@ -1,6 +1,5 @@
 package edu.usfca.cs272;
 
-import java.net.URI;
 import java.nio.file.Path;
 
 /**
@@ -60,10 +59,8 @@ public class Driver {
 				}
 		        try {
 		        	System.out.println("Total " + total);
-		            for (int i = 0; i < total; i++) {
-		                WebCrawler crawler = new WebCrawler(indexer, workQueue);
-		                crawler.crawl(new URI(seed));
-		            }
+		            WebCrawler crawler = new WebCrawler(indexer, workQueue);
+		            crawler.startCrawl(crawler, seed, total);
 		        } catch (Exception e) {
 		            System.out.println("Error crawling HTML content from " + seed);
 		            e.printStackTrace();
