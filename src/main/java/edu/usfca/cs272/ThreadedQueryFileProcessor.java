@@ -33,11 +33,6 @@ public class ThreadedQueryFileProcessor {
 	private final CustomWorkQueue workQueue;
 
 	/**
-	 * SnowballStemmer instance for query processing word stems
-	 */
-	private final SnowballStemmer stemmer; // TODO Remove
-
-	/**
 	 * A boolean indicating whether or not to partial search
 	 */
 	private final boolean partial;
@@ -53,7 +48,6 @@ public class ThreadedQueryFileProcessor {
 		this.searchResultsMap = new TreeMap<>();
 		this.mtIndexer = indexer;
 		this.workQueue = workQueue;
-		this.stemmer = new SnowballStemmer(SnowballStemmer.ALGORITHM.ENGLISH);
 		this.partial = partial;
 	}
 
@@ -107,31 +101,16 @@ public class ThreadedQueryFileProcessor {
 			return;
 		}
 		String queryVal = String.join(" ", query);
-		
-		/* TODO 
 		synchronized (this) {
 			if (searchResultsMap.containsKey(queryVal)) {
 				return;
 			}
 		}
-		
-			List<InvertedIndex.SearchResult> searchResults = mtIndexer.search(query, partial);
-			
+		List<InvertedIndex.SearchResult> searchResults = mtIndexer.search(query, partial);
 		synchronized (this) {
-			searchResultsMap.put(queryVal, searchResults);
-		}
-		*/
-		
-		synchronized (this) {
-			if (searchResultsMap.containsKey(queryVal)) {
-				return;
-			}
-			List<InvertedIndex.SearchResult> searchResults = mtIndexer.search(query, partial);
 			searchResultsMap.put(queryVal, searchResults);
 		}
 	}
-	
-	// TODO Need to synchronize all access to searchResultsMap below
 
 	/**
 	 * Process query line to a stemmed query
@@ -139,8 +118,8 @@ public class ThreadedQueryFileProcessor {
 	 * @param queryLine The query line to process
 	 * @return The stemmed query
 	 */
-	public String processQueryLine(String queryLine) {
-		TreeSet<String> query = FileStemmer.uniqueStems(queryLine, stemmer); // TODO remove stemmer
+	public synchronized String processQueryLine(String queryLine) {
+		TreeSet<String> query = FileStemmer.uniqueStems(queryLine);
 		return String.join(" ", query);
 	}
 
@@ -150,7 +129,7 @@ public class ThreadedQueryFileProcessor {
 	 * @param queryLine The query to check results for
 	 * @return True if search results exist, false otherwise
 	 */
-	public boolean hasSearchResults(String queryLine) {
+	public synchronized boolean hasSearchResults(String queryLine) {
 		String queryVal = processQueryLine(queryLine);
 		return searchResultsMap.containsKey(queryVal);
 	}
@@ -161,7 +140,7 @@ public class ThreadedQueryFileProcessor {
 	 * @param queryLine The query line for search results
 	 * @return The search results for the query line
 	 */
-	public List<InvertedIndex.SearchResult> getQueryLineResults(String queryLine) {
+	public synchronized List<InvertedIndex.SearchResult> getQueryLineResults(String queryLine) {
 		String queryVal = processQueryLine(queryLine);
 		List<InvertedIndex.SearchResult> results = searchResultsMap.get(queryVal);
 		if (results == null) {
@@ -175,7 +154,7 @@ public class ThreadedQueryFileProcessor {
 	 *
 	 * @return The total number of processed queries
 	 */
-	public int getTotalQueries() {
+	public synchronized int getTotalQueries() {
 		return searchResultsMap.size();
 	}
 
@@ -184,7 +163,7 @@ public class ThreadedQueryFileProcessor {
 	 *
 	 * @return An unmodifiable set containing the queries for search results
 	 */
-	public Set<String> viewQueryResults() {
+	public synchronized Set<String> viewQueryResults() {
 		return Collections.unmodifiableSet(searchResultsMap.keySet());
 	}
 
@@ -194,7 +173,7 @@ public class ThreadedQueryFileProcessor {
 	 * @param resultsPath the output path of the JSON file
 	 * @throws IOException if an I/O error occurs
 	 */
-	public void writeResults(Path resultsPath) throws IOException {
+	public synchronized void writeResults(Path resultsPath) throws IOException {
 		JsonWriter.writeResults(searchResultsMap, resultsPath);
 	}
 
@@ -204,7 +183,7 @@ public class ThreadedQueryFileProcessor {
 	 * @return a string representation of the search results map
 	 */
 	@Override
-	public String toString() {
+	public synchronized String toString() {
 		return searchResultsMap.toString();
 	}
 }
