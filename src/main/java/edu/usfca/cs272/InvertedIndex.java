@@ -203,19 +203,18 @@ public class InvertedIndex {
 				for (Map.Entry<String, TreeSet<Integer>> locationEntry : locations.entrySet()) {
 					String location = locationEntry.getKey();
 					TreeSet<Integer> positions = locationEntry.getValue();
-					TreeSet<Integer> thisPositions = thisLocations.get(location);
-					if (thisPositions == null) {
-						thisLocations.put(location, new TreeSet<>(positions));
-					} else {
-						thisPositions.addAll(positions);
-					}
+					thisLocations.put(location, positions);
 				}
 			}
 		}
 		for (Map.Entry<String, Integer> entry : other.counts.entrySet()) {
 			String location = entry.getKey();
 			int count = entry.getValue();
-			this.counts.put(location, Math.max(this.counts.getOrDefault(location, 0), count));
+			this.counts.putIfAbsent(location, 0);
+			int checkCount = this.counts.get(location);
+			if (count > checkCount) {
+				this.counts.put(location, count);
+			}
 		}
 	}
 
