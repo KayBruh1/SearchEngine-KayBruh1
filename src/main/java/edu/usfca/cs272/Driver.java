@@ -22,6 +22,7 @@ public class Driver {
 		InvertedIndex indexer;
 		FileBuilder builder;
 		QueryFileProcessorInterface processor;
+		CustomWorkQueue workQueue = null;
 
 		if (parser.hasFlag("-threads")) {
 			int numThreads = 5;
@@ -35,7 +36,7 @@ public class Driver {
 				numThreads = 5;
 			}
 
-			CustomWorkQueue workQueue = new CustomWorkQueue(numThreads);
+			workQueue = new CustomWorkQueue(numThreads);
 			indexer = new ThreadSafeInvertedIndex();
 			builder = new ThreadedFileBuilder((ThreadSafeInvertedIndex) indexer, workQueue);
 			processor = new ThreadedQueryFileProcessor((ThreadSafeInvertedIndex) indexer, workQueue,
@@ -63,6 +64,8 @@ public class Driver {
 				System.out.println("Error reading the query file " + queryPath);
 			}
 		}
+		
+		workQueue.shutdown();
 
 		if (parser.hasFlag("-counts")) {
 			Path countsPath = parser.getPath("-counts", Path.of("counts.json"));
