@@ -23,8 +23,10 @@ public class Driver {
 		FileBuilder builder;
 		QueryFileProcessorInterface processor;
 		CustomWorkQueue workQueue = null;
+		boolean threads = false;
 
 		if (parser.hasFlag("-threads")) {
+			threads = false;
 			int numThreads = 5;
 			try {
 				numThreads = Integer.parseInt(parser.getString("-threads"));
@@ -64,8 +66,11 @@ public class Driver {
 				System.out.println("Error reading the query file " + queryPath);
 			}
 		}
-		
-		workQueue.shutdown();
+
+		if (threads) {
+			workQueue.shutdown();
+
+		}
 
 		if (parser.hasFlag("-counts")) {
 			Path countsPath = parser.getPath("-counts", Path.of("counts.json"));
