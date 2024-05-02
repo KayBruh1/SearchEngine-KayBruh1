@@ -26,7 +26,7 @@ public class Driver {
 		boolean threads = false;
 
 		if (parser.hasFlag("-threads")) {
-			threads = false;
+			threads = true;
 			int numThreads = 5;
 			try {
 				numThreads = Integer.parseInt(parser.getString("-threads"));
