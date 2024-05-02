@@ -58,19 +58,15 @@ public class WebCrawler {
 				if (htmlContent != null) {
 					String cleanedHtml = HtmlCleaner.stripBlockElements(htmlContent);
 					ArrayList<URI> links = LinkFinder.listUris(uri, cleanedHtml);
-					LinkFinder.findLinks(uri, cleanedHtml, links);
-					//System.out.println(htmlContent);
-					//System.out.println(links);
 					cleanedHtml = HtmlCleaner.stripHtml(cleanedHtml);
 					ArrayList<String> words = FileStemmer.listStems(cleanedHtml);
-					
+
 					int position = 0;
 					for (String word : words) {
 						position++;
 						URI cleanURI = LinkFinder.clean(uri);
 						indexer.addWord(word, cleanURI.toString(), position);
 					}
-
 					for (URI link : links) {
 						if (!visited.contains(link)) {
 							crawl(link, total);

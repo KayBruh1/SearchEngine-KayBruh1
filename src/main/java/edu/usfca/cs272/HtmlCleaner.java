@@ -136,7 +136,7 @@ public class HtmlCleaner {
 		html = stripElement(html, "style");
 		html = stripElement(html, "script");
 		html = stripElement(html, "noscript");
-		//html = stripElement(html, "iframe");
+		html = stripElement(html, "iframe");
 		html = stripElement(html, "svg");
 		return html;
 	}
