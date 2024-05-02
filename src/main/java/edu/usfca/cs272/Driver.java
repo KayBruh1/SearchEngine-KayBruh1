@@ -69,7 +69,6 @@ public class Driver {
 
 		if (threads) {
 			workQueue.shutdown();
-
 		}
 
 		if (parser.hasFlag("-counts")) {
