@@ -1,7 +1,6 @@
 package edu.usfca.cs272;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
@@ -176,17 +175,5 @@ public class HtmlFetcher {
 	 */
 	public static String fetch(URI uri) {
 		return fetch(uri, 0);
-	}
-
-	/**
-	 * Demonstrates this class.
-	 *
-	 * @param args unused
-	 * @throws IOException if unable to process uri
-	 */
-	public static void main(String[] args) throws IOException {
-		String link = "https://usf-cs272-spring2024.github.io/project-web/input/birds/falcon.html";
-		System.out.println(link);
-		System.out.println(fetch(link));
 	}
 }
