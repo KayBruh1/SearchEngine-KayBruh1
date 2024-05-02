@@ -131,7 +131,7 @@ public class HtmlFetcher {
 				}
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			System.out.println("Error during fetch " + uri);
 		}
 		return null;
 	}
