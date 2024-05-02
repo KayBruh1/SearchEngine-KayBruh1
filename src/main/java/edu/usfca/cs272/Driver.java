@@ -58,7 +58,7 @@ public class Driver {
 					total = 1;
 				}
 		        try {
-		        	System.out.println("Total " + total);
+		        	//System.out.println("Total " + total);
 		            WebCrawler crawler = new WebCrawler(indexer, workQueue);
 		            crawler.startCrawl(seed, total);
 		        } catch (Exception e) {

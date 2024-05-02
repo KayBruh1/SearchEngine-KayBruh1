@@ -56,10 +56,12 @@ public class WebCrawler {
 			try {
 				String htmlContent = HtmlFetcher.fetch(uri, 3);
 				if (htmlContent != null) {
-					ArrayList<URI> links = LinkFinder.listUris(uri, htmlContent);
-					String cleanedHtml = HtmlCleaner.stripHtml(htmlContent);
+					String cleanedHtml = HtmlCleaner.stripBlockElements(htmlContent);
+					ArrayList<URI> links = LinkFinder.listUris(uri, cleanedHtml);
+					LinkFinder.findLinks(uri, cleanedHtml, links);
 					//System.out.println(htmlContent);
 					//System.out.println(links);
+					cleanedHtml = HtmlCleaner.stripHtml(cleanedHtml);
 					ArrayList<String> words = FileStemmer.listStems(cleanedHtml);
 					
 					int position = 0;
