@@ -7,7 +7,6 @@ import java.util.HashSet;
 
 public class WebCrawler {
 	private final HashSet<URI> visited;
-
 	/**
 	 * Thread safe inverted index instance for crawling
 	 */
@@ -23,51 +22,59 @@ public class WebCrawler {
 		this.workQueue = workQueue;
 		visited = new HashSet<>();
 	}
-	
-	public void startCrawl(WebCrawler crawler, String seed, int total) throws URISyntaxException {
-        for (int i = 0; i < total; i++) {
-        	System.out.println(seed);
-            crawler.crawl(new URI(seed));
-        }	
+
+	public void startCrawl(String seed, int total) throws URISyntaxException {
+		for (int i = 0; i < total; i++) {
+			crawl(new URI(seed), total);
+		}
+		workQueue.finish();
 	}
 
-	public void crawl(URI uri) {
-		if (!visited.contains(uri)) {
-			visited.add(uri);
-			workQueue.execute(new CrawlTask(uri, 3));
-			workQueue.finish();
+	public void crawl(URI uri, int total) {
+		if (visited.size() >= total || visited.contains(uri)) {
+			return;
+		}
+
+		visited.add(uri);
+		if (visited.size() <= total) {
+			workQueue.execute(new CrawlTask(uri, total));
 		}
 	}
 
 	private class CrawlTask implements Runnable {
 		private final URI uri;
-		private final int redirects;
 
-		public CrawlTask(URI uri, int redirects) {
+		private final int total;
+
+		public CrawlTask(URI uri, int total) {
 			this.uri = uri;
-			this.redirects = redirects;
+			this.total = total;
 		}
 
 		@Override
 		public void run() {
 			try {
-				crawl(uri, redirects);
+				String htmlContent = HtmlFetcher.fetch(uri, 3);
+				if (htmlContent != null) {
+					String cleanedHtml = HtmlCleaner.stripHtml(htmlContent);
+					ArrayList<URI> links = LinkFinder.listUris(uri, cleanedHtml);
+
+					ArrayList<String> words = FileStemmer.listStems(cleanedHtml);
+					int position = 0;
+					for (String word : words) {
+						position++;
+						URI cleanURI = LinkFinder.clean(uri);
+						indexer.addWord(word, cleanURI.toString(), position);
+					}
+
+					for (URI link : links) {
+						if (!visited.contains(link)) {
+							crawl(link, total);
+						}
+					}
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
-			}
-		}
-	}
-
-	private void crawl(URI uri, int redirects) {
-		String htmlContent = HtmlFetcher.fetch(uri, redirects);
-		if (htmlContent != null) {
-			String cleanedHtml = HtmlCleaner.stripHtml(htmlContent);
-			ArrayList<String> words = FileStemmer.listStems(cleanedHtml);
-			int position = 0;
-			for (String word : words) {
-				position++;
-				URI cleanURI = LinkFinder.clean(uri);
-				indexer.addWord(word, cleanURI.toString(), position);
 			}
 		}
 	}

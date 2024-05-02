@@ -60,7 +60,7 @@ public class Driver {
 		        try {
 		        	System.out.println("Total " + total);
 		            WebCrawler crawler = new WebCrawler(indexer, workQueue);
-		            crawler.startCrawl(crawler, seed, total);
+		            crawler.startCrawl(seed, total);
 		        } catch (Exception e) {
 		            System.out.println("Error crawling HTML content from " + seed);
 		            e.printStackTrace();
