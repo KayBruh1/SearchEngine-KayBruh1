@@ -54,11 +54,10 @@ public class WebCrawler {
 	 * @param uri   The URI to crawl
 	 * @param total The total number of URIs to crawl
 	 */
-	public void crawl(URI uri, int total) {
+	private void crawl(URI uri, int total) {
 		if (visited.size() >= total || visited.contains(uri)) {
 			return;
 		}
-
 		if (visited.size() < total) {
 			visited.add(uri);
 			workQueue.execute(new CrawlTask(uri, total));
