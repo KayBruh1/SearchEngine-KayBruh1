@@ -5,7 +5,6 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedMap;
 
 /**
  * Class for thread safe methods
@@ -50,21 +49,6 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 			super.addAll(localIndex);
 		} finally {
 			lock.writeLock().unlock();
-		}
-	}
-
-	/**
-	 * Returns the word counts
-	 *
-	 * @return the TreeMap containing word counts
-	 */
-	@Override
-	public SortedMap<String, Integer> getCounts() {
-		lock.readLock().lock();
-		try {
-			return super.getCounts();
-		} finally {
-			lock.readLock().unlock();
 		}
 	}
 

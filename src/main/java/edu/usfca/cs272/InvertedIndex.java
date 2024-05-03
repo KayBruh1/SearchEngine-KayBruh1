@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -30,16 +29,7 @@ public class InvertedIndex {
 		this.counts = new TreeMap<>();
 		this.invertedIndex = new TreeMap<>();
 	}
-
-	/**
-	 * Returns the word counts
-	 *
-	 * @return the TreeMap containing word counts
-	 */
-	public SortedMap<String, Integer> getCounts() {
-		return Collections.unmodifiableSortedMap(counts);
-	}
-
+	
 	/**
 	 * Gets the total word count for a specific location
 	 *
@@ -56,7 +46,7 @@ public class InvertedIndex {
 	 * @return The number of files
 	 */
 	public int numCounts() {
-		return counts.size(); // TODO Might as well reuse the view here too.
+		return viewCounts().size();
 	}
 
 	/**
@@ -65,7 +55,7 @@ public class InvertedIndex {
 	 * @return The number of words
 	 */
 	public int numWords() {
-		return invertedIndex.size(); // TODO Might as well reuse the view here too.
+		return viewWords().size();
 	}
 
 	/**
@@ -86,28 +76,7 @@ public class InvertedIndex {
 	 * @return The number of positions the word appears in the location
 	 */
 	public int numWordPositions(String word, String location) {
-		TreeMap<String, TreeSet<Integer>> fileMap = invertedIndex.get(word);
-		if (fileMap == null) {
-			fileMap = new TreeMap<>();
-		}
-		TreeSet<Integer> positions = fileMap.get(location);
-		if (positions == null) {
-			positions = new TreeSet<>();
-		}
-		return positions.size();
-		
-		/*
-		 * TODO This method unnecessarily creates new empty instances when 0 can be
-		 * returned instead.
-		 * 
-		 * Since you have efficient view methods, and are using it in your
-		 * numWordLocations above, you can actually switch ALL of the num and has
-		 * methods for the inverted index to use your view methods instead. It would be
-		 * more efficient, reuse more code, and make sure everything is consistently
-		 * implemented using the same approach. For example: 
-		 * 
-		 * return viewPositions(word, location).size();
-		 */
+		 return viewPositions(word, location).size();
 	}
 
 	/**
@@ -164,7 +133,7 @@ public class InvertedIndex {
 	 *
 	 * @return an unmodifiable view of the word counts
 	 */
-	public Map<String, Integer> viewCounts() { // TODO Either keep getCounts or viewCounts, and keep a consistent naming scheme.
+	public Map<String, Integer> viewCounts() {
 		return Collections.unmodifiableMap(counts);
 	}
 
