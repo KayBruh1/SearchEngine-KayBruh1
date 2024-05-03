@@ -20,7 +20,7 @@ public interface QueryFileProcessorInterface {
      * @param queryPath The path containing search queries
      * @throws IOException If an I/O error occurs
      */
-	default void processQueries(Path queryPath) throws IOException {
+	default void processQueries(Path queryPath) throws IOException { // TODO Fix indentation
 		try (BufferedReader reader = Files.newBufferedReader(queryPath)) {
 			String line;
 			while ((line = reader.readLine()) != null) {
@@ -43,6 +43,11 @@ public interface QueryFileProcessorInterface {
      * @return The stemmed query
      */
     default String processQueryLine(String queryLine) {
+    	/* TODO Can use the other form of uniqueStems to reduce lines of code:
+		TreeSet<String> query = FileStemmer.uniqueStems(queryLine);
+		return String.join(" ", query);
+		*/
+    	
     	SnowballStemmer stemmer = new SnowballStemmer(SnowballStemmer.ALGORITHM.ENGLISH);
 		TreeSet<String> query = FileStemmer.uniqueStems(queryLine, stemmer);
 		return String.join(" ", query);
@@ -68,6 +73,11 @@ public interface QueryFileProcessorInterface {
      * Returns the total number processed queries
      *
      * @return The total number of processed queries
+     */
+    /*
+     * TODO Make this a default method using your view...
+     * 
+     * return viewQueryResults().size();
      */
     int getTotalQueries();
     
