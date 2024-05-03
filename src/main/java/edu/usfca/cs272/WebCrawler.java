@@ -95,7 +95,6 @@ public class WebCrawler {
 				ArrayList<URI> links = LinkFinder.listUris(uri, cleanedHtml);
 				cleanedHtml = HtmlCleaner.stripHtml(cleanedHtml);
 				ArrayList<String> words = FileStemmer.listStems(cleanedHtml);
-
 				int position = 0;
 				for (String word : words) {
 					position++;
