@@ -38,10 +38,10 @@ public class CustomWorkQueue {
 	/**
 	 * The pendingLock to help synchronize pending
 	 */
-	private final Object pendingLock = new Object();
+	private final Object pendingLock = new Object(); // TODO Intialize instance members in the constructor
 
 	/** Variable to track unfinished work */
-	private static int pending;
+	private static int pending; // TODO Absolutely should not be static, then cannot have multiple functional work queues!
 
 	/**
 	 * Starts a work queue with the default number of threads.
@@ -77,6 +77,8 @@ public class CustomWorkQueue {
 		synchronized (tasks) {
 			tasks.addLast(task);
 			tasks.notifyAll();
+			
+			// TODO Move this block outside of the sync(tasks) block, recommend BEFORE it (no need for nesting sync blocks here, and nesting different sync blocks can cause deadlock issues)
 			synchronized (pendingLock) {
 				pending++;
 			}
@@ -90,6 +92,13 @@ public class CustomWorkQueue {
 	public void finish() {
 		synchronized (pendingLock) {
 			while (pending > 0) {
+				/*
+				 * This is uninterruptible code, which should be avoided. (Interrupts are used
+				 * to terminate threads early, and in this case instead of terminating this
+				 * thread will go back into the wait state if interrupted.) Instead, put the
+				 * try/catch outside of the while loop… I recommend outside of the sync block
+				 * too for readability.
+				 */
 				try {
 					pendingLock.wait();
 				} catch (Exception e) {
