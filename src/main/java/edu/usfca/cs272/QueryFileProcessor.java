@@ -79,6 +79,11 @@ public class QueryFileProcessor implements QueryFileProcessorInterface {
 		return searchResultsMap.containsKey(queryVal);
 	}
 
+	/*
+	 * TODO Override processQueryLine in this class to reuse your
+	 * stemmer member!
+	 */
+	
 	/**
 	 * Gets the search results for a query line
 	 *
@@ -101,7 +106,7 @@ public class QueryFileProcessor implements QueryFileProcessorInterface {
 	 * @return The total number of processed queries
 	 */
 	@Override
-	public int getTotalQueries() {
+	public int getTotalQueries() { // TODO Remove, will be implemented in interface instead
 		return searchResultsMap.size();
 	}
 

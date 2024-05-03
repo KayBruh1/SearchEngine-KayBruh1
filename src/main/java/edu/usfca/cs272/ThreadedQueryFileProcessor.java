@@ -97,6 +97,9 @@ public class ThreadedQueryFileProcessor implements QueryFileProcessorInterface {
 	 */
 	@Override
 	public void processQueries(String queryLine) {
+		/*
+		 * TODO Move this implementation into the QueryTask run() method
+		 */
 		SnowballStemmer stemmer = new SnowballStemmer(SnowballStemmer.ALGORITHM.ENGLISH);
 		TreeSet<String> query = FileStemmer.uniqueStems(queryLine, stemmer);
 		if (query.isEmpty()) {
@@ -160,7 +163,7 @@ public class ThreadedQueryFileProcessor implements QueryFileProcessorInterface {
 	 * @return The total number of processed queries
 	 */
 	@Override
-	public synchronized int getTotalQueries() {
+	public synchronized int getTotalQueries() { // TODO Remove, inherit default implementation
 		return searchResultsMap.size();
 	}
 

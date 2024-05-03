@@ -56,7 +56,7 @@ public class InvertedIndex {
 	 * @return The number of files
 	 */
 	public int numCounts() {
-		return counts.size();
+		return counts.size(); // TODO Might as well reuse the view here too.
 	}
 
 	/**
@@ -65,7 +65,7 @@ public class InvertedIndex {
 	 * @return The number of words
 	 */
 	public int numWords() {
-		return invertedIndex.size();
+		return invertedIndex.size(); // TODO Might as well reuse the view here too.
 	}
 
 	/**
@@ -95,6 +95,19 @@ public class InvertedIndex {
 			positions = new TreeSet<>();
 		}
 		return positions.size();
+		
+		/*
+		 * TODO This method unnecessarily creates new empty instances when 0 can be
+		 * returned instead.
+		 * 
+		 * Since you have efficient view methods, and are using it in your
+		 * numWordLocations above, you can actually switch ALL of the num and has
+		 * methods for the inverted index to use your view methods instead. It would be
+		 * more efficient, reuse more code, and make sure everything is consistently
+		 * implemented using the same approach. For example: 
+		 * 
+		 * return viewPositions(word, location).size();
+		 */
 	}
 
 	/**
@@ -125,6 +138,11 @@ public class InvertedIndex {
 	 * @return True if the word at location exists, false otherwise
 	 */
 	public boolean hasWordLocation(String word, String location) {
+		/*
+		 * TODO This can be implemented using your view too. For example:
+		 * 
+		 * return viewLocations(word).contains(location);
+		 */
 		return invertedIndex.containsKey(word) && invertedIndex.get(word).containsKey(location);
 	}
 
@@ -137,6 +155,7 @@ public class InvertedIndex {
 	 * @return True if the word exists at the location position, false otherwise
 	 */
 	public boolean hasWordPosition(String word, String location, int position) {
+		// TODO Same issue
 		return hasWordLocation(word, location) && invertedIndex.get(word).get(location).contains(position);
 	}
 
@@ -145,7 +164,7 @@ public class InvertedIndex {
 	 *
 	 * @return an unmodifiable view of the word counts
 	 */
-	public Map<String, Integer> viewCounts() {
+	public Map<String, Integer> viewCounts() { // TODO Either keep getCounts or viewCounts, and keep a consistent naming scheme.
 		return Collections.unmodifiableMap(counts);
 	}
 
@@ -200,18 +219,31 @@ public class InvertedIndex {
 			if (thisLocations == null) {
 				this.invertedIndex.put(word, locations);
 			} else {
+				
 				for (Map.Entry<String, TreeSet<Integer>> locationEntry : locations.entrySet()) {
 					String location = locationEntry.getKey();
 					TreeSet<Integer> positions = locationEntry.getValue();
+					
+					/*
+					 * TODO This is not always safe to do if the other index has some of the same
+					 * locations as this index. (Imagine this index has the first half of a file
+					 * indexed and the other index has the entire file indexed, so there is overlap
+					 * between the two.) This needs an if/else check similar to the one for
+					 * thisLocations, but for a different level of nesting within the data
+					 * structure.
+					 */
 					thisLocations.put(location, positions);
 				}
 			}
 		}
+		
 		for (Map.Entry<String, Integer> entry : other.counts.entrySet()) {
 			String location = entry.getKey();
 			int count = entry.getValue();
-			this.counts.putIfAbsent(location, 0);
-			int checkCount = this.counts.get(location);
+			
+			// TODO This is where a getOrDefault is great, because it doesn't need to create a new instance...
+			this.counts.putIfAbsent(location, 0); // TODO Remove
+			int checkCount = this.counts.get(location); // TODO getOrDefault(location, 0);
 			if (count > checkCount) {
 				this.counts.put(location, count);
 			}
