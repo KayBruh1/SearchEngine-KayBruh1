@@ -72,7 +72,7 @@ public class FileBuilder {
 	}
 
 	/**
-	 * TODO Fill in
+	 * Helper to process file given location
 	 * 
 	 * @param location The location to process
 	 * @throws IOException If an I/O error occurs
