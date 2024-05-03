@@ -182,32 +182,22 @@ public class InvertedIndex {
 			if (thisLocations == null) {
 				this.invertedIndex.put(word, locations);
 			} else {
-
 				for (Map.Entry<String, TreeSet<Integer>> locationEntry : locations.entrySet()) {
 					String location = locationEntry.getKey();
 					TreeSet<Integer> positions = locationEntry.getValue();
-
-					/*
-					 * TODO This is not always safe to do if the other index has some of the same
-					 * locations as this index. (Imagine this index has the first half of a file
-					 * indexed and the other index has the entire file indexed, so there is overlap
-					 * between the two.) This needs an if/else check similar to the one for
-					 * thisLocations, but for a different level of nesting within the data
-					 * structure.
-					 */
-					thisLocations.put(location, positions);
+					TreeSet<Integer> currentPositions = thisLocations.get(location);
+					if (currentPositions == null) {
+						thisLocations.put(location, positions);
+					} else {
+						currentPositions.addAll(positions);
+					}
 				}
 			}
 		}
-
 		for (Map.Entry<String, Integer> entry : other.counts.entrySet()) {
 			String location = entry.getKey();
 			int count = entry.getValue();
-
-			// TODO This is where a getOrDefault is great, because it doesn't need to create
-			// a new instance...
-			this.counts.putIfAbsent(location, 0); // TODO Remove
-			int checkCount = this.counts.get(location); // TODO getOrDefault(location, 0);
+			int checkCount = this.counts.getOrDefault(location, 0);
 			if (count > checkCount) {
 				this.counts.put(location, count);
 			}
