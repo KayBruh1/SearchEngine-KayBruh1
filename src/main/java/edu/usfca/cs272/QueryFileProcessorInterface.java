@@ -66,12 +66,9 @@ public interface QueryFileProcessorInterface {
 	 *
 	 * @return The total number of processed queries
 	 */
-	/*
-	 * TODO Make this a default method using your view...
-	 * 
-	 * return viewQueryResults().size();
-	 */
-	int getTotalQueries();
+	default int getTotalQueries() {
+		return viewQueryResults().size();
+	}
 
 	/**
 	 * Returns an unmodifiable set containing the queries for search results
