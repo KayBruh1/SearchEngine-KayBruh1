@@ -86,7 +86,21 @@ public class ThreadedQueryFileProcessor implements QueryFileProcessorInterface {
 
 		@Override
 		public void run() {
-			processQueries(queryLine);
+			SnowballStemmer stemmer = new SnowballStemmer(SnowballStemmer.ALGORITHM.ENGLISH);
+			TreeSet<String> query = FileStemmer.uniqueStems(queryLine, stemmer);
+			if (query.isEmpty()) {
+				return;
+			}
+			String queryVal = String.join(" ", query);
+			synchronized (this) {
+				if (searchResultsMap.containsKey(queryVal)) {
+					return;
+				}
+			}
+			List<InvertedIndex.SearchResult> searchResults = mtIndexer.search(query, partial);
+			synchronized (this) {
+				searchResultsMap.put(queryVal, searchResults);
+			}
 		}
 	}
 
@@ -100,21 +114,6 @@ public class ThreadedQueryFileProcessor implements QueryFileProcessorInterface {
 		/*
 		 * TODO Move this implementation into the QueryTask run() method
 		 */
-		SnowballStemmer stemmer = new SnowballStemmer(SnowballStemmer.ALGORITHM.ENGLISH);
-		TreeSet<String> query = FileStemmer.uniqueStems(queryLine, stemmer);
-		if (query.isEmpty()) {
-			return;
-		}
-		String queryVal = String.join(" ", query);
-		synchronized (this) {
-			if (searchResultsMap.containsKey(queryVal)) {
-				return;
-			}
-		}
-		List<InvertedIndex.SearchResult> searchResults = mtIndexer.search(query, partial);
-		synchronized (this) {
-			searchResultsMap.put(queryVal, searchResults);
-		}
 	}
 
 	/**
