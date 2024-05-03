@@ -29,7 +29,7 @@ public class InvertedIndex {
 		this.counts = new TreeMap<>();
 		this.invertedIndex = new TreeMap<>();
 	}
-	
+
 	/**
 	 * Gets the total word count for a specific location
 	 *
@@ -76,7 +76,7 @@ public class InvertedIndex {
 	 * @return The number of positions the word appears in the location
 	 */
 	public int numWordPositions(String word, String location) {
-		 return viewPositions(word, location).size();
+		return viewPositions(word, location).size();
 	}
 
 	/**
@@ -107,12 +107,7 @@ public class InvertedIndex {
 	 * @return True if the word at location exists, false otherwise
 	 */
 	public boolean hasWordLocation(String word, String location) {
-		/*
-		 * TODO This can be implemented using your view too. For example:
-		 * 
-		 * return viewLocations(word).contains(location);
-		 */
-		return invertedIndex.containsKey(word) && invertedIndex.get(word).containsKey(location);
+		return viewLocations(word).contains(location);
 	}
 
 	/**
@@ -124,8 +119,7 @@ public class InvertedIndex {
 	 * @return True if the word exists at the location position, false otherwise
 	 */
 	public boolean hasWordPosition(String word, String location, int position) {
-		// TODO Same issue
-		return hasWordLocation(word, location) && invertedIndex.get(word).get(location).contains(position);
+		return viewPositions(word, location).contains(position);
 	}
 
 	/**
@@ -188,11 +182,11 @@ public class InvertedIndex {
 			if (thisLocations == null) {
 				this.invertedIndex.put(word, locations);
 			} else {
-				
+
 				for (Map.Entry<String, TreeSet<Integer>> locationEntry : locations.entrySet()) {
 					String location = locationEntry.getKey();
 					TreeSet<Integer> positions = locationEntry.getValue();
-					
+
 					/*
 					 * TODO This is not always safe to do if the other index has some of the same
 					 * locations as this index. (Imagine this index has the first half of a file
@@ -205,12 +199,13 @@ public class InvertedIndex {
 				}
 			}
 		}
-		
+
 		for (Map.Entry<String, Integer> entry : other.counts.entrySet()) {
 			String location = entry.getKey();
 			int count = entry.getValue();
-			
-			// TODO This is where a getOrDefault is great, because it doesn't need to create a new instance...
+
+			// TODO This is where a getOrDefault is great, because it doesn't need to create
+			// a new instance...
 			this.counts.putIfAbsent(location, 0); // TODO Remove
 			int checkCount = this.counts.get(location); // TODO getOrDefault(location, 0);
 			if (count > checkCount) {
