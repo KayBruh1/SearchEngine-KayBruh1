@@ -58,8 +58,8 @@ public class CustomWorkQueue {
 		this.tasks = new LinkedList<Runnable>();
 		this.workers = new Worker[threads];
 		this.shutdown = false;
-	    this.pending = 0;
-	    this.pendingLock = new Object();
+		this.pending = 0;
+		this.pendingLock = new Object();
 
 		// start the threads so they are waiting in the background
 		for (int i = 0; i < threads; i++) {
@@ -89,21 +89,14 @@ public class CustomWorkQueue {
 	 * worker threads so that the work queue can continue to be used.
 	 */
 	public void finish() {
-		synchronized (pendingLock) {
-			while (pending > 0) {
-				/*
-				 * This is uninterruptible code, which should be avoided. (Interrupts are used
-				 * to terminate threads early, and in this case instead of terminating this
-				 * thread will go back into the wait state if interrupted.) Instead, put the
-				 * try/catch outside of the while loop… I recommend outside of the sync block
-				 * too for readability.
-				 */
-				try {
+		try {
+			synchronized (pendingLock) {
+				while (pending > 0) {
 					pendingLock.wait();
-				} catch (Exception e) {
-					Thread.currentThread().interrupt();
 				}
 			}
+		} catch (Exception e) {
+			Thread.currentThread().interrupt();
 		}
 	}
 
