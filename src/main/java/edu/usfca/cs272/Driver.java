@@ -75,7 +75,7 @@ public class Driver {
 			try {
 				crawler.startCrawl(seed, total);
 			} catch (Exception e) {
-				System.out.println("Error crawling HTML content from " + seed);
+				System.out.println("Error crawling the html content " + seed);
 			}
 		}
 
@@ -111,11 +111,11 @@ public class Driver {
 		}
 
 		if (parser.hasFlag("-html")) {
-			Path resultsPath = parser.getPath("-html", Path.of("html.json"));
+			Path htmlPath = parser.getPath("-html", Path.of("html.json"));
 			try {
-				processor.writeResults(resultsPath);
+				processor.writeResults(htmlPath);
 			} catch (Exception e) {
-				System.out.println("Error writing results to file " + resultsPath);
+				System.out.println("Error writing html results to file " + htmlPath);
 			}
 		}
 
