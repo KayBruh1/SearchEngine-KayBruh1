@@ -83,10 +83,10 @@ public class InvertedIndex {
 	 * Check if the location exists in the word counts
 	 *
 	 * @param location The location to check
-	 * @return True if the location exists, false otherwise
+	 * @return True if the location exists, false oterwise
 	 */
 	public boolean hasLocation(String location) {
-		return counts.containsKey(location);
+		return viewCounts().containsKey(location);
 	}
 
 	/**
@@ -96,7 +96,7 @@ public class InvertedIndex {
 	 * @return True if the word exists, false otherwise
 	 */
 	public boolean hasWord(String word) {
-		return invertedIndex.containsKey(word);
+		return viewWords().contains(word);
 	}
 
 	/**
