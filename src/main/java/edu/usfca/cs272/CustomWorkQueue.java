@@ -34,14 +34,13 @@ public class CustomWorkQueue {
 	/** Logger used for this class. */
 	private static final Logger log = LogManager.getLogger();
 
-	
 	/**
 	 * The pendingLock to help synchronize pending
 	 */
-	private final Object pendingLock = new Object(); // TODO Intialize instance members in the constructor
+	private final Object pendingLock;
 
 	/** Variable to track unfinished work */
-	private static int pending; // TODO Absolutely should not be static, then cannot have multiple functional work queues!
+	private int pending;
 
 	/**
 	 * Starts a work queue with the default number of threads.
@@ -59,6 +58,8 @@ public class CustomWorkQueue {
 		this.tasks = new LinkedList<Runnable>();
 		this.workers = new Worker[threads];
 		this.shutdown = false;
+	    this.pending = 0;
+	    this.pendingLock = new Object();
 
 		// start the threads so they are waiting in the background
 		for (int i = 0; i < threads; i++) {
@@ -74,14 +75,12 @@ public class CustomWorkQueue {
 	 * @param task work request (in the form of a {@link Runnable} object)
 	 */
 	public void execute(Runnable task) {
+		synchronized (pendingLock) {
+			pending++;
+		}
 		synchronized (tasks) {
 			tasks.addLast(task);
 			tasks.notifyAll();
-			
-			// TODO Move this block outside of the sync(tasks) block, recommend BEFORE it (no need for nesting sync blocks here, and nesting different sync blocks can cause deadlock issues)
-			synchronized (pendingLock) {
-				pending++;
-			}
 		}
 	}
 
