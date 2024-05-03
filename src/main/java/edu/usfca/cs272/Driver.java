@@ -23,10 +23,11 @@ public class Driver {
 		FileBuilder builder;
 		QueryFileProcessorInterface processor;
 		CustomWorkQueue workQueue = null;
-		boolean threads = false;
+		WebCrawler crawler = null;
+		boolean threaded = false;
 
-		if (parser.hasFlag("-threads")) {
-			threads = true;
+		if (parser.hasFlag("-threads") || parser.hasFlag("-html")) {
+			threaded = true;
 			int numThreads = 5;
 			try {
 				numThreads = Integer.parseInt(parser.getString("-threads"));
@@ -42,6 +43,7 @@ public class Driver {
 			ThreadSafeInvertedIndex threadSafe = new ThreadSafeInvertedIndex();
 			builder = new ThreadedFileBuilder(threadSafe, workQueue);
 			processor = new ThreadedQueryFileProcessor(threadSafe, workQueue, parser.hasFlag("-partial"));
+			crawler = new WebCrawler(threadSafe, workQueue);
 			indexer = threadSafe;
 		} else {
 			indexer = new InvertedIndex();
@@ -58,6 +60,25 @@ public class Driver {
 			}
 		}
 
+		if (parser.hasFlag("-html")) {
+			String seed = parser.getString("-html");
+			int total = 1;
+			try {
+				total = Integer.parseInt(parser.getString("-crawl"));
+			} catch (Exception e) {
+				System.out.println("Invalid total. Using default value.");
+			}
+			if (total < 1) {
+				System.out.println("Invalid total. Using default value.");
+				total = 1;
+			}
+			try {
+				crawler.startCrawl(seed, total);
+			} catch (Exception e) {
+				System.out.println("Error crawling HTML content from " + seed);
+			}
+		}
+
 		if (parser.hasFlag("-query")) {
 			Path queryPath = parser.getPath("-query");
 			try {
@@ -67,7 +88,7 @@ public class Driver {
 			}
 		}
 
-		if (threads) {
+		if (threaded) {
 			workQueue.shutdown();
 		}
 
@@ -86,6 +107,15 @@ public class Driver {
 				indexer.writeIndex(indexPath);
 			} catch (Exception e) {
 				System.out.println("Error building the inverted index " + indexPath);
+			}
+		}
+
+		if (parser.hasFlag("-html")) {
+			Path resultsPath = parser.getPath("-html", Path.of("html.json"));
+			try {
+				processor.writeResults(resultsPath);
+			} catch (Exception e) {
+				System.out.println("Error writing results to file " + resultsPath);
 			}
 		}
 
