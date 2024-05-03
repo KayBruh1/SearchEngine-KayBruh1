@@ -79,11 +79,18 @@ public class QueryFileProcessor implements QueryFileProcessorInterface {
 		return searchResultsMap.containsKey(queryVal);
 	}
 
-	/*
-	 * TODO Override processQueryLine in this class to reuse your
-	 * stemmer member!
+	/**
+	 * Process query line to a stemmed query
+	 *
+	 * @param queryLine The query line to process
+	 * @return The stemmed query
 	 */
-	
+	@Override
+	public String processQueryLine(String queryLine) {
+		TreeSet<String> query = FileStemmer.uniqueStems(queryLine, stemmer);
+		return String.join(" ", query);
+	}
+
 	/**
 	 * Gets the search results for a query line
 	 *
