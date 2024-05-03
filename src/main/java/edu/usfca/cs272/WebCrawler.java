@@ -36,11 +36,24 @@ public class WebCrawler {
 		visited = new HashSet<>();
 	}
 
+	/**
+	 * Initiates the crawling process for the seed
+	 * 
+	 * @param seed  The URI to start crawling from
+	 * @param total The total number of URIs to crawl
+	 * @throws URISyntaxException If the syntax is invalid
+	 */
 	public void startCrawl(String seed, int total) throws URISyntaxException {
 		crawl(new URI(seed), total);
 		workQueue.finish();
 	}
 
+	/**
+	 * Crawls the given URI and its hyperlinks
+	 * 
+	 * @param uri   The URI to crawl
+	 * @param total The total number of URIs to crawl
+	 */
 	public void crawl(URI uri, int total) {
 		if (visited.size() >= total || visited.contains(uri)) {
 			return;
@@ -52,11 +65,24 @@ public class WebCrawler {
 		}
 	}
 
+	/**
+	 * Class to help web crawl
+	 */
 	private class CrawlTask implements Runnable {
+		/**
+		 * The URI to crawl
+		 */
 		private final URI uri;
 
+		/**
+		 * The total number of URIs to crawl
+		 */
 		private final int total;
 
+		/**
+		 * @param uri   The URI to crawl
+		 * @param total The number of URIs to crawl
+		 */
 		public CrawlTask(URI uri, int total) {
 			this.uri = uri;
 			this.total = total;
