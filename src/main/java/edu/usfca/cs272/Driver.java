@@ -43,6 +43,26 @@ public class Driver {
 			builder = new ThreadedFileBuilder((ThreadSafeInvertedIndex) indexer, workQueue);
 			processor = new ThreadedQueryFileProcessor((ThreadSafeInvertedIndex) indexer, workQueue,
 					parser.hasFlag("-partial"));
+			
+			/*
+			 * Avoid downcasting when possible (it is considered bug-prone). The trick to
+			 * fix it here is to create a thread-safe reference and instance of the inverted
+			 * index, use that to initialize the other classes that need it, and then upcast
+			 * it to the inverted index reference used in the if blocks below. For example:
+			 */
+
+			/*-
+			// initialize the thread-safe version
+			ThreadSafeInvertedIndex threadSafe = new ThreadSafeInvertedIndex();
+			
+			// initialize other classes using thread-safe version
+			processor = new ThreadedQueryProcessor(threadSafe, workQueue);
+			etc.
+			
+			// upcast the thread-safe version so it can still be used later
+			indexer = threadSafe;
+			*/
+
 		} else {
 			indexer = new InvertedIndex();
 			builder = new FileBuilder(indexer);
