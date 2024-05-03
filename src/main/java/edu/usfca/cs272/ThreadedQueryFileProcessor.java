@@ -158,16 +158,6 @@ public class ThreadedQueryFileProcessor implements QueryFileProcessorInterface {
 	}
 
 	/**
-	 * Returns the total number processed queries
-	 *
-	 * @return The total number of processed queries
-	 */
-	@Override
-	public synchronized int getTotalQueries() { // TODO Remove, inherit default implementation
-		return searchResultsMap.size();
-	}
-
-	/**
 	 * Returns an unmodifiable set containing the queries for search results
 	 *
 	 * @return An unmodifiable set containing the queries for search results
