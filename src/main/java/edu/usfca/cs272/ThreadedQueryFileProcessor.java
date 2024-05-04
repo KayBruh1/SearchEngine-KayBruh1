@@ -111,9 +111,7 @@ public class ThreadedQueryFileProcessor implements QueryFileProcessorInterface {
 	 */
 	@Override
 	public void processQueries(String queryLine) {
-		/*
-		 * TODO Move this implementation into the QueryTask run() method
-		 */
+		workQueue.execute(new QueryTask(queryLine));
 	}
 
 	/**
