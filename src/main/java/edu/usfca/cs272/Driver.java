@@ -26,7 +26,7 @@ public class Driver {
 		WebCrawler crawler = null;
 		boolean threaded = false;
 
-		if (parser.hasFlag("-threads") || parser.hasFlag("-html")) {
+		if (parser.hasFlag("-threads") || parser.hasFlag("-html") || parser.hasFlag("-server")) {
 			threaded = true;
 			int numThreads = 5;
 			try {
@@ -37,6 +37,17 @@ public class Driver {
 			if (numThreads < 1) {
 				System.out.println("Invalid number of threads. Using default value.");
 				numThreads = 5;
+			}
+			
+			int port = 8080;
+			try {
+				port = Integer.parseInt(parser.getString("-server"));
+			} catch (Exception e) {
+				System.out.println("Invalid port. Using default value.");
+			}
+			if (port < 0) {
+				System.out.println("Invalid port. Using default value.");
+				port = 8080;
 			}
 
 			workQueue = new CustomWorkQueue(numThreads);
