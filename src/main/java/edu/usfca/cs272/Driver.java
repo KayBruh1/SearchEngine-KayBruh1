@@ -16,14 +16,16 @@ public class Driver {
 	 * Main method
 	 *
 	 * @param args Command line arguments
+	 * @throws Exception 
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 		ArgumentParser parser = new ArgumentParser(args);
 		InvertedIndex indexer;
 		FileBuilder builder;
 		QueryFileProcessorInterface processor;
 		CustomWorkQueue workQueue = null;
 		WebCrawler crawler = null;
+		SearchEngine engine = null;
 		boolean threaded = false;
 
 		if (parser.hasFlag("-threads") || parser.hasFlag("-html") || parser.hasFlag("-server")) {
@@ -38,23 +40,13 @@ public class Driver {
 				System.out.println("Invalid number of threads. Using default value.");
 				numThreads = 5;
 			}
-			
-			int port = 8080;
-			try {
-				port = Integer.parseInt(parser.getString("-server"));
-			} catch (Exception e) {
-				System.out.println("Invalid port. Using default value.");
-			}
-			if (port < 0) {
-				System.out.println("Invalid port. Using default value.");
-				port = 8080;
-			}
 
 			workQueue = new CustomWorkQueue(numThreads);
 			ThreadSafeInvertedIndex threadSafe = new ThreadSafeInvertedIndex();
 			builder = new ThreadedFileBuilder(threadSafe, workQueue);
 			processor = new ThreadedQueryFileProcessor(threadSafe, workQueue, parser.hasFlag("-partial"));
 			crawler = new WebCrawler(threadSafe, workQueue);
+			engine = new SearchEngine(threadSafe);
 			indexer = threadSafe;
 		} else {
 			indexer = new InvertedIndex();
@@ -88,6 +80,20 @@ public class Driver {
 			} catch (Exception e) {
 				System.out.println("Error crawling the html content " + seed);
 			}
+		}
+
+		if (parser.hasFlag("-server")) {
+			int port = 8080;
+			try {
+				port = Integer.parseInt(parser.getString("-server"));
+			} catch (Exception e) {
+				System.out.println("Invalid port. Using default value.");
+			}
+			if (port < 0) {
+				System.out.println("Invalid port. Using default value.");
+				port = 8080;
+			}
+			engine.startEngine(port);
 		}
 
 		if (parser.hasFlag("-query")) {
