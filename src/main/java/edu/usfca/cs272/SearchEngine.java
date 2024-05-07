@@ -49,7 +49,6 @@ public class SearchEngine {
 			if (query != null) {
 				Set<String> queries = Set.of(query.split("\\s+"));
 				results = indexer.search(queries, true);
-				System.out.println(indexer.toString());
 			}
 
 			response.setContentType("text/html");
