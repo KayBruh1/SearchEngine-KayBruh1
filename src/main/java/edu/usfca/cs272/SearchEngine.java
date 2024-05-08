@@ -73,18 +73,19 @@ public class SearchEngine {
 						        </p>
 						    </form>
 						    <h2>Search Results:</h2>
-						    <ol>
 						""";
 
 				out.println(html);
-				for (InvertedIndex.SearchResult result : results) {
-					out.println("<li><a href=\"" + result.getLocation() + "\">" + result.getLocation() + "</a></li>");
+				if (results != null && !results.isEmpty()) {
+					out.println("<ol>");
+					for (InvertedIndex.SearchResult result : results) {
+						out.println(
+								"<li><a href=\"" + result.getLocation() + "\">" + result.getLocation() + "</a></li>");
+					}
+					out.println("</ol>");
+				} else if (query != null) {
+					out.println("<p>No results found.</p>");
 				}
-				out.println("""
-						    </ol>
-						</body>
-						</html>
-						""");
 			}
 		}
 	}
