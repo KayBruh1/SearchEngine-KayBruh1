@@ -82,6 +82,15 @@ public class Driver {
 			}
 		}
 
+		if (parser.hasFlag("-query")) {
+			Path queryPath = parser.getPath("-query");
+			try {
+				processor.processQueries(queryPath);
+			} catch (Exception e) {
+				System.out.println("Error reading the query file " + queryPath);
+			}
+		}
+		
 		if (parser.hasFlag("-server")) {
 			int port = 8080;
 			try {
@@ -94,15 +103,6 @@ public class Driver {
 				port = 8080;
 			}
 			engine.startEngine(port);
-		}
-
-		if (parser.hasFlag("-query")) {
-			Path queryPath = parser.getPath("-query");
-			try {
-				processor.processQueries(queryPath);
-			} catch (Exception e) {
-				System.out.println("Error reading the query file " + queryPath);
-			}
 		}
 
 		if (threaded) {

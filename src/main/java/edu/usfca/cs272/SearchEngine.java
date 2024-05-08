@@ -46,6 +46,7 @@ public class SearchEngine {
 		public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
 			String query = request.getParameter("query");
 			System.out.println(query);
+			System.out.println("index " + indexer.toString());
 			if (query != null) {
 				Set<String> queries = Set.of(query.split("\\s+"));
 				results = indexer.search(queries, true);
@@ -72,14 +73,18 @@ public class SearchEngine {
 						        </p>
 						    </form>
 						    <h2>Search Results:</h2>
-						</body>
-						</html>
+						    <ol>
 						""";
 
 				out.println(html);
 				for (InvertedIndex.SearchResult result : results) {
 					out.println("<li><a href=\"" + result.getLocation() + "\">" + result.getLocation() + "</a></li>");
 				}
+				out.println("""
+						    </ol>
+						</body>
+						</html>
+						""");
 			}
 		}
 	}
