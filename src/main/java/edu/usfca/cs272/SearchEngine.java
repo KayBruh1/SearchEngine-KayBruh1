@@ -72,11 +72,11 @@ public class SearchEngine {
 						            <button type="submit">Search</button>
 						        </p>
 						    </form>
-						    <h2>Search Results:</h2>
 						""";
 
 				out.println(html);
 				if (results != null && !results.isEmpty()) {
+					out.println("<h2>Search Results:</h2>");
 					out.println("<ol>");
 					for (InvertedIndex.SearchResult result : results) {
 						out.println(
@@ -84,7 +84,7 @@ public class SearchEngine {
 					}
 					out.println("</ol>");
 				} else if (query != null) {
-					out.println("<p>No results found.</p>");
+					out.println("<h2>No results found.</h2>");
 				}
 			}
 		}
