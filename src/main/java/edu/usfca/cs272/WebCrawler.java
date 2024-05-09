@@ -93,10 +93,25 @@ public class WebCrawler {
 			if (htmlContent != null) {
 				String cleanedHtml = HtmlCleaner.stripBlockElements(htmlContent);
 				ArrayList<URI> links = LinkFinder.listUris(uri, cleanedHtml);
-				cleanedHtml = HtmlCleaner.stripHtml(cleanedHtml);
+				
+				/* TODO
+				 * Move here and properly synchronize:
+ 
+				for (URI link : links) {
+					if (!visited.contains(link)) {
+						crawl(link, total);
+					}
+					
+					// TODO Break out of the loop if you hit the max
+				}
+				*/
+				
+				cleanedHtml = HtmlCleaner.stripHtml(cleanedHtml); // TODO This repeats the stripBlockElements, more efficient to remove the entities and tags than to reuse stripHtml
+				
+				// TODO A bit more efficient to use a local index instead
 				ArrayList<String> words = FileStemmer.listStems(cleanedHtml);
 				int position = 0;
-				for (String word : words) {
+				for (String word : words) { // TODO If you had an addWords in your index that was write locked outside the loop, it also would have been more efficient
 					position++;
 					URI cleanURI = LinkFinder.clean(uri);
 					indexer.addWord(word, cleanURI.toString(), position);
