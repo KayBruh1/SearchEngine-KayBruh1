@@ -46,36 +46,50 @@ public class SearchEngine {
 		public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
 			String query = request.getParameter("query");
 			System.out.println(query);
-			System.out.println("index " + indexer.toString());
-			if (query != null) {
+			String searchType = request.getParameter("searchType");
+			if (query != null && !query.isBlank()) {
+				boolean search = true;
 				Set<String> queries = Set.of(query.split("\\s+"));
-				results = indexer.search(queries, true);
+				search = "exact".equals(searchType);
+				results = indexer.search(queries, search);
 			}
 
 			response.setContentType("text/html");
 			response.setStatus(HttpServletResponse.SC_OK);
 			try (PrintWriter out = response.getWriter()) {
 				String html = """
-						<!DOCTYPE html>
-						<html lang="en">
-						<head>
-						    <meta charset="UTF-8">
-						    <title>Search Engine</title>
-						</head>
-						<body>
-						    <h1>Search Engine</h1>
-						    <form method="get" action="/search">
-						        <p>
-						            <input type="text" name="query" size="50" value=""></input>
-						        </p>
-						        <p>
-						            <button type="submit">Search</button>
-						        </p>
-						    </form>
-						""";
+												<!DOCTYPE html>
+												<html lang="en">
+												<head>
+												    <meta charset="UTF-8">
+												    <title>Search Engine</title>
+												                <script>
+												          function setPartial() {
+												              document.getElementById('searchType').value = 'partial';
+												          }
+												          function setExact() {
+												              document.getElementById('searchType').value = 'exact';
+												          }
+												      </script>
+												</head>
+												<body>
+												    <h1>Search Engine</h1>
+												    <form method="get" action="/search">
+												        <p>
+												            <input type="text" name="query" size="50" value=""></input>
+												        </p>
+												        <p>
+						<button type="button" onclick="setPartial()">Partial Search</button>
+						                    <button type="button" onclick="setExact()">Exact Search</button>
+												        	<br>
+												        	<br>
+												            <button type="submit">Enter</button>
+												        </p>
+												    </form>
+												""";
 
 				out.println(html);
-				if (results != null && !results.isEmpty()) {
+				if (query != null && results != null && !results.isEmpty()) {
 					out.println("<h2>Search Results:</h2>");
 					out.println("<ol>");
 					for (InvertedIndex.SearchResult result : results) {
