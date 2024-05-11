@@ -31,7 +31,7 @@ public class HtmlFetcher {
 	 * @see HttpsFetcher#processHttpHeaders(BufferedReader)
 	 */
 	public static boolean isHtml(Map<String, List<String>> headers) {
-		if (headers.containsKey("content-type") /* TODO && !headers.get("content-type").isEmpty() */) {
+		if (headers.containsKey("content-type") && !headers.get("content-type").isEmpty()) {
 			return headers.get("content-type").get(0).toLowerCase().startsWith("text/html");
 		}
 		return false;
@@ -47,9 +47,9 @@ public class HtmlFetcher {
 	 * @see HttpsFetcher#processHttpHeaders(BufferedReader)
 	 */
 	public static int getStatusCode(Map<String, List<String>> headers) {
-		List<String> statusLine = headers.get(null);
-		String[] headerParts = statusLine.get(0).split(" "); // TODO Test that there is a 0 element (or catch an exception if you access an element that doesn't exist)
 		try {
+			List<String> statusLine = headers.get(null);
+			String[] headerParts = statusLine.get(0).split(" ");
 			return Integer.parseInt(headerParts[1]);
 		} catch (Exception e) {
 			return -1;
@@ -67,11 +67,15 @@ public class HtmlFetcher {
 	 * @see HttpsFetcher#processHttpHeaders(BufferedReader)
 	 */
 	public static String getRedirect(Map<String, List<String>> headers) {
-		int statusCode = getStatusCode(headers);
-		if (statusCode >= 300 && statusCode <= 399) {
-			if (headers.containsKey("location")) { // TODO Same
-				return headers.get("location").get(0);
+		try {
+			int statusCode = getStatusCode(headers);
+			if (statusCode >= 300 && statusCode <= 399) {
+				if (headers.containsKey("location")) {
+					return headers.get("location").get(0);
+				}
 			}
+		} catch (Exception e) {
+			return null;
 		}
 		return null;
 	}
@@ -131,8 +135,7 @@ public class HtmlFetcher {
 				}
 			}
 		} catch (Exception e) {
-			System.out.println("Error during fetch " + uri);
-			// TODO return null or log instead
+			return null;
 		}
 		return null;
 	}
