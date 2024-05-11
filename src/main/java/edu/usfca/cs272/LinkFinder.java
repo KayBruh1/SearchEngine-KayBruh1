@@ -23,6 +23,7 @@ public class LinkFinder {
 	 * @return true if the URI uses the HTTP or HTTPS protocol (or scheme)
 	 */
 	public static boolean isHttp(URI uri) {
+		// TODO return uri.toString().toLowerCase().startsWith("http");
 		return uri.toString().toLowerCase().startsWith("http") || uri.toString().toLowerCase().startsWith("https");
 	}
 

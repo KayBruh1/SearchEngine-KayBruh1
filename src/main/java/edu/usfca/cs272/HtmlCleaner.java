@@ -36,6 +36,7 @@ public class HtmlCleaner {
 	 * @see String#replaceAll(String, String)
 	 */
 	public static String stripTags(String html) {
+		// TODO Could use 1 regex instead of 2
 		return html.replaceAll("<[a-zA-Z/][^>]*>", "").replaceAll("<[^>]*>", "");
 	}
 
