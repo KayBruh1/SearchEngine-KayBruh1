@@ -103,8 +103,8 @@ public class WebCrawler {
 					}
 				}
 				
-				cleanedHtml = HtmlCleaner.stripEntities(cleanedHtml);
 				cleanedHtml = HtmlCleaner.stripTags(cleanedHtml);
+				cleanedHtml = HtmlCleaner.stripEntities(cleanedHtml);
 				ArrayList<String> words = FileStemmer.listStems(cleanedHtml);
 				int position = 0;
 				for (String word : words) {
