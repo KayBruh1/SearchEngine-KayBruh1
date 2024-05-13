@@ -55,6 +55,11 @@ public class SearchEngine {
 	 * Help process and display search results
 	 */
 	public static class SearchServlet extends HttpServlet {
+		/**
+		 * Default id
+		 */
+		private static final long serialVersionUID = 1L;
+
 		@Override
 		public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
 			String query = request.getParameter("query");
