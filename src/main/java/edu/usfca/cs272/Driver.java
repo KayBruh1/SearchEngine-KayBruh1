@@ -16,7 +16,7 @@ public class Driver {
 	 * Main method
 	 *
 	 * @param args Command line arguments
-	 * @throws Exception 
+	 * @throws Exception If an error occurs
 	 */
 	public static void main(String[] args) throws Exception {
 		ArgumentParser parser = new ArgumentParser(args);
@@ -90,7 +90,7 @@ public class Driver {
 				System.out.println("Error reading the query file " + queryPath);
 			}
 		}
-		
+
 		if (parser.hasFlag("-server")) {
 			int port = 8080;
 			try {

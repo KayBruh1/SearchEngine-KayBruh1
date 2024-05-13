@@ -13,6 +13,9 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+/**
+ * Class to process and display search results
+ */
 public class SearchEngine {
 	/**
 	 * Map to store search results
@@ -24,10 +27,17 @@ public class SearchEngine {
 	 */
 	private static ThreadSafeInvertedIndex indexer;
 
+	/**
+	 * @param indexer The indexer to help with crawling
+	 */
 	public SearchEngine(ThreadSafeInvertedIndex indexer) {
-		this.indexer = indexer;
+		SearchEngine.indexer = indexer;
 	}
 
+	/**
+	 * @param port The port to use
+	 * @throws Exception If an error occurs
+	 */
 	public void startEngine(int port) throws Exception {
 		Server server = new Server(port);
 
@@ -41,13 +51,14 @@ public class SearchEngine {
 		server.join();
 	}
 
+	/**
+	 * Help process and display search results
+	 */
 	public static class SearchServlet extends HttpServlet {
 		@Override
 		public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
 			String query = request.getParameter("query");
-			System.out.println("q " + query);
 			String searchType = request.getParameter("searchType");
-			System.out.println("s " + searchType);
 			if (query != null) {
 				boolean search = true;
 				search = "exact".equals(searchType);
