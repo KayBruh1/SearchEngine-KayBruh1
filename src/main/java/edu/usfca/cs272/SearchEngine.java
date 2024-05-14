@@ -66,8 +66,9 @@ public class SearchEngine {
 			String searchType = request.getParameter("searchType");
 			if (query != null) {
 				boolean search = "exact".equals(searchType);
-				Set<String> queries = Set.of(query.split("\\s+"));
-				results = indexer.search(queries, search);
+//				Set<String> queries = Set.of(query.split("\\s+"));
+				Set<String> queries = FileStemmer.uniqueStems(query);
+				results = indexer.search(queries, !search);
 			}
 
 			response.setContentType("text/html");
