@@ -65,8 +65,7 @@ public class SearchEngine {
 			String query = request.getParameter("query");
 			String searchType = request.getParameter("searchType");
 			if (query != null) {
-				boolean search = true;
-				search = "exact".equals(searchType);
+				boolean search = "exact".equals(searchType);
 				Set<String> queries = Set.of(query.split("\\s+"));
 				results = indexer.search(queries, search);
 			}
@@ -80,6 +79,13 @@ public class SearchEngine {
 						    <head>
 						        <meta charset="UTF-8">
 						        <title>Search Engine</title>
+						        <!-- Bootstrap CSS -->
+						        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+						        <style>
+						            .results {
+						                margin-top: 30px;
+						            }
+						        </style>
 						        <script>
 						            function setPartial() {
 						                document.getElementById('searchType').value = 'partial';
@@ -90,20 +96,26 @@ public class SearchEngine {
 						        </script>
 						    </head>
 						    <body>
-						        <h1>Search Engine</h1>
-						        <form method="get" action="/search">
-						            <p>
-						                <input type="text" name="query" size="50" value="">
-						            </p>
-						            <p>
-						                <button type="button" onclick="setPartial()">Partial Search</button>
-						                <button type="button" onclick="setExact()">Exact Search</button>
-						                <br>
-						                <br>
-						                <button type="submit">Enter</button>
+						        <div class="container">
+						            <h1 class="text-center mt-5">Search Engine</h1>
+						            <form class="mt-5" method="get" action="/search">
+						                <div class="input-group mb-3">
+						                    <input type="text" class="form-control" name="query" placeholder="Search query">
+						                    <div class="input-group-append">
+						                        <button class="btn btn-outline-secondary" type="button" onclick="setPartial()">Partial Search</button>
+						                        <button class="btn btn-outline-secondary" type="button" onclick="setExact()">Exact Search</button>
+						                    </div>
+						                </div>
+						                <button type="submit" class="btn btn-primary">Enter</button>
 						                <input type="hidden" name="searchType" id="searchType" value="partial">
-						            </p>
-						        </form>
+						            </form>
+						            <div class="results">
+						            </div>
+						        </div>
+						        <!-- Bootstrap JS -->
+						        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
+						    </body>
+						    </html>
 						""";
 
 				out.println(html);
@@ -115,8 +127,8 @@ public class SearchEngine {
 								"<li><a href=\"" + result.getLocation() + "\">" + result.getLocation() + "</a></li>");
 					}
 					out.println("</ol>");
-				} else if (query != null) {
-					out.println("<h2>No results found.</h2>");
+				} else if (query != null && !query.isEmpty()) {
+					out.println("<h2>No results found for query: " + query + "</h2>");
 				}
 			}
 		}
