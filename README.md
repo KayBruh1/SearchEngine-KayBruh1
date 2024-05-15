@@ -1,6 +1,2 @@
 Search Engine
-=================================================
-
-The project is broken into two separate GitHub repositories and Eclipse Java projects. This is the private repository for your individual project source code.
-
-Unlike the shared public tests repository, this repository is only accessible by you, the instructor, and the teacher assistants.
+Developed a full-stack search engine with an in-memory inverted index and multithreaded web crawler using Java v21 Apache OpenNLP, TD-IDF, Apache Log4j2, sockets, HTTP, regular expressions, Eclipse Jetty, servlets, HTML, Bulma, GitHub, Eclipse, JUnit, and Apache Maven.
