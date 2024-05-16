@@ -18,11 +18,6 @@ import jakarta.servlet.http.HttpServletResponse;
  */
 public class SearchEngine {
 	/**
-	 * Map to store search results
-	 */
-	private static List<SearchResult> results = null;
-
-	/**
 	 * Inverted index instance for searching
 	 */
 	private static ThreadSafeInvertedIndex indexer;
@@ -60,15 +55,19 @@ public class SearchEngine {
 		 */
 		private static final long serialVersionUID = 1L;
 
+		/**
+		 * Map to store search results
+		 */
+		private List<SearchResult> results = null;
+
 		@Override
 		public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
 			String query = request.getParameter("query");
 			String searchType = request.getParameter("searchType");
 			if (query != null) {
-				boolean search = "exact".equals(searchType);
-//				Set<String> queries = Set.of(query.split("\\s+"));
+				boolean search = "partial".equals(searchType);
 				Set<String> queries = FileStemmer.uniqueStems(query);
-				results = indexer.search(queries, !search);
+				results = indexer.search(queries, search);
 			}
 
 			response.setContentType("text/html");
